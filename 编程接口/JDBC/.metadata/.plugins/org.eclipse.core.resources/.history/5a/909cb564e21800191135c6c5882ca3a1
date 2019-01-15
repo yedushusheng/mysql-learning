@@ -18,6 +18,6 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         </environment>
     </environments>
     <mappers>
-        <mapper resource="com/mybatis/pojo/Category.xml"/>
+        <mapper resource="com/how2java/pojo/Category.xml"/>
     </mappers>
 </configuration>
