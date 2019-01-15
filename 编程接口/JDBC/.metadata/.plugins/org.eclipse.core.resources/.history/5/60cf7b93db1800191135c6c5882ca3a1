@@ -13,14 +13,14 @@ public class TestJDBC {
   
             Connection c = DriverManager
                     .getConnection(
-                            "jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8",
-                            "root", "root");
+                            "jdbc:mysql://127.0.0.1:3306/how2java?characterEncoding=UTF-8",
+                            "root", "admin");
   
             Statement s = c.createStatement();
   
             // 准备sql语句
             // 注意： 字符串要用单引号'
-            String sql = "insert into test values(1,'test')";
+            String sql = "insert into hero values(null,"+"'提莫'"+","+313.0f+","+50+")";
             s.execute(sql);
   
             System.out.println("执行插入语句成功");

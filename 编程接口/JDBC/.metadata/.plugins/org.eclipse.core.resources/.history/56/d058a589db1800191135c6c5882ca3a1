@@ -16,14 +16,11 @@ public class TestJDBC {
                             "jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8",
                             "root", "root");
   
+            // 注意：使用的是 java.sql.Statement
+            // 不要不小心使用到： com.mysql.jdbc.Statement;
             Statement s = c.createStatement();
   
-            // 准备sql语句
-            // 注意： 字符串要用单引号'
-            String sql = "insert into test values(1,'test')";
-            s.execute(sql);
-  
-            System.out.println("执行插入语句成功");
+            System.out.println("获取 Statement对象： " + s);
   
         } catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block

@@ -20,7 +20,7 @@ public class TestJDBC {
   
             // 准备sql语句
             // 注意： 字符串要用单引号'
-            String sql = "insert into test values(1,'test')";
+            String sql = "insert into test values(null,"+"'提莫'"+","+313.0f+","+50+")";
             s.execute(sql);
   
             System.out.println("执行插入语句成功");
