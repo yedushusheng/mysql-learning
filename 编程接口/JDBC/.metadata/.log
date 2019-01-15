@@ -123,3 +123,8 @@ org.apache.http.client.HttpResponseException: Proxy Error
 
 !ENTRY org.eclipse.jface.text 2 0 2019-01-15 23:29:51.259
 !MESSAGE Duplicate template id: 'org.eclipse.wst.xslt.templates.xpath.round'
+
+!ENTRY org.eclipse.core.resources 2 2 2019-01-15 23:45:45.823
+!MESSAGE Save operation warnings.
+!SUBENTRY 1 org.eclipse.core.resources 2 234 2019-01-15 23:45:45.823
+!MESSAGE The project description file (.project) for 'RemoteSystemsTempFiles' was missing.  This file contains important information about the project.  A new project description file has been created, but some information about the project may have been lost.
