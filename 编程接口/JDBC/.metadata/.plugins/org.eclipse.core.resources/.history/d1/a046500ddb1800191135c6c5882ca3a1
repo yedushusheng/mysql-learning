@@ -21,8 +21,8 @@ public class TestJDBC {
   
             Connection c = DriverManager
                     .getConnection(
-                            "jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8",
-                            "root", "root");
+                            "jdbc:mysql://127.0.0.1:3306/how2java?characterEncoding=UTF-8",
+                            "root", "admin");
   
             System.out.println("连接成功，获取连接对象： " + c);
   
