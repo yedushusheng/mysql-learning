@@ -18,7 +18,7 @@ public class TestJDBC {
  
             s = c.createStatement();
  
-            String sql = "insert into test values(1,'test')";
+            String sql = "insert into hero values(1,'test')";
  
             s.execute(sql);
  
