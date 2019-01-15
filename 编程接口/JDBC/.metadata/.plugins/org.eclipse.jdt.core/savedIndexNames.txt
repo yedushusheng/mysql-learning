@@ -1,0 +1,11 @@
+INDEX VERSION 1.129+D:\GitHubDesktop\github\mysql-learning\±à³Ì½Ó¿Ú\JDBC\.metadata\.plugins\org.eclipse.jdt.core
+1389524478.index
+1745134394.index
+1834641125.index
+3504320479.index
+3300369669.index
+2651560574.index
+203359206.index
+3512398304.index
+1968621184.index
+76471625.index
