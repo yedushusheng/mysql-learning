@@ -1,0 +1,17 @@
+<html>
+<head></head>
+<body>
+	<div align="center">
+	<h1>User Management</h1>
+	{% if message %} {{message}} {% endif %}
+	<form method="post">
+		Username :{{form.username}}
+		<br/>
+		Password :{{form.password}}
+		<br/>
+		<input type="submit" value="Submit" />
+		<input type="reset" value="reset" /> 
+	</form>
+</div>
+</body>
+</html>
