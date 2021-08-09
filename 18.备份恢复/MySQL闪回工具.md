@@ -4,9 +4,13 @@
 
 [https://mp.weixin.qq.com/s?__biz=MzIzOTA2NjEzNQ==&mid=2454780189&idx=1&sn=2013c2f62cbdffa7f274f6ccf60cbd09&chksm=fe8b9465c9fc1d7373226dfeb4bf7cb27cece721140819d30118af9b8dcddce12e6c365490a5&mpshare=1&scene=24&srcid=0315yBplX63k706DextFWkT7&sharer_sharetime=1615768697494&sharer_shareid=33f795d236f19ac7c128b2e279563f84#rd](#rd)
 
- 可以用于MySQL误操作闪回的工具包括my2sql、binlog2sql和MyFlash等工具，其中，个人感觉my2sql最好用。
+ 
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps78.tmp.jpg) 
+可以用于MySQL误操作闪回的工具包括my2sql、binlog2sql和MyFlash等工具，其中，个人感觉my2sql最好用。
+
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps57AC.tmp.jpg) 
+
+ 
 
 # 工具
 
@@ -18,6 +22,8 @@ my2sql是使用go语言开发的MySQL binlog解析工具，通过解析MySQL bin
 
 my2sql的GitHub地址：https://github.com/liuhr/my2sql
 
+ 
+
 ### 特点
 
 #### **优点**
@@ -25,6 +31,8 @@ my2sql的GitHub地址：https://github.com/liuhr/my2sql
 功能丰富，不仅支持回滚操作，还有其他实用功能。
 
 基于golang实现，速度快，全量解析1.1Gbinlog只需要1分30秒左右，当前其他类似开源工具一般要几十分钟。
+
+ 
 
 #### **限制**
 
@@ -37,6 +45,8 @@ my2sql的GitHub地址：https://github.com/liuhr/my2sql
 此工具是伪装成从库拉取binlog，需要连接数据库的用户有SELECT, REPLICATION SLAVE, REPLICATION CLIENT权限
 
 MySQL8.0版本需要在配置文件中加入default_authentication_plugin=mysql_native_password，用户密码认证必须是mysql_native_password才能解析
+
+ 
 
 ### 用途
 
@@ -55,6 +65,8 @@ IO高TPS高， 查出哪些表在频繁更新
 主从延迟，分析主库执行的SQL语句
 
 除了支持常规数据类型，对大部分工具不支持的数据类型做了支持，比如json、blob、text、emoji等数据类型sql生成。
+
+ 
 
 ### 参数
 
@@ -95,6 +107,8 @@ datetime=2020-07-16_10:44:09 database=orchestrator table=cluster_domain_name bin
 -work-type 
 
 2sql表示生成原始sql，rollback表示生成回滚sql，stats表示只统计DML、事务信息
+
+ 
 
 ### 使用
 
@@ -142,7 +156,7 @@ datetime=2020-07-16_10:44:09 database=orchestrator table=cluster_domain_name bin
 
 binlog2sql当前是业界使用最广泛的MySQL回滚工具，下面对my2sql和binlog2sql做个性能对比。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps79.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps57BD.tmp.jpg) 
 
 # 分布式数据库实践
 
@@ -176,9 +190,9 @@ Proxy查询回收站中的表：支持两种查询：
 
 ### 流程梳理
 
-#### **交互流程**
+#### 交互流程
 
-#### **内部流程**
+#### 内部流程
 
 ## TiDB
 
