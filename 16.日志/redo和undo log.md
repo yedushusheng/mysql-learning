@@ -4,27 +4,27 @@
 
 ## **概述**
 
-**undo log是为了实现事务的原子性，在MySQL数据库InnoDB存储引擎中，采用undo log来实现多版本并发控制（简称 MVCC）**。
+​	undo log是为了实现事务的原子性，在MySQL数据库InnoDB存储引擎中，采用undo log来实现多版本并发控制（简称 MVCC）。
 
-在操作任何数据之前，首先将数据备份到一个地方（这个存储数据备份的地方称为undo log）。然后进行数据的修改。如果出现了错误或者用户执行了ROLLBACK语句，系统可以利用undo log中的备份将数据恢复到事务开始之前的状态。除了可以保证事务的原子性，undo log也可以用来辅助完成事务的持久化。
+​	在操作任何数据之前，首先将数据备份到一个地方（这个存储数据备份的地方称为undo log）。然后进行数据的修改。如果出现了错误或者用户执行了ROLLBACK语句，系统可以利用undo log中的备份将数据恢复到事务开始之前的状态。除了可以保证事务的原子性，undo log也可以用来辅助完成事务的持久化。
 
-因此，undo log有两个作用：提供回滚和多个行版本控制(MVCC)。
+​	因此，undo log有两个作用：提供回滚和多个行版本控制(MVCC)。
 
  
 
-注意：undo log和redo log记录物理日志不一样，它是逻辑日志。可以理解为：
+​	注意：undo log和redo log记录物理日志不一样，它是逻辑日志。可以理解为：
 
-当delete一条记录时，undo log中会记录一条对应的insert记录
+​	当delete一条记录时，undo log中会记录一条对应的insert记录
 
-当insert一条记录时，undo log中会记录一条对应的delete记录
+​	当insert一条记录时，undo log中会记录一条对应的delete记录
 
-当update一条记录时，undo log中会记录一条对应相反的update记录
+​	当update一条记录时，undo log中会记录一条对应相反的update记录
 
 undo log也会产生redo log，因为undo log也要实现持久性保护。
 
 ## **存储**
 
-InnoDB存储引擎对undo的管理采用**段**的方式。rollback segment称为回滚段，每个回滚段中有1024个undo log segment。
+InnoDB存储引擎对undo的管理采用***\*段\****的方式。rollback segment称为回滚段，每个回滚段中有1024个undo log segment。
 
 undo log默认存放在共享表空间中。
 
@@ -42,10 +42,15 @@ undo log默认存放在共享表空间中。
 
 默认rollback segment全部写在一个文件中，但可以通过设置变量 innodb_undo_tablespaces 平均分配到多少个文件中。该变量默认值为0，即全部写入一个表空间文件。该变量为静态变量，只能在数据库示例停止状态下修改，如写入配置文件或启动时带上对应参数。但是innodb存储引擎在启动过程中提示，不建议修改为非0的值，如下：
 
-`2017-03-31 13:16:00 7f665bfab720 InnoDB: Expected to open 3 undo tablespaces but was able
-2017-03-31 13:16:00 7f665bfab720 InnoDB: to find only 0 undo tablespaces.
-2017-03-31 13:16:00 7f665bfab720 InnoDB: Set the innodb_undo_tablespaces parameter to the
-2017-03-31 13:16:00 7f665bfab720 InnoDB: correct value and retry. Suggested value is 0`
+***\*2017\****-***\*03\****-***\*31\**** ***\*13\****:***\*16\****:***\*00\**** 7f665bfab720 InnoDB: Expected to open ***\*3\**** undo tablespaces but was able
+
+***\*2017\****-***\*03\****-***\*31\**** ***\*13\****:***\*16\****:***\*00\**** 7f665bfab720 InnoDB: to find only ***\*0\**** undo tablespaces.
+
+***\*2017\****-***\*03\****-***\*31\**** ***\*13\****:***\*16\****:***\*00\**** 7f665bfab720 InnoDB: Set the innodb_undo_tablespaces parameter to the
+
+***\*2017\****-***\*03\****-***\*31\**** ***\*13\****:***\*16\****:***\*00\**** 7f665bfab720 InnoDB: correct value and retry. ***\**Suggested value is 0\**\***
+
+ 
 
 ## **变量**
 
@@ -67,9 +72,15 @@ mysql> show variables like "%undo%";
 
 ### **innodb_undo_directory**
 
+ 
+
 ### **innodb_undo_logs**
 
+ 
+
 ### **innodb_undo_tablespaces**
+
+ 
 
 ## **原理**
 
@@ -99,11 +110,11 @@ MVCC的版本链上存储的就是各个事务的undo log。
 
 ## **概述**
 
-和undo log相反，redo log记录的是新数据的备份。**在事务提交前，只要将redo log持久化即可，不需要将数据持久化。当系统崩溃时，虽然数据没有持久化，但是redo log已经持久化。系统可以根据redo log的内容，将所有数据恢复到最新的状态。**
+​	和undo log相反，redo log记录的是新数据的备份。在事务提交前，只要将redo log持久化即可，不需要将数据持久化。当系统崩溃时，虽然数据没有持久化，但是redo log已经持久化。系统可以根据redo log的内容，将所有数据恢复到最新的状态。
 
 redo log包括两部分：一是内存中的日志缓冲(redo log buffer)，该部分日志是易失性的；二是磁盘上的重做日志文件(redo log file)，该部分日志是持久的。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps2433.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps115F.tmp.jpg) 
 
 MySQL支持用户自定义在commit时如何将log buffer中的日志刷log file中。这种控制通过变量 innodb_flush_log_at_trx_commit 的值来决定。该变量有3种值：0、1、2，默认为1。但注意，这个变量只是控制commit动作是否刷新log buffer到磁盘。
 
@@ -113,7 +124,7 @@ MySQL支持用户自定义在commit时如何将log buffer中的日志刷log file
 
 当设置为2的时候，每次提交都仅写入到os buffer，然后是每秒调用fsync()将os buffer中的日志写入到log file on disk。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps2434.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1160.tmp.jpg) 
 
 ## **日志块**
 
@@ -131,7 +142,9 @@ log buffer中未刷到磁盘的日志称为脏日志(dirty log)。
 
 默认情况下事务每次提交的时候都会刷事务日志到磁盘中，这是因为变量 innodb_flush_log_at_trx_commit 的值为1。但是innodb不仅仅只会在有commit动作后才会刷日志到磁盘，这只是innodb存储引擎刷日志的规则之一。
 
-**刷日志到磁盘有以下几种规则：**
+ 
+
+刷日志到磁盘有以下几种规则：
 
 1、发出commit动作时。已经说明过，commit发出后是否刷日志由变量 innodb_flush_log_at_trx_commit 控制。
 
@@ -153,13 +166,13 @@ log buffer中未刷到磁盘的日志称为脏日志(dirty log)。
 
 binlog和redo log之间的数据一致性问题
 
-**必要性：**
+***\*必要性：\****
 
-保证binlog存在的事务一定在redo log里面存在。**主从复制架构中，主机崩溃恢复依赖redo log和binlog，从机数据来源是主机binlog**。
+保证binlog存在的事务一定在redo log里面存在。***\*主从复制架构中，主机崩溃恢复依赖redo log和binlog，从机数据来源是主机binlog\****。
 
 保证binlog里面事务顺序与redo log事务顺序一致。
 
-**解决方案：**
+***\*解决方案：\****
 
 引入XA协议
 
@@ -177,7 +190,7 @@ write/sync binlog
 
 innodb commit，写入commit标记，释放prepare_commit_mutex锁
 
-**说明：**
+说明：
 
 1、以binlog写入与否作为事务提交成功与否的标志
 
