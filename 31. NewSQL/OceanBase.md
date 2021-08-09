@@ -1,10 +1,10 @@
-# *背景*
+# 背景
 
-## *集中式数据库*
+## 集中式数据库
 
 传统集中式数据库面临的挑战：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3CB7.tmp.jpg) 
 
 注：其实最根本的缺点还是成本高，扩展可以通过增加存储，但是那样也只是垂直扩展，成本非常高。
 
@@ -13,25 +13,25 @@
 
 第二，传统数据库虽然能很好的应对高并发查询场景，但一旦需要访问的并发量太大，比如双十一期间的短期的大流量，突破了单点设备所能提供的存储容量上限或者计算能力上限，剧烈的资源争抢就会导致整体性能显著下降。因此，传统数据库比较适合处理数据量和访问量都比较平稳、比较有限的场景，比较难应对数据量和访问量都快速增长的场景。
 
-## *分库分表中间件*
+## 分库分表中间件
 
 使用数据库中间件分库分表方案依然有短板
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3CB8.tmp.jpg) 
 
 为了解决上述问题，同时也为了降低成本，传统数据库普遍引入“分库分表”中间件的方案（比如 MySQL 数据库常用的 MyCAT 中间件），利用中间件将多个单点数据库整合在一起来实现水平扩展，但从架构上讲，各个数据库之间是相互独立的，互相感知不到对方，当要做跨库事务的时候，必须依赖中间件。这种方法虽然暂时解决了扩展性问题，且技术难度和技术成本相对较低，不需要或者很少需要修改数据库引擎，但又引入了其它问题：
-	1、*应用侵入性问题*：为了满足中间件的使用要求，应用必须做相应的改造以实现正确的数据访问路由，这对应用具有很大的侵入性，相当于把数据库没解决的问题甩给了应用，应用开发需要做改造来适配。而每一次扩容/缩容，由于底层数据库引擎无法在线调整数据分布规则，意味着往往需要暂停业务、重新导入数据、做一次对应的路由变更，这会明显加大应用开发和运维的复杂度。
+	1、***\*应用侵入性问题\****：为了满足中间件的使用要求，应用必须做相应的改造以实现正确的数据访问路由，这对应用具有很大的侵入性，相当于把数据库没解决的问题甩给了应用，应用开发需要做改造来适配。而每一次扩容/缩容，由于底层数据库引擎无法在线调整数据分布规则，意味着往往需要暂停业务、重新导入数据、做一次对应的路由变更，这会明显加大应用开发和运维的复杂度。
 
-2、**诸多功能限制**：如果应用比较简单，单表的规模也不大，所有的操作均在一个单点数据库完成，是没有太多功能的限制，应用开发者依然可以像使用单机数据库一样使用这种分库分表的中间件数据库。但一旦一些操作需要跨越不同的数据库，涉及的数据分布在多个不同的单点数据库，比如多表关联的复杂sql，由于中间件不具备分布式并行计算能力，导致它不能跨越多台机器协同执行任务。所以，很多数据库中间件会告诉应用开发者一些不支持的SQL，需要应用通过其他方式解决，影响了应用的迁移和开发。
-	3、*不能保证数据一致性*：当一个事务中处理的数据跨越多个不同的单点数据库时，由于数据库引擎没有分布式能力，只能通过中间件来完成分布式处理，中间件无法100%保证多台机器之间的数据一致性，尤其是中间件在执行分布式事务过程中遇到异常的时候，无法100%保证分布式事务的ACID。
+**2、*****\*诸多功能限制\****：如果应用比较简单，单表的规模也不大，所有的操作均在一个单点数据库完成，是没有太多功能的限制，应用开发者依然可以像使用单机数据库一样使用这种分库分表的中间件数据库。但一旦一些操作需要跨越不同的数据库，涉及的数据分布在多个不同的单点数据库，比如多表关联的复杂sql，由于中间件不具备分布式并行计算能力，导致它不能跨越多台机器协同执行任务。所以，很多数据库中间件会告诉应用开发者一些不支持的SQL，需要应用通过其他方式解决，影响了应用的迁移和开发。
+	3、***\*不能保证数据一致性\****：当一个事务中处理的数据跨越多个不同的单点数据库时，由于数据库引擎没有分布式能力，只能通过中间件来完成分布式处理，中间件无法100%保证多台机器之间的数据一致性，尤其是中间件在执行分布式事务过程中遇到异常的时候，无法100%保证分布式事务的ACID。
 
 造成这些问题的根本原因是这种架构的“先天不足”，“分布式”、“扩展性”等关键能力并没有内嵌在数据库引擎里实现，而是在数据库之外的中间件层面间接实现，因此当某些操作要求底层数据库具备这些能力时，中间件就显得无能为力了。 
 
-## *分布式数据库*
+## 分布式数据库
 
 原生的分布式关系型数据库架构：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3CC9.tmp.jpg) 
 
 既然传统数据库有这样那样的问题，接下来我们看下，分布式数据库的基本特点，以及分布式数据库是如何解决了上述问题的。
 	原生的分布式是把中间件做的很多事情下移到数据库引擎中，一般采用多副本一致性的架构。对应用来说，分布式数据库是给传统关系型数据库插上了一个分布式的翅膀，应用可以像用传统集中式数据库一样使用分布式数据库，业务不用关心其底层的分布式架构，迁移改造成本较低。 
@@ -43,7 +43,7 @@
 
 OceanBase和传统数据库对比：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3CCA.tmp.jpg) 
 
 总结：
 
@@ -58,11 +58,11 @@ OceanBase和传统数据库对比：
 
  
 
-# *概述*
+# 概述
 
-## *发展历程*
+## 发展历程
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3CCB.tmp.jpg) 
 
 项目是2010年开始启动的，项目负责人是阳振坤老师，阳老师之前在北京大学、百度、微软等公司工作，一直从事分布式系统相关研究工作。最开始这个产品只是一个分布式存储的项目，通过API形式给应用访问。第一个业务是淘宝的收藏夹，现在也依然是OceanBase的客户，这个业务是单表非常大的业务。
 	2013年，为了让OceanBase变成一个通用的关系型数据库，OceanBase开始做SQL。第一个业务是阿里妈妈，是一个报表或者批处理的业务，今天也依然跑在OceanBase上面.
@@ -73,9 +73,9 @@ OceanBase和传统数据库对比：
 2019年，OceanBase正式发布2.X版本，2.0版本相比1.0版本，有很多的改进，从以前只兼容MySQL到同时兼容了ORACLE，OceanBase可以实现在一个集群内同时跑两种模式的数据库。另外，OceanBase提升了HTAP能力，一套数据库同时支持OLTP和OLAP的业务。
 	2020年，OceanBase成立独立公司，开展独立商业化运营，第二次参加TPC-C认证，再次打破之前的记录。 
 
-## *核心特性*
+## 核心特性
 
-*主要技术特点：*
+***\*主要技术特点：\****
 
 1、采用Paxos协议，数据多副本写同步
 
@@ -89,18 +89,18 @@ OceanBase和传统数据库对比：
 
  
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3CDC.tmp.jpg) 
 
 OceanBase能够在阿里及蚂蚁内部有着如此广泛的应用，主要因为产品的 6 个核心特性，高可靠、高性能、高可用、高兼容、高透明和多租户 6 个核心特性。
 	1、高性能：OceanBase采用了很多先进的技术来提高数据库的性能。比如LSM Tree、无锁结构、消除磁盘的随机写等等，这些技术帮助我们充分使用硬件的能力，再辅以高扩展性，OceanBase就可以提供一个世界级性能的 OceanBase集群。在实际的生产系统里，OceanBase可以在峰值的时候提供6100万次每秒，单表最大容量可以到3200亿行。和高性能伴随的是低成本，因为OceanBase采用了LSM Tree结构，所以当数据落盘的时候是更有组织的，有更高的压缩比，可以有效减少磁盘空间。
 	2、高透明：OceanBase支持很多创新的技术，比如全局一致性快照、全局索引、自动事务两阶段提交。使用OceanBase数据库，应用就像使用一台单机数据库一样，不需要做针对分布式数据库的特别感知和修改。
 	3、高兼容：我们在一套OceanBase集群上同时提供两套生态，一套是Oracle生态，一套是MySQL生态，有效地降低业务迁移改造的成本。同时OceanBase和国内主流的操作系统、芯片也都做了互认的支持，可以有效满足技术供应链安全的需求。 
 
-## *内部应用*
+## 内部应用
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3CDD.tmp.jpg) 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3CDE.tmp.jpg) 
 
 OceanBase 应用到外部客户之前，已经在阿里及蚂蚁内部，广泛应用到阿多个核心系统。
 	首先是支付宝核心交易，支付宝最常用的模块，如交易，支付，积分等业务的核心链路都运行在 OceanBase 上，日常每秒都有上万笔交易，双十一期间，每秒可以达到几十万笔交易。支付宝是典型的在线 OLTP 数据库场景，支付宝对 OceanBase 所有核心特性进行了验证，包括响应时间、处理速度、事务的完整性、并发量等，将 OceanBase 真正打磨成了金融级数据库。从产品成熟度上来讲，证明了 OceanBase 能够承担金融在线交易的场景。国内其他的数据库产品很少有机会能够在这么大的场景下，进行实实在在的打磨。
@@ -108,9 +108,9 @@ OceanBase 应用到外部客户之前，已经在阿里及蚂蚁内部，广泛�
 	网商银行虽然不是传统意义的银行，它没有个人存款的卡或者存折，但它是真正的商业银行。网商银行，创建伊始，就采用了 OceanBase 承载其所有业务流量，因此 OceanBase 承担了网商银行所有的数字资产。网商银行创新的采用三地五中心方案，无论服务器故障、机房故障还是城市灾难，都可以实现 RPO=0，RTO<30 秒的高可用性。证明了 OceanBase 能够提供最高等级的容灾方案，能够承载银行核心系统。
 	Paytm，是印度的支付宝。Paytm 主站核心数据库也采用了 OceanBase 数据库。 
 
-## *产品家族*
+## 产品家族
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3CDF.tmp.jpg) 
 
 我们先从整体上看下 OceanBase 产品家族的几个主要产品：
 
@@ -121,9 +121,9 @@ OceanBase 给开发者提供 ODC 工具平台，图形化的界面，帮助开�
 
 为了方便快捷的进行数据迁移，OceanBase 还提供了 OMS 数据库迁移平台，既可以从数据仓库订阅数据，也可以从异构的数据库里（比如 DB2、Oracle、MySQL）进行数据迁移、回滚等。 
 
-# *安装部署*
+# 安装部署
 
-## *部署方式*
+## 部署方式
 
 OceanBase 支持多种部署方式。
 	OceanBase 已经部署到阿里云公有云上，而且是采用两地三中心的高可用形式部署的，用户可以直接在阿里云订购服务，即买即用。
@@ -135,9 +135,9 @@ OceanBase 支持多种部署方式。
 	CPU方面：除了支持Intel X86系列CPU外，支持如下国产CPU（海光、海思、飞腾等）。
 	操作系统方面：除了支持CentOS、Red Hat、SUSE、Debian/Ubuntu等Linux操作系统外，还支持如下国产Linux操作系统，包括AliOS、中标麒麟NeoKylin、银河麒麟Kylin等。
 
-## *部署流程*
+## 部署流程
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3CEF.tmp.jpg) 
 
 OceanBase 一般的安装部署流程是：
 	第一步：首先需要对所有服务器和操作系统进行一系列的设置，使得服务器的环境适合部署 OceanBase；
@@ -148,52 +148,52 @@ OceanBase 一般的安装部署流程是：
 第五步：创建租户，以及租户内的数据库、表等等；
 	最后，可以根据业务需要部署 OMS、ODC、备份恢复等其他组件。 
 
-## *连接工具*
+## 连接工具
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3CF0.tmp.jpg) 
 
 OceanBase部署完成并创建完租户后。OceanBase支持2种客户端工具，用于连接数据库，对数据库进行日常的管理。
 	一种是黑屏工具，包括MySQL客户端和OceanBase专有的客户端。OceanBase 专有的客户端工具可以同时访问 MySQL租户和 Oracle 租户，是比较推荐的黑屏客户端工具。MySQL客户端只支持访问 MySQL 租户。
 	第二种是白屏工具，包括 OceanBase 云平台 OCP，OceanBase 开发者中心 ODC，通过这些图形化的工具，DBA 和开发者可以更好的连接、使用 OceanBase 数据库。 
 
-# *架构*
+# 架构
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3CF1.tmp.jpg) 
 
 从管理员视角看，他创建的数据库集群有多个Zone，比如3个Zone，分别在杭州、上海和北京，每个Zone又包含了多个OceanBase服务器，一般情况下各个Zone内的机器配置和数量是一致的。所有这些就构成了各个业务需要使用的资源池。管理员可以根据业务情况，划分成不同大小的资源池授予租户使用，高性能要求的业务授予大资源池，低性能要求的业务授予小资源池。
 	从应用开发者视角看，他可以基于自己的业务规划，向管理员申请租户资源池，当然这个资源池不是固定不变的，是可以根据业务发展平滑扩容的。拿到租户后，开发者可以创建数据库、表、分区等操作，满足应用对数据库的各类要求。 
 
  
 
-## *集群、Zone和OB Server*
+## 集群、Zone和OB Server
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D02.tmp.jpg) 
 
 首先是集群、Zone和OB Server之间的关系。
 	一个集群由多个Zone组成，每一份数据在各个Zone上都有一份副本，而且只能有一份副本，这样一个Zone的故障不会影响业务正常运行和数据的完整性。物理上讲，不同的Zone可以对应不同的城市，如杭州、上海和深圳；也可以对应一个城市的不同机房，如杭州石桥机房、滨江机房、西湖机房等。也可以对应一个机房的不同机架，从而实现不同级别的容灾。逻辑上讲，Zone就是给集群内的一批机器打上同一个tag，打了同样tag的服务器就归属于一个Zone。
 	Zone的个数一般大于 3 台，因为 OceanBase 采用 Paxos 协议，多数派要达成一致。至少 3 个 Zone 的话，当一个 Zone 故障后，剩下 2 个 Zone 内的副本依然还可以构成多数派，不影响业务。当然，如果有足够的投资，5 个 Zone 会提供更高的可靠性，比如网商银行的三地五中心五副本的方案。
 	OB Server 是相对独立的，有自己的计算引擎和存储引擎，也会有部分数据。对业务而言，每台 OB Server 均是一台传统的集中式数据库，业务访问到这台 OB Server 后，如果需要访问的数据在其它 OB Server 上，它们自己会自动协商调度，对业务是无感知的。 
 
-## *RootService总控服务(RS)*
+## RootService总控服务(RS)
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D03.tmp.jpg) 
 
 一个集群由3个Zone以上组成，包含若干台服务器，如此庞大的系统需要一个“大脑”来统一管理，RootService总控服务就是这样一个“大脑”，它负责资源分配与调度、全局DDL、集群数据合并等全局事宜，是OceanBase的核心模块。
 	比如扩容场景，新增一台服务器进入集群，原有哪个服务器应该释放哪个业务出来给这台新服务器，这些都是由RootService总控服务确定的。
 	RootService无需额外的软硬件部署，一般与Zone内的一个OB Server合设，共用一台服务器。为了消除单点故障的风险，各个Zone都建议部署一个RootService总控服务，但只有一个Zone的总控服务是“主”，其他Zone内的总控服务为“备”，当“主”出现故障的时候，“备”可以自动的接管整个服务。 
 
-## *多租户机制，资源隔离，数据隔离*
+## 多租户机制，资源隔离，数据隔离
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D04.tmp.jpg) 
 
-集群多个服务器组成了一个大的资源池，系统会根据各个租户的要求，创建与之对应的虚拟资源池给租户使用，资源池包括指定规格的CPU、内存、存储、TPS、QPS等。租户之间资源是相互隔离的，*内存是物理隔离、CPU是逻辑隔离*，避免租户之间争抢资源。
+集群多个服务器组成了一个大的资源池，系统会根据各个租户的要求，创建与之对应的虚拟资源池给租户使用，资源池包括指定规格的CPU、内存、存储、TPS、QPS等。租户之间资源是相互隔离的，***\*内存是物理隔离、CPU是逻辑隔离\****，避免租户之间争抢资源。
 	一般一个应用占用一个租户。这个概念跟虚拟机比较类似，将一个庞大的物理资源虚拟成多个逻辑资源，彼此互相隔离。
 	每个租户跟传统数据库实例的概念比较类似，租户可以创建自己的用户、数据库、表等对象。有自己独立的系统变量。使得租户可以更好的满足业务个性化的需求。
 	系统租户保存系统表，一般ID是1000以内。剩下是业务租户，创建租户时候必须指定是MySQL模式还是Oracle模式。 
 
-## *资源池(Resource Pool)*
+## 资源池(Resource Pool)
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D05.tmp.jpg) 
 
 那么租户的虚拟资源池是如何分布在各个Zone及OB Server内的呢？会不会集中到某个Zone或者某个OB Server里面，当Zone故障或者这台服务器故障后，导致租户无法正常提供业务呢。
 	首先，我们需要定义一个资源规格，比如资源规格U1=2C8G。这只是定义了一个2C8G的资源规格，并没有真正创建资源池。
@@ -203,20 +203,20 @@ OceanBase部署完成并创建完租户后。OceanBase支持2种客户端工具�
 当然，这个资源大小和数量也不是静态的，可以随着业务的发展调整Unit的规格，比如从2C8G调整为4C16G，如果你把这个租户看成传统数据库的话，就是纵向扩展，或者调整Unit的数量，比如从1到3，就是横向扩展了。当然横向扩展也是有上限的，上限就是每个Zone内服务器数量的上限。
 	因此，管理员需要实时了解集群资源水位情况，比如剩余多少CPU资源、剩余多少内存资源。这样当有新的业务需要租户，或者租户需要扩容时，管理员可以给出合适的建议（是使用大的资源规格+少的资源数量，还是使用小的资源规格+多的资源数量）。如果系统找不到足够的资源，资源池创建的任务会失败，管理员需要扩展扩容集群规模。 
 
-# *存储引擎*
+# 存储引擎
 
-## *LSMTree*
+## LSMTree
 
-### 概述
+### **概述**
 
-#### 简介
+#### **简介**
 
 LSM Tree（The Log-Structured Merge-Tree）
 	• 将某个对象（Partition）中的数据按照“key-value”形式在磁盘上有序存储（SSTable）；
 	• 数据更新先记录在MemStore中的MemTable里，然后再合并（Merge）到底层的ssTable里；
 	• SSTable和MemTable之间可以有多级中间数据，同样以key-value形式保存在磁盘上，逐级向下合并。 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D16.tmp.jpg) 
 
 作为企业IT基础架构的核心部分，数据库技术一直是大家讨论的热点，也是很多人关注的领域。如果简单划分的话，数据库内核可以分为计算层和存储层，其中计算层负责接收用户发送过来的SQL语句，调用存储的功能来实现数据的存取，所以存储层的设计会直接影响计算层存取的效率，影响SQL语句的性能。
 相对于传统的page based数据库存储方式，OceanBase使用了现在非常流行的LSM Tree作为存储引擎保存数据的基本数据结构，这在分布式的通用关系型数
@@ -228,18 +228,18 @@ LSM Tree（The Log-Structured Merge-Tree）
 第二：merge，可以合并的 
 
 第三：tree，一种树形结构实际上它并不是一棵树，也不是一种具体的数据结构，它实际上是一种数据保存和更新的思想。简单的说，就是将数据按照key来进行排序（在数据库中就是表的主键），之后形成一棵一棵小的树形结构，或者不是树形结构，是一张小表也可以，这些数据通常被称为基线数据；之后把每次数据的改变（也就是log）都记录下来，也按照主键进行排序，之后定期的把log中对数据的改变合并（merge）到基线数据当中。下面的图形描述了LSM Tree的基本结构。
-	图中的C0代表了缓存在内存中的数据，当内存中的数据达到了一定的阈值后，就会把数据内存中的数据排序后保存到磁盘当中，这就形成了磁盘中C1级别的增量数据（这些数据也是按照主键排序的），这个过程通常被称为转储。当C1级别的数据也达到一定阈值的时候，就会触发另外的一次合并（合并的过程可以认为是一种归并排序的过程），形成C2级别的数据，以此类推，如果这个逐级合并的结构定义了k层的话，那么最后的第k层数据就是最后的基线数据，这个过程通常被称为合并。*用一句话来简单描述的话，LSM Tree就是一个基于归并排序的数据存储思想*。从上面的结构中不难看出，LSM Tree对写密集型的应用是非常友好的，因为绝大部分的写操作都是顺序的。但是对很多读操作是要损失一些性能的，因为数据在磁盘上可能存在多个版本，所以通常情况下，使
+	图中的C0代表了缓存在内存中的数据，当内存中的数据达到了一定的阈值后，就会把数据内存中的数据排序后保存到磁盘当中，这就形成了磁盘中C1级别的增量数据（这些数据也是按照主键排序的），这个过程通常被称为转储。当C1级别的数据也达到一定阈值的时候，就会触发另外的一次合并（合并的过程可以认为是一种归并排序的过程），形成C2级别的数据，以此类推，如果这个逐级合并的结构定义了k层的话，那么最后的第k层数据就是最后的基线数据，这个过程通常被称为合并。***\*用一句话来简单描述的话，LSM Tree就是一个基于归并排序的数据存储思想\****。从上面的结构中不难看出，LSM Tree对写密集型的应用是非常友好的，因为绝大部分的写操作都是顺序的。但是对很多读操作是要损失一些性能的，因为数据在磁盘上可能存在多个版本，所以通常情况下，使
 用了LSM Tree的存储引擎都会选择把很多个版本的数据存在内存中，根据查询
 的需要，构建出满足要求的数据版本。在数据库领域，很多产品都使用了LSM
 Tree结构来作为数据库的存储引擎，例如：OceanBase，LevelDB，HBase等。
 
-#### SSTable
+#### **SSTable**
 
 • 将数据按照主键或者隐含列（不可见）的顺序在磁盘上有序排列，以B+ Tree数据结构实现“key-value”存储。
 	• 数据被分成2MB的固定大小宏块（Macro Block），每个宏块包含一定key值范围的数据。
 	• 为了避免读取少量数据时的“读放大”，每个宏块内部又分为多个微块（Micro Block），大小一般配为16KB（可变）；微块内的记录数和具体的数据特征相关。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D17.tmp.jpg) 
 
 OceanBase的数据文件以宏块（Macro Block）为单位组织数据，每个宏块大小为2MB。宏块内部又划分出很多个16K（压缩前的大小）大小的微块(Micro
 Block)，而每个微块里面包含多个行(Row)。OceanBase内部IO的最小单位是微块。
@@ -248,11 +248,11 @@ Block)，而每个微块里面包含多个行(Row)。OceanBase内部IO的最小�
 
  
 
-### 随机写问题
+### **随机写问题**
 
 传统数据库有随机写、写放大等问题：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D18.tmp.jpg) 
 
 传统关系型数据库一般采用“堆表”的架构,磁盘上有表空间,会划分出不同的段(Extend),每个段再划分为若干页(Block），磁盘有一个根节点，段和页是随着数据的不断插入来不停分配的。在内存里，跟磁盘表空间对应的是Buffer Pool，无论应用读取数据，还是修改数据，都需要把数据从硬盘的表空间装载到内存里，在内存里完成数据的读和写，修改后的数据就是“脏数据”，这些“脏数据”最终还是要落入到硬盘表空间里，内存的Buffe Pool和硬盘的表空间是一一对应的，也就是数据从哪里读出来的，也写回到哪里。
 	这就有一个问题，内存Buffer Pool的数据是相对紧凑、相对有序的。但是，在表空间上，有可能是非常离散的，比如图中所示，内存的4个页是紧凑的，但对应到硬盘上，四个页分布的非常分散。当内存中Buffer Pool的脏数据要写回硬盘表空间时，会有一个很严重的随机写的问题。这种随机写会导致严重的写放大，不仅影响写操作性能，而且会显著降低SSD的寿命，所以传统数据库一般使用高端读写型SSD。
@@ -260,7 +260,7 @@ Block)，而每个微块里面包含多个行(Row)。OceanBase内部IO的最小�
 
 准内存数据库+LSMTree存储引擎，避免随机写
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D19.tmp.jpg) 
 
 OceanBase是一个准内存数据库的架构，存储又采用LSM Tree的架构，可以有效解决随机写和写放大的问题。
 	OceanBase把内存分为了两块，一块是MemTable，用于写；一块是热点缓存，用于读。所有对数据的修改，比如insert、update等，都会先放到内存的MemTable中，所以可以认为MemTable是用于存储“脏数据”的。MemTable中的数据不像传统数据库那样不定期的进行check point到硬盘中，它会在内存中保存较长时间，当内存空间快满的时候，或者到了某个固定的时间（比如凌晨2点这种系统不太繁忙的时段），或者由人工触发，把内存的一大批脏数据批量的写回到硬盘上，这个过程叫转储，转储的数据还是增量数据，只是已经落盘了，它还需要与硬盘的SS Table的基线数据进行合并，形成新的基线数据。
@@ -273,17 +273,17 @@ OceanBase是一个准内存数据库的架构，存储又采用LSM Tree的架构
 	当应用要读取数据时，不能仅仅从基线数据或者热点缓存中读取数据，因为这些数据有可能被更新了，只是还没最后合并到基线数据中。因此，OceanBase服务器还需要查看硬盘中的转储数据，以及内存中MemTable中的数据，确保读数据的强一致性。
 	可能大家有个问题，这么大量的更新数据都存储在内存中而没有落盘，万一服务器断电，岂不是要丢大量的数据。OceanBase 写数据到内存 MemTable 的同时，也会同步将 RedoLog 落盘，并将 Redo-Log 同步到从副本那里。因此，即使服务器故障了，待服务器恢复后，依然可以通过 Redo-Log 恢复数据。因此，OceanBase 的“准内存数据库”+“LSM Tree 存储”的架构，不仅可以有效的提升性能，也可以极大的降低存储成本。 
 
-### 转储和合并
+### **转储和合并**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D29.tmp.jpg) 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D2A.tmp.jpg) 
 
-### 数据压缩
+### **数据压缩**
 
 LSMTree存储高数据压缩率，降低存储需求
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D2B.tmp.jpg) 
 
 每次做数据合并的时候，写入到硬盘的数据量很大，OceanBase 可以对大数量进行采样后会有更好的压缩率。OceanBase 一般会进行两次压缩。
 	第一次是 encoding，会使用字典、RLE 等算法对数据做瘦身。字典编码的思想很简单，就是把重复性较高的数据进行去重，把去重后的数据建立字典，而把原来存放数据的地方存成指向特定字典下标的引用，比如图上这个例子，Rate-ID 这一列的很多数据是一样的，可以归纳成 4 类，实际表中直接引用即可。
@@ -292,14 +292,14 @@ LSMTree存储高数据压缩率，降低存储需求
 因此，在使用相同的压缩算法下，OceanBase 通过高效的数据编码技术大大减少了存储空间。线下测试时，OceanBase 同 MySQL 最新版本 5.7 进行了对比，使用相同的块大小（16KB）、以及相同的压缩算法（lz4），同样的数据存放在 OceanBase 中，要比在 MySQL 5.7中平均节省一半的空间。数据压缩并不是以牺牲性能为代价的，OceanBase 写入（合并）性能较原有系统有了较大的提升，查询性能基本没有变化。
 	实际生成系统中，支付宝的一个业务迁移到 OceanBase 后，数据由 100T 压缩到了 33T，也充分证明了 OceanBase 的数据压缩效率。 
 
-## *内存管理*
+## 内存管理
 
-### 内存结构
+### **内存结构**
 
 • OceanBase是支持多租户架构的准内存分布式数据库，对大容量内存的管理和使用提出了很高要求。
 	• OceanBase会占据物理服务器的大部分内存并进行统一管理。 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D3C.tmp.jpg) 
 
 通过参数设定observer占用的内存上限
 	• memory_limit_percentage
@@ -314,7 +314,7 @@ OceanBase提供两种方式设置observer内存上限
 
 以100GB物理内存的机器为例， 下述表格展示了不同配置下机器上的observer内存上限： 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D3D.tmp.jpg) 
 
 场景1：memory_limit=0，因此由memory_limit_percentage确定observer内存大小，即100GB*80% = 80GB。
 	场景2：memory_limit='90GB'，因此observer内存上限就是90GB， memory_limit_percentage参数失效。 
@@ -325,7 +325,7 @@ OB系统内部内存
 	• 每一个observer都包含多个租户（sys租户 & 非sys租户）的数据，但observer的内存并不是全部分配给租户。
 	• observer中有些内存不属于任何租户，属于所有租户共享的资源，称为“系统内部内存”。 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D3E.tmp.jpg) 
 
 通过参数设定“系统内部内存”上限
 	• system_memory
@@ -342,7 +342,7 @@ OceanBase支持多租户架构，但是OceanBase内存上限中配置的内容�
 	• 可动态伸缩的内存：KVCache
 	MemStore用来保存DML产生的增量数据，空间不可被占用； KVCache空间会被其它众多内存模块复用。  
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D3F.tmp.jpg) 
 
 MemStore
 	• 大小由参数memstore_limit_percentage决定，表示租户的 MemStore 部分占租户总内存的百分比。
@@ -361,7 +361,7 @@ OceanBase把租户内部的内存总体上分为两个部分：
 	可动态伸缩的KVCache会尽量使用除去不可动态伸缩后租户的全部内存。
 	除去memstore和kvcache，其他模块的内存使用大小默认不超过10G
 
-select * from gv$memory where used > 102410241024*10 and CONTEXT not
+select * from gv$memory where used > 1024*1024*1024*10 and CONTEXT not
 in ('OB_MEMSTORE','OB_KVSTORE_CACHE’);
 	KVcache中的重要组成部分：
 	sys租户：location_cache；location_cache中存放partition的leader信息；
@@ -377,45 +377,45 @@ SQL AREA:
 	工作线程所占用的内存。
 	内存模块称作 OB_WORKER_EXECUTION。 
 
-### 内存总结
+### **内存总结**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D4F.tmp.jpg) 
 
 OceanBase占用了服务器的大量内存（OBServer Total Memory），然后一部分用于自身系统运行（Memory Reserved For OBServer)，一部分用于划分给创建的租户（Allocatable Memory For OBServer)。 每个租户等同于传统数据库的一个实例，不同租户的内存模块组成是一样的，其内存又分为装载增量数据的MemStore（Tenant MemStore）以及KVCache缓存（Tenant Cache Memory）。 
 
-### 常见问题
+### **常见问题**
 
-## *内存数据落盘技术*
+## 内存数据落盘技术
 
-### 转储与合并
+### **转储与合并**
 
-#### 合并
+#### **合并**
 
-##### *过程*
+##### 过程
 
 OceanBase中最简单的LSM Tree只有C0层（MemTable）和C1层（SSTable）。两层数据的合并过程如下：
 	• 将所有observer上的MemTable数据做大版本冻结（Major Freeze），其余内存作为新的MemTable继续使用；
 	• 将冻结后的MemTable数据合并（Merge）到SSTable中，形成新的SSTable，并覆盖旧的SSTable；
 	• 合并完成后，冻结的MemTable内存才可以被清空并重新使用。 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D50.tmp.jpg) 
 
 合并：合并操作（Major Freeze）是将动静态数据做归并，也就是产生新的C1层的数据，会比较费时。当转储产生的增量数据积累到一定程度时，通过Major Freeze实现大版本的合并。由于在合并的过程中为了保证数据的一致性，就需要在合并的过程中暂停正在被合并的数据上的事务，这对性能来说是会有影响的，OceanBase对合并操作进行了细化，分为增量合并，轮转合并和全量合并。 
 
-##### *触发方式*
+##### 触发方式
 
 三种合并触发方式
 	• 定时合并
 	• MemStore使用率达到阈值自动合并
 	• 手动合并 
 
-###### 定时合并
+###### **定时合并**
 
 • 由major_freeze_duty_time参数控制定时合并时间，可以修改参数控制合并时间：alter system set major_freeze_duty_time='02:00' 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D51.tmp.jpg) 
 
-###### MemStore使用率达到阈值自动合并 
+###### **MemStore使用率达到阈值自动合并** 
 
 当租户的 MemStore内存使用率达到freeze_trigger_percentage参数的值， 并且转储的次数已经达到了major_compact_trigger/minor_freeze_times参数的值，会自动触发合并：
 	• 通过查询(g)v$memstore视图来查看各租户的memstore内存使用情况。
@@ -426,22 +426,22 @@ alter system set freeze_trigger_percentage = 40;
 
 alter system set major_compact_trigger = 100； 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D52.tmp.jpg) 
 
 某个租户的memstore写到一定的比例会后会自行发起冻结，所谓 memstore，是指租户申请的内存资源中有多少可以来存放更新数据， 比如一个租户可使用的内存为8G(建立租户时，ResourceUnit的min_memory)，有一个参数memstore_limit_percentage来控制有多少内存可以用来存写入的数据(其余的内存会被用作其它用途，比如缓存)。 
 
-假如memstore_limit_percentage为50%，即memstore的总大小为4G。当memstore写入超过一定比例 (由参数freeze_trigger_percentage控制，默认为70%)，故该租户的memstore超过4G 0.7 = 2.8G时会触发冻结。可以通过select from oceanbase.v$memstore来查看各租户的memstore信息。可使用show parameters like ‘minor_freeze%’查看再两次合并之间可以有多少次转储。
+假如memstore_limit_percentage为50%，即memstore的总大小为4G。当memstore写入超过一定比例 (由参数freeze_trigger_percentage控制，默认为70%)，故该租户的memstore超过4G 0.7 = 2.8G时会触发冻结。可以通过`select from oceanbase.v$memstore来查看各租户的memstore`信息。可使用show parameters like ‘minor_freeze%’查看再两次合并之间可以有多少次转储。
 
-###### 手动合并
+###### **手动合并**
 
 • 可以在"root@sys"用户下，通过以下命令发起手动合并（忽略当前MemStore的使用率）：alter system major freeze；
-	• 合并发起以后，可以在"oceanbase"数据库里用以下命令查看合并状态：select * from all_zone;或者select * from all_zone where name = 'merge_status'; 
+	• 合并发起以后，可以在"oceanbase"数据库里用以下命令查看合并状态：select * from __all_zone;或者select * from __all_zone where name = 'merge_status'; 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D63.tmp.jpg) 
 
-##### *轮转合并*
+##### 轮转合并
 
-###### 概述
+###### **概述**
 
 借助自身天然具备的多副本分布式架构， OceanBase引入了轮转合并机制：
 	• 一般情况下， OceanBase会有3份（或更多）数据副本；可以轮流为每份副本单独做合并。
@@ -456,7 +456,7 @@ alter system set major_compact_trigger = 100；
 轮转合并是一种各个副本轮流进行合并的策略既可用于全量合并，也可用于增量合并。对全量合并和增量合并而言是一个正交的概念，可以配置也可以不配
 置。如果不配置，则多个副本同步合并。 
 
-###### 设置轮转合并顺序
+###### **设置轮转合并顺序**
 
 • 合并开始前，通过参数zone_merge_order设置合并顺序；只对轮转合并有效。
 	• 场景举例
@@ -473,22 +473,22 @@ alter system set zone_merge_order = 'z1,z2,z3'; -- 设置合并顺序
 
 在加zone或者减zone的情况下，用户设置的旧的zone_merge_order在每日合并的时候，不会生效，同时会报警。
 
-###### 示例
+###### **示例**
 
 假设集群中的设置是zone_merge_order = 'z1,z2,z3,z4,z5'， zone_merge_concurrency =3，一次轮转合并的大概过程如下： 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D64.tmp.jpg) 
 
 合并切主检查以后，如果zone_merge_list设置的不合理，则有可能影响每日合并的并发度。
 
-##### *每日合并策略*
+##### 每日合并策略
 
 可通过以下参数控制每日合并的策略：
 	• enable_manual_merge: 是否开启手动合并（默认值False）；
 	• enable_merge_by_turn: 是否开启自动轮转合并（默认值True）；
 	• zone_merge_order: 指定自动轮转合并的合并顺序（默认值NULL）； 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D65.tmp.jpg) 
 
 简要来说：
 	手动合并：通过alter system的命令指定zone开始合并；
@@ -499,7 +499,7 @@ alter system set zone_merge_order = 'z1,z2,z3'; -- 设置合并顺序
 
 根据这个顺序依次调度起zone进行合并；zone_merge_concurrency： 每日合并的并发度；在各种合并策略下的作用不尽相同； 
 
-##### *合并控制*
+##### 合并控制
 
 合并线程数，由参数merge_thread_count控制
 	• 控制可以同时执行合并的分区个数；单分区暂不支持拆分合并，分区表可以加快合并速度。
@@ -514,9 +514,9 @@ alter system set zone_merge_order = 'z1,z2,z3'; -- 设置合并顺序
 	• 调大参数值可以保留更多历史数据，但同时占用更多的存储空间。
 	• 在hint中利用frozen_version(<major_version>)指定历史版本。 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D66.tmp.jpg) 
 
-##### *合并注意事项*
+##### 合并注意事项
 
 *合并超时时间**
 *	• 由参数zone_merge_timeout定义超时阈值；默认值为'3h'（3个小时）。
@@ -526,11 +526,11 @@ alter system set zone_merge_order = 'z1,z2,z3'; -- 设置合并顺序
 	• 当数据盘空间使用量超过阈值后，合并任务打印ERROR警告日志，合并任务失败；需要尽快扩大数据盘物理空间，并调大data_disk_usage_limit_percentage参数的值。
 	• 当数据盘空间使用量超过阈值后，禁止数据迁入。 
 
-##### *查看合并记录和状态*
+##### 查看合并记录和状态
 
-#### 转储
+#### **转储**
 
-##### *概述*
+##### 概述
 
 转储功能的引入，是为了解决合并操作引发的一系列问题
 	• 资源消耗高，对在线业务性能影响较大。
@@ -550,14 +550,14 @@ alter system set zone_merge_order = 'z1,z2,z3'; -- 设置合并顺序
 	• 数据层级增多，查询链路变长，查询性能下降。
 	• 冗余数据增多，占用更多磁盘空间。 
 
-##### *过程*
+##### 过程
 
 为了解决2层LSM Tree合并时引发的问题（资源消耗大，内存释放速度慢等），引入了“转储”机制：
 	• 将MemTable数据做小版本冻结（Minor Freeze）后写到磁盘上单独的转储文件里，不与SSTable数据做合并；
 	• 转储文件写完之后，冻结的MemTable内存被清空并重新使用；
 	• 每次转储会将MemTable数据与前一次转储的数据合并（Merge），转储文件最终会合并到SSTable中。 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D77.tmp.jpg) 
 
 OceanBase数据库采用了基于LSM Tree结构作为数据库的存储引擎，数据被分为基线数据（SSTable）和增量数据（MemTable）两部分，基线数据被保存在磁盘中，当需要读取的时候会被加载到数据库的缓存中，当数据被不断插入（或
 者修改时）在内存中缓存增量数据，当增量数据达到一定阈值时，就把增量数
@@ -565,7 +565,7 @@ OceanBase数据库采用了基于LSM Tree结构作为数据库的存储引擎，
 和基线数据进行合并。
 	对于LSM Tree结构，如果保存多个层次的MemTable的话，会带来很大的空间存储问题，OceanBase对LSM Tree结构进行了简化，只保留了C0层和C1层，也就是说，内存中的增量数据会被以MemTable的方式保存在磁盘中，这个过程被称之为转储（compaction），当转储了一定的次数之后，就需要把磁盘上的MemTable与基线数据进行合并（merge）。
 
-##### *参数*
+##### 参数
 
 major_compact_trigger /minor_freeze_times
 	• 控制两次合并之间的转储次数，达到此次数则自动触发合并（Major Freeze）。
@@ -575,34 +575,34 @@ major_compact_trigger /minor_freeze_times
 	• 并发转储的分区过少，会影响转储的性能和效果（比如MemStore内存释放不够快）。
 	• 并发转储的分区过多，同样会消耗过多资源，影响在线交易的性能。 
 
-##### *手动触发转储*
+##### 手动触发转储
 
-##### *查看转储记录*
+##### 查看转储记录
 
-#### 对比
+#### **对比**
 
-### 合并操作策略
+### **合并操作策略**
 
-### 转储操作策略
+### **转储操作策略**
 
-# *SQL引擎*
+# SQL引擎
 
-## *概述*
+## 概述
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D78.tmp.jpg) 
 
 目前市场上的主流应用级别都是运行在Oracle或者MySQL数据库上，为了方便应用迁移，降低迁移的技术难度和成本，OceanBase的SQL引擎可以兼容MySQL和Oracle。在创建租户的时候，我们就需要指定租户的模式是MySQL或者Oracle。
 	OceanBase可以在一个数据库中，实现两种租户，对DBA来说，之前他要维护两个数据库，一个Oracle，一个MySQL。现在他只要维护一套数据库，应用开发者习惯了MySQL，就给他创建 MySQL租户，应用开发者习惯了Oracle，就给他创建Oracle租户。
 	MySQL方面，由于蚂蚁内部的很多应用之前都使用MySQL数据库，为了更好的迁移应用到OceanBase上，OceanBase兼容了MySQL 5.6语法、数据结构、通信协议等等，继承开发者的开发习惯。还有一个原因是MySQL是开源的数据库，通信协议层也是完全公开的，OceanBase可以知道协议包的内容，就可以解析协议。所以，OceanBase是支持MySQL客户端的，应用开发者可以像使用MySQL一样使用OceanBase，但OceanBase内部是100%自主研发的分布式数据库，技术架构和原理与MySQL完全不一样。
 	Oracle的兼容性就比较困难，OceanBase没有源码和通信协议层可以参考，只能独立研发，尽量去兼容Oralce，当前OceanBase兼容Oracle 11g语法，支持 90%的Oracle数据类型和内置函数，支持分布式执行的存储过程（PL/SQL），OceanBase也将持续投入，未来会更好的兼容Oracle。 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D79.tmp.jpg) 
 
-## *SQL请求执行流程*
+## SQL请求执行流程
 
-### Parse语法解析
+### **Parse语法解析**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D7A.tmp.jpg) 
 
 在语法解析器（Parser） 阶段， OceanBase使用lex进行词法分析，使用yacc进行语法分析，将SQL语句生成语法分析树。
 	OceanBase既然可以同时兼容MySQL和Oracle，那语法解析阶段该如何实现？实际上OceanBase是以租户的方式提供MySQL和Oracle这两种兼容模式的（一个租户等同一个MySQL或Oracle实例，OceanBase可以混布这两种兼容模式的租户），在创建租户时指定兼容模式（不能修改），之后不同的租户走各自对应兼容模式的语法解析流程即可。 
@@ -611,16 +611,16 @@ major_compact_trigger /minor_freeze_times
 
  
 
-### Resolver语义解析
+### **Resolver语义解析**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D8A.tmp.jpg) 
 
 语义分析器（Resolver）相比上一阶段要复杂得多。针对不同类型的SQL语句（DML、DDL、DCL）或命令，会有不同的解析。
 	这一步主要用于生成SQL语句的数据结构，其中主要包含各子句（如SELECT /FROM / WHERE）及表达式信息。
 
-### Transformer逻辑改写
+### **Transformer逻辑改写**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D8B.tmp.jpg) 
 
 查询重写的核心思想在于保证执行结果不变的情况下将SQL语句做等价转换，以获得更优的执行效率。因为用户认为的“好”SQL，不一定是内核认为的“好”SQL，我们不能希望所有程序开发人员都在成为SQL优化的专家之后再来写SQL、生成好的执行计划让数据库高效执行，这就是查询重写模块存在的意义。
 	查询重写本质上是一个模式匹配的过程，先基于规则对SQL语句进行重写（这些规则如：恒真恒假条件简化、视图合并、内连接消除、子查询提升、外连接消除等等），之后进入基于代价的重写判定。相比总能带来性能提升的基于规则的重写，基于代价的重写多了代价评估这一步（需要查询优化器参与）：基于
@@ -628,9 +628,9 @@ major_compact_trigger /minor_freeze_times
 计划进行比较，如果代价降低则接受，代价不减反增则拒绝。在迭代了基于代
 价的重写之后，如果接受了重写的SQL，内部会再迭代一次基于规则的重写，生成终态的内核认为的“好”SQL并给到查询优化器模块。
 
-### Optimizer优化器
+### **Optimizer优化器**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D8C.tmp.jpg) 
 
 查询优化器是数据库管理系统的“大脑”，它会枚举传入语句的执行计划，基于代价模型和统计信息对每一个执行计划算出代价，并最终选取一条代价最低的
 执行计划。OceanBase的查询优化器基于System-R框架，是一个bottom-up的过程，通过选择基表访问路径、连接算法和连接顺序、最后综合一些其他算子来
@@ -640,27 +640,27 @@ major_compact_trigger /minor_freeze_times
 问的每个分区的各个副本在集群中的存储位置，这一信息由总控服务（主）
 （Master Root Service）维护，为了提升访问效率该分布信息还有缓存机制。 
 
-### Code Generator代码生成器
+### **Code Generator代码生成器**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D8D.tmp.jpg) 
 
 代码生成器是SQL编译器的最后一个步骤，其作用是把逻辑执行计划翻译成物理执行计划。
 	查询优化器生成逻辑执行计划是对执行路径的逻辑表示，理论上已经具备可执行能力，但是这种逻辑表达带有过多的语义信息和优化器所需的冗余数据结构，对于执行引擎来说还是相对“偏重”。为了提高计划的执行效率，OceanBase通过代码生成器把逻辑计划树翻译成更适合查询执行引擎运行的树形结构，最终得到一个可重入的物理执行计划。 
 
-### Executor执行器
+### **Executor执行器**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D8E.tmp.jpg) 
 
 物理执行计划的生成意味着SQL编译器的工作完成，之后交给执行引擎进行处理。需要注意的是，由于OceanBase是一个分布式数据库，分区副本遍布每一台OBServer上，我们执行的SQL语句要根据是访问本机数据、还是其他机器上的数据抑或是多台服务器上的数据来区别对待，这里就引入了调度器的概念。调度器把执行计划分为本地、远程、分布式三种作业类型，在对外提供统一接口且不侵入SQL执行引擎的同时，根据三种作业类型的特点，充分利用存储层和事务层的特性，实现了各自情况下最合适的调度策略。
-	*本地作业：*所有要访问的数据都位于本机的查询，就是一个本地作业。调度器对于这样的执行计划，无需多余的调度动作，直接在当前线程运行执行计划。
+	***\*本地作业：\****所有要访问的数据都位于本机的查询，就是一个本地作业。调度器对于这样的执行计划，无需多余的调度动作，直接在当前线程运行执行计划。
 事务也在本地开启。如果是单语句事务，则事务的开启和提交都在本地执行，
 也不会发生分布式事务。这样的执行路径和传统单机数据库类似。
-	*远程作业：*如果查询只涉及到一个分区组，但是这个分区组的数据位于其他服务器上，这样的执行计划就是远程作业（多半是由于切主等原因导致缓存还未
+	***\*远程作业：\****如果查询只涉及到一个分区组，但是这个分区组的数据位于其他服务器上，这样的执行计划就是远程作业（多半是由于切主等原因导致缓存还未
 来得及更新数据的分布信息）。调度器把整个执行计划发送到数据所在机器上
 执行，查询结果流式地返回给调度器，同时流式地返回给客户端。这样的流式
 转发能够提供较优的响应时间。不仅如此，远程作业对于事务层的意义更大。
 对于一个远程作业，如果是单语句事务，事务的开启提交等也都在数据所在服务器上执行，这样可以避免事务层的RPC，也不会发生分布式事务。
-	*分布式作业：*当查询涉及的数据位于多台不同的服务器时，需要作为分布式作业来处理，这种调度模式同时具有并行计算的能力。对于分布式计划，执行时
+	***\*分布式作业：\****当查询涉及的数据位于多台不同的服务器时，需要作为分布式作业来处理，这种调度模式同时具有并行计算的能力。对于分布式计划，执行时
 间相对较长，消耗资源也较多。对于这样的查询，我们希望能够在任务这个小
 粒度上提供容灾能力。每个任务的执行结果并不会立即发送给下游，而是缓存
 到本机，由调度器驱动下游的任务去拉取自己的输入。这样，当任务需要重试
@@ -668,57 +668,57 @@ major_compact_trigger /minor_freeze_times
 器所在服务器上开启事务，事务层需要协调多个分区，必要时会产生分布式事
 务。  
 
-### Plan Cache执行计划缓存
+### **Plan Cache执行计划缓存**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3D9F.tmp.jpg) 
 
-## *执行计划快速参数化*
+## 执行计划快速参数化
 
 将SQL进行参数化(即将SQL中的常量转换为参数)， 然后使用参数化的SQL文本作为键值在Plan Cache中获取执行计划， 从而达到仅参数不同的SQL能够共用相同的计划目的。
 	参数化过程是指把SQL查询中的常量变成变量的过程： 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DA0.tmp.jpg) 
 
 举例：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DA1.tmp.jpg) 
 
-### 常量不能参数化
+### **常量不能参数化**
 
 常量不能参数化的场景：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DA2.tmp.jpg) 
 
 举例：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DB3.tmp.jpg) 
 
 由于c1作为主键列已是有序的，使用主键访问可以免去排序。 
 
-## *DML语言处理*
+## DML语言处理
 
 数据操纵语言（Data Manipulation Language, DML）是SQL语言中，负责对数据库对象运行数据访问工作的指令集，以INSERT、UPDATE、DELETE三种指令为核心。
 	除此之外，OceanBase还支持REPLACE和INSERT INTO...ON DUPLICATED KEY UPDATE两种DML语句，DML的主要功能是访问数据，因此其语法都是以读取与写入数据库为主，除了INSERT 以外，其他指令都可能需搭配WHERE指令来过滤数据范围，或是不加WHERE指令来访问全部的数据。 
 
-### INSERT
+### **INSERT**
 
 对于INSERT/REPLACE语句而言，由于其不用读取表中的已有数据，因此， INSERT语句的执行计划相对简单，其执行计划为简单的EXPR VALUES+INSERT OP算子构成： 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DB4.tmp.jpg) 
 
-### UPDATE
+### **UPDATE**
 
 对于UPDATE或者DELETE语句而言，优化器会通过代价模型对WHERE条件进行访问路径的选择，或者ORDER BY数据顺序的选择：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DB5.tmp.jpg) 
 
-### DELETE
+### **DELETE**
 
 对于UPDATE或者DELETE语句而言，优化器会通过代价模型对WHERE条件进行访问路径的选择，或者ORDER BY数据顺序的选择： 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DB6.tmp.jpg) 
 
-### 一致性校验
+### **一致性校验**
 
 • DML操作的表对象每一列都有相关的约束性定义，例如列的NOT NULL约束，UNIQUE KEY约束等，写入数据前进行：
 	- 约束检查
@@ -727,7 +727,7 @@ major_compact_trigger /minor_freeze_times
 
 NOT NULL检查和类型转换通过SQL层生成的COLUMN_CONVERT表达式来完成，执行计划会为DML语句写入表中的每一列都添加该表达式，在执行算子中，数据以行的形式被流式的迭代，在迭代过程中， COLUMN_CONVERT表达式被计算，即可完成相应的类型转换和约束性检查，而UNIQUE KEY约束的检查是在存储层的data buffer中完成。
 
-### 锁管理
+### **锁管理**
 
 • OceanBase锁的类型
 	- 只有行锁，没有表锁；在线DDL，不中断DML。
@@ -736,52 +736,52 @@ NOT NULL检查和类型转换通过SQL层生成的COLUMN_CONVERT表达式来完�
 	- 读取“已提交”数据的最新版本，不需要读锁，不支持“脏读”。
 	- 避免读写之间的锁互斥，实现更好的并发性。 
 
-## *DDL语言处理*
+## DDL语言处理
 
 • OceanBase支持传统数据库的DDL语句，自动完成全局统一的schema变更，无需用户在多节点间做schema一致性检查。
 	• DDL任务由OceanBase的RootServer统一调度执行，保证全局范围内的schema一致性。
 	• DDL不会产生表锁； DML根据schema信息的变更自动记录格式，对业务零影响。 
 
-## *查询改写*
+## 查询改写
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DC6.tmp.jpg) 
 
-### 基于规则查询改写
+### **基于规则查询改写**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DC7.tmp.jpg) 
 
-#### 视图合并
+#### **视图合并**
 
 视图合并是指将代表一个视图的子查询合并到包含该视图的查询中，视图合并后，有助于优化器增加连接顺序的选择、访问路径的选择以及进一步做其他改写操作，从而选择更优的执行计划。 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DC8.tmp.jpg) 
 
-#### 子查询展开
+#### **子查询展开**
 
-##### *子查询展开为semi-join/anti-join* 
+##### 子查询展开为semi-join/anti-join 
 
 子查询展开是指将where条件中子查询提升到父查询中，并作为连接条件与父查询并列进行展开。一般涉及的子查询表达式有not in、in、not exist、exist、any、all
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DC9.tmp.jpg) 
 
-##### *子查询展开为内连接* 
+##### 子查询展开为内连接 
 
 子查询展开是指将 where 条件中子查询提升到父查询中，并作为连接条件与父查询并列进行展开。一般涉及的子查询表达式有not in、in、not exist、exist、any、all。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DDA.tmp.jpg) 
 
-#### 外连接消除
+#### **外连接消除**
 
 外连接消除是指将外连接转换成内连接，从而可以提供更多可选择的连接路径，供优化器考虑。外连接消除需要存在“空值拒绝条件”，即where条件中，存在当内表生成的值为null时，使得输出为false的条件。
 	示例： 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DDB.tmp.jpg) 
 
 这是一个外连接，在其输出行中t2.c2可能为null。 如果加上一个条件t2.c2 > 5，则通过该条件过滤后，t2.c1输出不可能为NULL，从而可以将外连接转换为内连接：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DDC.tmp.jpg) 
 
-### 基于代价的查询改写
+### **基于代价的查询改写**
 
 OceanBase 目前只支持基于代价的查询改写—或展开（Or-Expansion） 。
 或展开（Or-Expansion）：把一个查询改写成若干个用union组成的子查询，这个改写可能会给每个子查询提供更优的优化空间，但是也会导致多个子查询的执行，所以这个改写需要基于代价去判断。
@@ -792,7 +792,7 @@ OceanBase 目前只支持基于代价的查询改写—或展开（Or-Expansion�
 
  
 
-#### 分支使用不同索引
+#### **分支使用不同索引**
 
 • 允许每个分支使用不同的索引来加速查询
 	Q1: select * from t1 where t1.a = 1 or t1.b = 1;
@@ -800,68 +800,68 @@ OceanBase 目前只支持基于代价的查询改写—或展开（Or-Expansion�
 	示例：Q1会被改写成Q2的形式，其中Q2中的谓词lnnvl(t1.a = 1)保证了这两个子查询不会生成重复的结果。
 	如果不进行改写，Q1一般来说会选择主表作为访问路径，对于Q2来说，如果t1上存在索引（a）和索引（b）， 那么该改写可能会让Q2中的每一个子查询选择索引作为访问路径：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DDD.tmp.jpg) 
 
  
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DED.tmp.jpg) 
 
  
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DEE.tmp.jpg) 
 
  
 
-#### 分支使用不同连接算法
+#### **分支使用不同连接算法**
+
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DEF.tmp.jpg) 
 
  
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DF0.tmp.jpg) 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3DF1.tmp.jpg) 
 
- 
+#### **分支分别消除排序**
 
-#### 分支分别消除排序
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E02.tmp.jpg) 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E03.tmp.jpg) 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E04.tmp.jpg) 
 
- 
-
-## *执行计划*
+## 执行计划
 
 • SQL是一种“描述型”语言。与“过程型”语言不同，用户在使用SQL时，只描述了“要做什么”，而不是“怎么做”。
 	• 数据库在接收到SQL查询时，必须为其生成一个“执行计划”。 OceanBase的执行计划与本质上是由物理操作符构成的一棵执行树。
 	• 执行树从形状上可以分为“左深树”、“右深树”和“多枝树”三种（参见下图）。OceanBase的优化器在生成连接顺序时主要考虑左深树的连接形式。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E05.tmp.jpg) 
 
-### 执行计划展示(EXPLAIN)
+### **执行计划展示(EXPLAIN)**
 
 • 通过Explain命令查看优化器针对给定SQL生成的逻辑执行计划。
 	• Explain不会真正执行给定的SQL，可以放心使用该功能而不用担心在性能调试中可能给系统性能带来影响。
 	• Explain命令格式如下例所示，展示的格式包括BASIC、EXTENDED、PARTITIONS等等，内容的详细程度有所区别：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E16.tmp.jpg) 
 
-#### 计划形状与算子信息
+#### **计划形状与算子信息**
 
 • Explain输出的第一部分是执行计划的树形结构展示。其中每一个操作在树中的层次通过其在OPERATOR中的缩进予以展示：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E17.tmp.jpg) 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E18.tmp.jpg) 
 
 在表操作中，NAME字段会显示该操作涉及的表的名称（别名），如果是使用索引访问，还会在名称后的括号中展示该索引的名称， 例如t1(t1_c2) 表示使用了t1_c2这个索引。
 	另外，如果扫描的顺序是逆序，还会在后面使用reserve关键字标识，例如t1(t1_c2,Reverse)。
 
-#### 操作算子详细输出
+#### **操作算子详细输出**
 
 • Explain输出的第二部分是各操作算子的详细信息，包括输出表达式、过滤条件、分区信息以及各算子的独有信息，包括排序键、连接键、下压条件等等：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E19.tmp.jpg) 
 
 • output
 
@@ -888,44 +888,44 @@ range_key 中。当用户给定不同条件时，优化器会定位到最终扫�
 
 举例：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E29.tmp.jpg) 
 
 可以看出要访问的表为t1_c2这张索引表，表的主键为(c2, c1)，扫描的范围是全表扫描。
 
-## *实时执行计划展示*
+## 实时执行计划展示
 
 • 通 过 查 询(g)v$plan_cache_plan_explain这张虚拟表来展示某条SQL在计划缓存中的执行计划。
 	• 首 先 通 过(g)v$plan_cache_plan_stat虚 拟表查询到plan_id。  
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E2A.tmp.jpg) 
 
 • v$plan_cache_plan_explain
 	- 查询时必须指定tenant_id和plan_id的值。
 	• gv$plan_cache_plan_explain
 	- 查询时必须指定ip、port、tenant_id、plan_id这四列的值。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E2B.tmp.jpg) 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E2C.tmp.jpg) 
 
-## *执行计划缓存*
+## 执行计划缓存
 
 • 一次完整的语法解析、语义分析、查询改写、查询优化、代码生成的SQL编译流程称为一次“硬解析”，硬解析生成执行计划的过程比较耗时（一般为毫秒级），这对于OLTP语句来说是很难接受的。
 	• OceanBase通过计划缓存（Plan Cache）来避免SQL硬解析 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E2D.tmp.jpg) 
 
 执行计划的生成过程非常复杂，优化器需要综合考虑多种因素，为SQL生成“最佳”的执行计划。因此，查询优化的过程本身也是一个比较耗时的过程，当 SQL本身执行耗时较短时，查询优化所带来的开销也变得不可忽略。一般来说，数据库在这种场景会缓存之前生成的执行计划，以便在下次执行该 SQL 时直接使用，这种策略被称为“optimize once”，即“一次优化”。
 	OceanBase内置有计划缓存，会将首次优化后生成的计划缓存在内存中，随后的执行会首先访问计划缓存，查找是否有可用计划，如果有，则直接使用该计
 划；否则将执行查询优化的过程。
 
-### 缓存淘汰
+### **缓存淘汰**
 
 ➢自动淘汰
 	➢手动淘汰
 	• alter system flush plan cache; 命令 
 
-#### 自动淘汰
+#### **自动淘汰**
 
 ➢ 当计划缓存占用的内存达到了需要淘汰计划的内存上限(即淘汰计划的高水位线)时，对计划缓存中的执行计划自动进行淘汰。
 	➢ 优先淘汰最久没被使用的执行计划，影响淘汰策略的参数和变量如下：
@@ -948,7 +948,7 @@ range_key 中。当用户给定不同条件时，优化器会定位到最终扫�
 	➢当该租户在某个server上计划缓存使用超过0.9G时，会触发淘汰，优先淘汰最久没执行的计划；当淘汰到使用内存只由0.5G时，则停止淘汰。
 	➢如果淘汰速度没有新计划生成速度快，计划缓存使用内存达到内存上限绝对值1G时，将不再往计划缓存中添加新计划，直到淘汰后使用的内存小于1G才会添加新计划到计划缓存中。 
 
-#### 手动淘汰
+#### **手动淘汰**
 
 • 手动删除计划缓存中的计划，忽略当前参数/变量的设置。
 	• 支持按租户、server或删除计划缓存，或者全部删除缓存：
@@ -960,56 +960,56 @@ range_key 中。当用户给定不同条件时，优化器会定位到最终扫�
 	如果global没有指定，则清空本机的计划缓存，否则清空该租户所在的所有
 server上的计划缓存。 
 
-### 缓存刷新
+### **缓存刷新**
 
 计划缓存中的执行计划因各种原因失效时，会将计划缓存中失效的计划进行刷新（可能会导致新的计划）：
 	• SQL中涉及的表的SCHEMA进行变更时（比如添加索引，删除或增加列等），该SQL在计划缓存中对应的执行计划将被刷新；
 	• SQL中涉及的表的统计信息被更新时，该SQL对应的执行计划会被刷新，由于OceanBase在合并时统一进行统计信息的收集，因此每次合并之后，计划缓存中所有的计划将被刷新；
 	• SQL进行outline计划绑定变更时，该SQL对应的执行计划会被刷新，更新为按绑定的outline生成的执行计划。 
 
-### 使用控制
+### **使用控制**
 
 ➢ 系统变量控制
 	• ob_enable_plan_cache设置为ture时表示SQL请求可以使用计划缓存，设置为false时表示SQL请求不使用计划缓存。可进行session级和global级设置，默认设置为true。
 	➢ Hint控制
-	• /+use_plan_cache(none)/ , 该hint表示请求不使用计划缓存
-• /+use_plan_cache(default)/, 该hint表示使用计划缓存 
+	• /*+use_plan_cache(none)*/ , 该hint表示请求不使用计划缓存
+• /*+use_plan_cache(default)*/, 该hint表示使用计划缓存 
 
-# *OBProxy路由*
+# OBProxy路由
 
-## *背景*
+## 背景
 
 OceanBase在部署完成后，应用可以采用OB提供的客户端、MySQL客户端或者其他语言的客户端来访问OceanBase，OceanBase以服务的形式提供给应用访问。OceanBase集群一般包含多个Zone，每个Zone中又包含一台或多台OBServer，集群中的每个OBServer都可以接收用户的连接并处理请求。
 	• 实现一个OBProxy来接受来自应用的请求，并转发给OBServer，然后OBServer将数据返回给OBProxy，OBProxy将数据转发给应用客户端。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E3E.tmp.jpg) 
 
 OBProxy作为OceanBase的高性能且易于运维的反向代理服务器，具有防连
 接闪断、OBServer宕机或升级不影响客户端正常请求、兼容所有MySQL客户端、支持热升级和多集群功能。
 
-## *功能*
+## 功能
 
-### 路由
+### **路由**
 
-#### SQLParser
+#### **SQLParser**
 
 SQLParser：轻量的sql解析，判断出客户端的sql请求所涉及的表的主副本在哪台机器上，将请求路由至主副本所在的机器上。
 
-#### LDC路由
+#### **LDC路由**
 
 LDC路由：主要对于读写分离的场景，根据observer和obproxy配置的region
 （区域）和LDC（逻辑机房），将请求发送给本地的副本（后面proxy路由策略
 会详细说明）。
 
-#### 读写分离部署
+#### **读写分离部署**
 
 读写分离部署：对于读写分离的场景，OBProxy会把请求优先发送到本地的只读副本。
 
-#### 黑名单
+#### **黑名单**
 
 黑名单：OBProxy在路由过程中，如果发现OBServer不可用，则把该server加入到黑名单。
 
-### 连接管理
+### **连接管理**
 
 在observer宕机/升级/重启时，客户端与OBProxy的连接不会断开， OBProxy可以迅速切换到正常的server上，对应用透明。
 
@@ -1019,9 +1019,9 @@ LDC路由：主要对于读写分离的场景，根据observer和obproxy配置�
 
 OBProxy与OB集群（OBServer）保持长连接，客户端一般通过连接池的方式连接到OBProxy。
 
-## *部署*
+## 部署
 
-## *策略*
+## 策略
 
 根据不同的配置，Obproxy进行综合的路由排序：
 	1、LDC配置：
@@ -1047,37 +1047,37 @@ OBProxy与OB集群（OBServer）保持长连接，客户端一般通过连接池
 
  
 
-## *执行流程*
+## 执行流程
 
-## *使用限制*
+## 使用限制
 
-## *使用和运维*
+## 使用和运维
 
-## *常见问题*
+## 常见问题
 
-# *SQL调优*
+# SQL调优
 
-## *调优方法*
+## 调优方法
 
-## *分区*
+## 分区
 
-## *索引*
+## 索引
 
-## *局部索引与全局索引*
+## 局部索引与全局索引
 
-## *Hint*
+## Hint
 
-## *SQL执行性能监控*
+## SQL执行性能监控
 
  
 
-# *分布式事务*
+# 分布式事务
 
-## *ACID*
+## ACID
 
 分布式事务跨机执行时，OceanBase通过多种机制保证ACID：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E3F.tmp.jpg) 
 
 首先介绍下 ACID。事务指逻辑上的一组操作，这些操作要么全部成功，要么全部不成功。典型场景就是转账，A 账户的扣减，与 B 账户的增加，必须一起完成或者都不完成。事务有ACID，四个基本要素：
 	A 指原子性，需要保证操作都发生或都不发生。这在传统集中式数据库中比较容易实现，因为不存在跨机操作的风险，如果服务器故障了，所有的操作都不会完成，一般不会出现部分提交的现象。
@@ -1091,11 +1091,11 @@ I 是指隔离性，是指多个用户并发访问数据库时，数据库为每
 
  
 
-## *分布式两阶段提交*
+## 分布式两阶段提交
 
 创新的来那个阶段，任何故障均可以保障事务的原子性：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E40.tmp.jpg) 
 
 首先看下如何保障 A，原子性。如果一个事务有 10 条 SQL 语句，涉及 8 个分区，极端情况下，这 8 个分区可能分布到 8 台服务器上，这时就是分布式事务了。
 	对于应用而言，是否需要应用知道分区具体分布到哪台服务器上，是不是需要应用采取一些技术手段，如两阶段提交，来保证事务的 ACID。答案是不需要的，对于 OceanBase 而言，OceanBase 内部是典型的分布式场景，很复杂。对外，对应用开发者来说，是一个简单的一阶段事务的场景，应用只要开启事务，执行 10 条 SQL 语句，提交事务或者回滚事务即可，跟使用一个集中式数据库差异不大。
@@ -1115,11 +1115,11 @@ TPC-C测试要求40%的订单需要跨仓库执行，这个时候，如果是一
 
  
 
-## *全局快照及分布式一致性读*
+## 全局快照及分布式一致性读
 
 多版本并发控制（MVCC），解决读写互斥问题：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E51.tmp.jpg) 
 
 采用锁机制控制读写冲突时，对数据加锁后，往往其他事务将无法读，导致读写竞争，影响读的并发性，OceanBase支持MVCC特性，可以有效解决该问题。如图上举例，张三的账户余额是100元。A1时间，T1事务想要更改张三的账户余额为50元，此时会加锁，避免数据被其他事务改写。由于事务没有正式提交，系统以时间戳为版本号，记录两个版本的数据，新版本为50，旧版本为100。
 
@@ -1134,11 +1134,11 @@ A4 时间，T3 事务想要读取张三的余额，由于 T1 事务已经提交�
 
  
 
-## *事务隔离级别*
+## 事务隔离级别
 
 保证全局事务一致性的隔离级别：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E52.tmp.jpg) 
 
 讲解事务隔离级别前，先了解几个概念：
 
@@ -1149,15 +1149,15 @@ A4 时间，T3 事务想要读取张三的余额，由于 T1 事务已经提交�
 	OceanBase支持两种隔离级别，一种是Read-Committed，可以避免脏读，但存在不可重复读和幻读（默认）；另外一种是Serializable，可以避免脏读、不可重复读和幻读，这是最严格的隔离级别，但会影响性能。
 	OceanBase 不支持脏读，事务能够读取的数据肯定都是已提交的数据，不可能是未提交的数据，但有可能是已提交的旧数据。 
 
-# *数据分布*
+# 数据分布
 
-# *复制/一致性*
+# 复制/一致性
 
-## *多副本同步redo log*
+## 多副本同步redo log
 
 通过多副本同步redo log确保数据持久化：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E53.tmp.jpg) 
 
 业务从OceanBase读取数据时候，只会从主副本读取数据。那么如果业务对数据库进行写操作，OceanBase是如何确保数据持久化呢？
 	Paxos组成员通过Redo-Log的多数派强同步来确保数据持久化，以图中所示为例，当应用要写数据到P2分区时，应用会连接到P2分区的主副本所在的机器（Zone2-OB Server1）中，该服务器首先会将Redo-Log落盘，并将Redo-Log同步请求发送到P2从副本所在的机器（Zone1-OB Server1和Zone3-OB Server1）中，从副本完成日志落盘后，并返回消息给主副本。主副本只要收到其中一个从副本的回复后即可以返回应用（两个副本强同步已满足了多数派），而无需再等待其他从副本的反馈。 
@@ -1167,9 +1167,9 @@ A4 时间，T3 事务想要读取张三的余额，由于 T1 事务已经提交�
 	数据更新只要 Redo-Log 落盘就好,而 Redo-Log 的落盘是像记日记一样，是顺序写的，很快。实际更新的数据存储在内存,不用马上落盘.减少了数据落盘带来的寻址、写数据等时间，快速响应应用的写请求。
 	Redo-Log 日志是同时同步给 2 个以上的副本，只要多数派落盘成功，不用等所有从副本落盘成功，可以快速响应应用。 
 
-# *备份恢复*
+# 备份恢复
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E54.tmp.jpg) 
 
 OceanBase支持全量备份和增量备份，全量备份是对存储层的基线数据进行备份，增量备份是通过redo-log备份，OceanBase支持在线实时的全量和增量备份，对业务无感知。
 	备份支持2种介质，一种是阿里云OSS存储，另外一种是普通的NFS。NFS需要一个公共目录，每个OB Server都可以访问，NFS服务器为每台OB Server创建子目录，用于存储备份文件。
@@ -1177,40 +1177,40 @@ OceanBase支持全量备份和增量备份，全量备份是对存储层的基�
 	备份恢复最小粒度是租户，让备份和恢复更加灵活。
 	备份恢复数据方面，支持逻辑数据（比如用户权限、表定义、系统变量、用户信息、视图信息等）和物理数据。 
 
-## *架构*
+## 架构
 
-### 逻辑备份/恢复方案
+### **逻辑备份/恢复方案**
 
- 
-
- 
-
-### 物理备份/恢复方案
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E55.tmp.jpg) 
 
  
 
-## *步骤*
+### **物理备份/恢复方案**
 
-## *查看任务状态*
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E65.tmp.jpg) 
 
-## *常见问题*
+## 步骤
 
-# *兼容性*
+## 查看任务状态
 
-# *扩展性*
+## 常见问题
 
-## *动态扩容/缩容*
+# 兼容性
+
+# 扩展性
+
+## 动态扩容/缩容
 
 动态水平扩展的场景：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E66.tmp.jpg) 
 
 业务的流量往往不是固定不变的，比如促销期间，业务流量很高，需要对数据库进行扩容，以应对洪峰流量；促销过后，业务流量降低，需要对数据库缩容，以节省成本。支付宝在每年双十一期间，均需要购买阿里云ECS服务器，把它们加入集群，共同应对流量洪峰，洪峰过后再进行缩容，恢复到扩容前的状态，这个过程对业务是透明的，业务也无需暂停。
 	传统数据库的扩容和缩容非常复杂，要改规则、要改分布、要导出数据，创建新表后再导入。不仅业务要短暂停止，也需要投入大量人力进行运维。 
 
 动态扩容和缩容技术实现：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E67.tmp.jpg) 
 
 OceanBase 的扩容和缩容是可以自动化完成的，以上图为例，我们讲解下扩容和缩容的过程：
 	扩容前是 3 个 Zone，每个 zone 都有 1 台服务器，是 1-1-1 的组网。假设一个表有 8 个分区，则每个 zone 内的 1 台服务器都有主副本和从副本。促销前，经过评估，如果要满足促销的洪峰流量，需要扩展到 2-2-2 组网，即每个 Zone 由 1 台服务器扩容到 2 台服务器。
@@ -1218,13 +1218,13 @@ OceanBase 的扩容和缩容是可以自动化完成的，以上图为例，我�
 	洪峰流量过后，再做反向动作，告诉 OceanBase 新增加的服务器不用了，OceanBase 会自动将新服务器的副本迁回到旧服务器中，数据追平后，新服务器的副本将停止服务，继续由旧服务器独自承担所有流量。最后把新服务器移除集群，释放阿里云资源。
 	因此，使用 OceanBase，整个扩容和缩容是全自动的，无需人工参与；是线性的，可以灵活的增加和减少；这是原生分布式数据库的优势。 
 
-# *高并发*
+# 高并发
 
-## *执行计划快速参数化*
+## 执行计划快速参数化
 
-## *自动负载均衡*
+## 自动负载均衡
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E68.tmp.jpg) 
 
 既然只有主副本供应用访问。可能有人会问，会不会选出来的主副本都在同一个Zone内，或者同一台服务器上，导致一台服务器负载太高，其他服务器只做备份，负载很低，造成忙闲不均的现象呢。答案是不会的，默认情况下，系统会自动的把主副本平均分配到3个Zone中，比如图中，Zone1有3个主，Zone2有2个主，Zone3有3个主，每个服务器也都是有主副本，有从副本。这样的好处是每个服务器都承载了部分业务的同时，也给其他服务器做着备份的工作，将业务负载均衡了。当然，在一些特殊场景下，管理员也可以通过Primary zone的功能将业务负载集中到某个zone内，以满足一些特定场景的需求。 
 
@@ -1234,11 +1234,11 @@ OceanBase 的扩容和缩容是可以自动化完成的，以上图为例，我�
 
  
 
-## *智能路由*
+## 智能路由
 
 OB Proxy为应用提供智能路由服务，应用透明访问：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E79.tmp.jpg) 
 
 虽然对于应用来说，如果它需要的数据位于多台OB Server上。它可以连接任何一台OB Server，由其访问其他OB Server获取应用想要的所有数据。但万一这台服务器故障后，应用需要自身实现高可用的机制，增加了应用的复杂度。
 	OB Proxy可以解决这个问题，OB Proxy包含简单的SQL Parser功能，可进行轻量的SQL解析。先从客户端发出的SQL语句中解析出数据库名和表名，然后根据用户的租户名、数据库名、表名以及分区ID信息等信息查询路由表，获取分区的主/从副本所在OB Server的IP地址信息。有了这些信息之后，OB Proxy将请求路由至主副本所在的机器上（Leader位置无法确定时随机选择 OB Server），同时将副本的位置信息更新到自己的 Location Cache中，当再次访问时，会命中该Cache以加速访问。当负载均衡被打破（如机器故障、集群扩容等），导致分区分布发生变化时，location cache 也会动态更新，应用无感知。
@@ -1246,11 +1246,11 @@ OB Proxy为应用提供智能路由服务，应用透明访问：
 	当然，OB Proxy除了支持负载均衡功能外，也可以配置为其他功能，比如读写分离、备优先读、黑名单等功能，满足业务差异化的需求。
 	有人可能会问，OB Proxy跟数据库中间件很像，都是在应用和数据库服务器之间。其实是完全不一样的架构。OB Proxy是一个“无状态”的服务进程，不做数据持久化，不参与数据库引擎的计算任务。比如一台OB Proxy故障了，由于这台故障的服务器没有维护任何session的状态，也没任何数据，业务可以重连其他OB Proxy，重新开始session。 
 
-## *设定Primary Zone*
+## 设定Primary Zone
 
 通过设定Primary Zone，将业务汇聚到特定Zone：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E7A.tmp.jpg) 
 
 负载均衡机制可以将主副本打散到不同 Zone 内的不同 Server 中，将业务流量分到不同服务器中，提升了系统整体的可用性和性能，但这也导致出现分布式事务的概率增大，带来更大的资源消耗。
 
@@ -1261,23 +1261,23 @@ OB Proxy为应用提供智能路由服务，应用透明访问：
 
  
 
-*Primary Zone有租户、数据库和表不同的级别*
+***\*Primary Zone有租户、数据库和表不同的级别\****
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E7B.tmp.jpg) 
 
 OceanBase的Primary Zone有不同的优先级，比如我们可以设置某租户的Primary Zone的优先级为Zone1=Zone2=Zone3，主副本被打散到集群中，实现负载均衡。但某个数据库/表，对时延很敏感，可以设置该数据库或者表的Primary Zone为Zone1>Zone2>Zone3，将主副本集中到Zone1中，从而对主副本的分布实现更细粒度的管理。 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E7C.tmp.jpg) 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E8C.tmp.jpg) 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E8D.tmp.jpg) 
 
-# *高可用*
+# 高可用
 
-## *灾难恢复等级*
+## 灾难恢复等级
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E8E.tmp.jpg) 
 
 讲OB方案前，我们普及下业界公认的灾难恢复能力等级的概念，主要包括RTO和RP0，这两个指标。
 	RTO指故障或灾难发生后，数据库停止工作的最高可承受时间。如果这个值为小于1小时，指灾难发生后，系统最多停止1小时的服务，1小时后可以恢复业务。比如早上8点系统故障了，那么早上9点之前系统将能够恢复。
@@ -1285,19 +1285,19 @@ OceanBase的Primary Zone有不同的优先级，比如我们可以设置某租�
 	基于这两个参数，业界定义了灾难恢复能力的6个等级，等级越高，灾难恢复的能力越强。
 	OceanBase的RPO=0，RTO<30秒，意味着当少数派故障时，OceanBase能够在30秒内恢复业务，且不会丢失任何数据，远远达到了灾难恢复能力6级的标准。 
 
-## *方案*
+## 方案
 
-### 基于通用PC服务器提供高可用
+### **基于通用PC服务器提供高可用**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3E8F.tmp.jpg) 
 
 了解了标准后，我们再看看传统数据库和OceanBase的基础设施情况。因为高可用是个整体方案，除了数据库软件外，底层的硬件也同样重要。
 	传统数据库一般对底层硬件有很高的要求，高端PC服务器、小型机、IPSAN 存储等等，运行在如此“豪华”的基础设施上，大量的高可用特性都由底层完成了，减轻了数据库软件的压力。
 	OceanBase是运行在易损的PC服务器上的，对于一个100台服务器的集群来说，可能每周甚至每天都有服务器故障。为了在这样“简陋”的基础设施上，实现金融级的高可用性，OceanBase需要在软件层面做大量的工作，最终的结果是，OceanBase用普通硬件实现的高可用性超越了传统数据库用高端硬件实现的高可用性。 
 
-### 自动服务接管
+### **自动服务接管**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3EA0.tmp.jpg) 
 
 那么OB是如何做到这么高的可靠性呢，主要还是依靠之前讲的Paxos协议。我们用图上的例子解释下，这是一个三副本的集群，一共有3个Zone，每个Zone有2台服务器，每个Zone都有8个副本。
 	我们假设Zone3-OB Server2故障了，那么它上面的4个副本都将无法提供服务了。
@@ -1309,17 +1309,17 @@ OceanBase的Primary Zone有不同的优先级，比如我们可以设置某租�
 	如果Zone3-OB Server2 和Zone2-OB Server1同时故障了，这两个服务器刚好没有重复的副本，8个副本还都有2个，依然还可以构成多数派，也不影响业务。
 	除非，刚好两台有相同副本的服务器同时故障，比如Zone2-OB Server2和Zone3-OB Server2同时故障，才会影响业务。但这个对于大型集群来说，概率是非常低的。 
 
-### OB Server异常处理策略
+### **OB Server异常处理策略**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3EA1.tmp.jpg) 
 
 一台 OB Server 故障后，系统会根据“server_permanent_offline_time”这个参数的设定来进行相应的操作。
 	如果故障时间小于该参数，由于进程异常终止时间不长，异常进程可能很快就可以恢复，因此 OceanBase 暂时不做处理，以避免频繁的数据迁移。那么此时 P5-P8 只有两份副本，虽然依然满足多数派，可以保证 RPO=0，但存在风险（如果再有服务器故障）。
 	如果故障时间大于该参数，也就是宕机时间比较长了，OceanBase 会将机器做“临时下线”处理，从其它 Zone 的主副本中，将缺失的数据复制到本 Zone 内剩余的机器上（需要有足够的资源），以维持副本个数。异常终止的 OB Server 进程恢复后会自动加入集群，如果已经做过“临时下线”处理，需要从本 Zone 内其它机器上（或者其它 Zone）将 unit 迁移过来。 
 
-### 对比
+### **对比**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3EA2.tmp.jpg) 
 
 上面我们介绍了 OB 的高可用模式，听起来好像跟传统数据库的主备模式差异不大，传统数据库也是依靠在主备之间同步日志来实现高可用性,那我们来对比下:
 	传统数据库有“最大保护模式”,主备之间会通过网络同步 Redo-Log 日志，备数据库完成日志落盘后，告诉主数据库，主数据库反馈给业务成功。因为每份数据都有两份，一个在主数据库，一个在备数据库。这时是可以保证 RPO=0 的。但一旦备数据库故障，主数据库无法同步日志到备数据库，由于启动了“最大保护模式”，主数据库会一直等，导致业务中断，这是企业无法接受的。所以实际现场，基本没有企业会启用“最大保护模式”。
@@ -1331,33 +1331,33 @@ OceanBase的Primary Zone有不同的优先级，比如我们可以设置某租�
 	我们再来看下当主副本所在服务器故障后，OceanBase 是怎么做的。OceanBase 的主副本故障，剩余两个从副本会自动选出新的主来承接业务，这个过程是自动的，不需要人工干预，一般过程小于 30 秒，所以 OceanBase 可以实现 RTO<30 秒，且会降低运维难度。
 	OceanBase 会不会脑裂呢？我们上一页讲了，不会的，主副本联系不到两个从副本后，它就变成少数派了，它会自动卸任主副本，不会出现两个主副本的情况。 
 
-## *部署*
+## 部署
 
-### 同城两机房“主备”方案
+### **同城两机房“主备”方案**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3EA3.tmp.jpg) 
 
-### 两地三中心“主备”方案
+### **两地三中心“主备”方案**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3EB4.tmp.jpg) 
 
-### 同城三机房部署
+### **同城三机房部署**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3EB5.tmp.jpg) 
 
-### 三地五中心五副本
+### **三地五中心五副本**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3EB6.tmp.jpg) 
 
-# *数据安全*
+# 数据安全
 
-# *数据压缩*
+# 数据压缩
 
-# *数据迁移*
+# 数据迁移
 
-# *运维/监控告警*
+# 运维/监控告警
 
-## *用户权限管理*
+## 用户权限管理
 
 数据库用户管理操作包括新建用户、删除用户、修改密码、修改用户名、锁定用户、用户授权和撤销授权等。
 	用户分为两类：系统租户下的用户，一般租户下的用户.
@@ -1368,18 +1368,18 @@ OceanBase的Primary Zone有不同的优先级，比如我们可以设置某租�
 	• 收回权限：revoke [用户权限] on [资源对象] to username
 	• 查看用户：show grants for username 
 
-## *日志查询*
+## 日志查询
 
 Observer日志： OceanBase在运行过程中会自动生成日志。维护工程师通过查看和分析日志，可以了解OceanBase的启动和运行状态
 	• /home/admin/oceanbase/log
 	➢ 事务/存储日志： OceanBase在事务执行过程中，会持久化事务/存储日志
 	• /data/log1/集群名/ 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps3EB7.tmp.jpg) 
 
  
 
-### clog
+### **clog**
 
 clog是指广义的 Commit Log，代表整个事务的所有日志信息。 
 
@@ -1390,18 +1390,18 @@ clog是指广义的 Commit Log，代表整个事务的所有日志信息。
 	• clear log用于通知事务清理事务上下文
 	• abort log表示这个事务被回滚所有的事务日志信息，不用于用户查看和定位系统问题 
 
-### ilog
+### **ilog**
 
-### slog
+### **slog**
 
  
 
-## *日常运维操作*
+## 日常运维操作
 
-## *数据库监控*
+## 数据库监控
 
-# *故障排查*
+# 故障排查
 
-## *常见异常处理*
+## 常见异常处理
 
-## *灾难恢复*
+## 灾难恢复

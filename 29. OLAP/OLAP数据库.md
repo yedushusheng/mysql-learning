@@ -1,4 +1,4 @@
-# *背景*
+# 背景
 
  Lambda架构的核心理念是“流批一体化”，因为随着机器性能和数据框架的不断完善，用户其实不关心底层是如何运行的，批处理也好，流式处理也罢，能按照统一的模型返回结果就可以了，这就是Lambda架构诞生的原因。现在很多应用，例如Spark和Flink，都支持这种结构，也就是数据进入平台后，可以选择批处理运行，也可以选择流式处理运行，但不管怎样，一致性都是相同的。
 
@@ -16,7 +16,7 @@
 
 数据仓库和OLAP关系：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps4C10.tmp.jpg) 
 
 数据仓库和数据库的主要区别：用途不同。
 
@@ -28,11 +28,11 @@
 
 数据仓库的出现就是为了解决部分之间数据分散的问题（数据孤岛）。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps4C11.tmp.jpg) 
 
 数据仓库分层设计：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps4C22.tmp.jpg) 
 
 ## OLTP/OLAP
 
@@ -60,11 +60,11 @@ OLTP（Online Transaction Process），联机事务处理，侧重于数据库�
 
 ## 多维数据模型
 
-### 星型模型(star schema)
+### **星型模型(star schema)**
 
-### 雪花模型(snowflake schema)
+### **雪花模型(snowflake schema)**
 
-### 区别
+### **区别**
 
 # 特点
 
@@ -124,7 +124,7 @@ Codd提出了关于OLAP的12条准则：
 
   适合的场景也是比较固定的，场景清晰的地方。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps4C23.tmp.jpg) 
 
 ## ClickHouse
 
@@ -142,7 +142,7 @@ ClickHouse很轻量级，支持数据压缩和最终数据一致性，其数据�
 
 总之ClickHouse用于在线数据分析，支持功能简单。CPU利用率高，速度极快。最好的场景用于行为统计分析。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps4C24.tmp.jpg) 
 
 ## Hive
 
@@ -154,7 +154,7 @@ Hive与HDFS结合紧密，在大数据开始初期，提供一种直接使用sql
 
 当然Hive的缺点非常明显，定义的是分钟级别的查询延迟，估计都是在比较理想的情况。但是作为数据仓库的每日批量工具，的确是一个稳定合格的产品。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps4C25.tmp.jpg) 
 
 ## Presto
 
@@ -166,9 +166,9 @@ Presto由于是基于内存的，缺点可能是多张大表关联操作时易�
 
 另外Presto不支持OLTP的场景，所以不要把Presto当做数据库来使用。
 
-**Presto相比ClickHouse优点主要是多表join效果好。**相比ClickHouse的支持功能简单，场景支持单一，Presto支持复杂的查询，应用范围更广。
+Presto相比ClickHouse优点主要是多表join效果好。相比ClickHouse的支持功能简单，场景支持单一，Presto支持复杂的查询，应用范围更广。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps4C35.tmp.jpg) 
 
  
 
@@ -182,7 +182,7 @@ Presto由于是基于内存的，缺点可能是多张大表关联操作时易�
 
 Impala的缺点也很明显，首先严重依赖Hive，而且稳定性也稍差，元数据需要单独的mysql/pgsql来存储，对数据源的支持比较少，很多nosql是不支持的。但是，估计是cloudera的国内市场推广做的不错，Impala在国内的市场不错。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps4C36.tmp.jpg) 
 
 ## SparkSQL
 
@@ -194,7 +194,7 @@ Impala的缺点也很明显，首先严重依赖Hive，而且稳定性也稍差�
 
   支持访问各式各样的数据源，包括Hive, Avro, Parquet, ORC, JSON, and JDBC。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps4C37.tmp.jpg) 
 
  
 
@@ -204,7 +204,7 @@ Drill好像国内使用的很少，根据定义，Drill是一个低延迟的分�
 
 除了支持多种的数据源，Drill跟BI工具集成比较好。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps4C48.tmp.jpg) 
 
 ## Druid
 
@@ -218,7 +218,7 @@ Drill好像国内使用的很少，根据定义，Drill是一个低延迟的分�
 
 Druid最大的优点还是支持实时与查询功能，解约了很多开发工作。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps4C49.tmp.png) 
 
 ## Kudu
 
@@ -230,13 +230,13 @@ Druid最大的优点还是支持实时与查询功能，解约了很多开发工
 
 kudu相对于原有parquet和ORC格式主要还是做增量更新的。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps4C4A.tmp.jpg) 
 
 ## Hbase
 
 Hbase使用的很广,更多的是作为一个KV数据库来使用，查询的速度很快。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps4C5B.tmp.png) 
 
 ## Hawq
 

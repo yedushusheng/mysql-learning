@@ -1,10 +1,10 @@
-# *背景*
+# 背景
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps11AE.tmp.jpg) 
 
 从上图可以看到。Spanner位于F1和GFS之间，承上启下。所以先提一提F1和GFS。
 
-## *F1*
+## F1
 
 和众多互联网公司一样，在早期Google大量使用了Mysql。Mysql是单机的，可以用Master-Slave来容错，分区来扩展。但是需要大量的手工运维工作，有很多的限制。因此Google开发了一个可容错可扩展的RDBMS—F1。和一般的分布式数据库不同，F1对应RDMS应有的功能，毫不妥协。起初F1是基于Mysql的，不过会逐渐迁移到Spanner。
 
@@ -20,19 +20,19 @@ F1有如下特点：
 
 事务提交延迟50-100ms，读延迟5-10ms，高吞吐
 
-众所周知Google BigTable是重要的NoSql产品，提供很好的扩展性，开源世界有HBase与之对应。为什么Google还需要F1，而不是都使用BigTable呢？因为*BigTable提供的最终一致性，一些需要事务级别的应用无法使用*。同时*BigTable还是NoSql，而大量的应用场景需要有关系模型*。就像现在大量的互联网企业都使用Mysql而不愿意使用HBase，因此Google才有这个可扩展数据库的F1。而Spanner就是F1的至关重要的底层存储技术。
+众所周知Google BigTable是重要的NoSql产品，提供很好的扩展性，开源世界有HBase与之对应。为什么Google还需要F1，而不是都使用BigTable呢？因为***\*BigTable提供的最终一致性，一些需要事务级别的应用无法使用\****。同时***\*BigTable还是NoSql，而大量的应用场景需要有关系模型\****。就像现在大量的互联网企业都使用Mysql而不愿意使用HBase，因此Google才有这个可扩展数据库的F1。而Spanner就是F1的至关重要的底层存储技术。
 
 初代GFS是为批处理设计的。对于大文件很友好，吞吐量很大，但是延迟较高。所以使用他的系统不得不对GFS做各种优化，才能获得良好的性能。那为什么Google没有考虑到这些问题，设计出更完美的GFS ?因为那个时候是2001年，Hadoop出生是在2007年。如果Hadoop是世界领先水平的话，GFS比世界领先水平还领先了6年。同样的Spanner出生大概是2009年，现在我们看到了论文，估计Spanner在Google已经很完善，同时Google内部已经有更先进的替代技术在酝酿了。
 
  
 
-## *Colossus（GFS II）*
+## Colossus（GFS II）
 
 Colossus也是一个不得不提起的技术。他是第二代GFS，对应开源世界的新HDFS。GFS是著名的分布式文件系统。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps11AF.tmp.jpg) 
 
-Colossus是Google重要的基础设施，因为他可以满足主流应用对FS的要求。	*Colossus的重要改进有：*
+Colossus是Google重要的基础设施，因为他可以满足主流应用对FS的要求。	***\*Colossus的重要改进有：\****
 
 优雅Master容错处理 (不再有2s的停止服务时间)
 
@@ -42,7 +42,7 @@ Master可以存储更多的Metadata(当Chunk从64MB变为1MB后，Metadata会扩
 
 Colossus可以自动分区Metadata。使用Reed-Solomon算法来复制，可以将原先的3份减小到1.5份，提高写的性能，降低延迟。客户端来复制数据。
 
-## *BigTable**/**Megastore*
+## BigTable/Megastore
 
 Spanner主要致力于跨数据中心的数据复制上，同时也能提供数据库功能。在Google类似的系统有BigTable和Megastore。和这两者相比，Spanner又有什么优势呢。
 
@@ -54,17 +54,17 @@ Google官方认为Spanner是下一代BigTable，也是Megastore的继任者。
 
  
 
-# *概述*
+# 概述
 
 Spanner是Google的全球级的分布式数据库(Globally-Distributed Database) 。Spanner的扩展性达到了令人咋舌的全球级，可以扩展到数百万的机器，数已百计的数据中心，上万亿的行。更给力的是，除了夸张的扩展性之外，他还能同时通过同步复制和多版本来满足外部一致性，可用性也是很好的。冲破CAP的枷锁，在三者之间完美平衡。
 
-Spanner是个可扩展，多版本，全球分布式还支持同步复制的数据库。他是Google的第一个可以全球扩展并且支持外部一致的事务。Spanner能做到这些，离不开一个*用GPS和原子钟实现的时间API*。这个API能将数据中心之间的时间同步精确到10ms以内。因此有几个给力的功能：无锁读事务，原子schema修改，读历史数据无block。
+Spanner是个可扩展，多版本，全球分布式还支持同步复制的数据库。他是Google的第一个可以全球扩展并且支持外部一致的事务。Spanner能做到这些，离不开一个***\*用GPS和原子钟实现的时间API\****。这个API能将数据中心之间的时间同步精确到10ms以内。因此有几个给力的功能：无锁读事务，原子schema修改，读历史数据无block。
 
  
 
-# *设计*
+# 设计
 
-## *功能*
+## 功能
 
 从高层看Spanner是通过Paxos状态机将分区好的数据分布在全球的。数据复制全球化的，用户可以指定数据复制的份数和存储的地点。Spanner可以在集群或者数据发生变化的时候将数据迁移到合适的地点，做负载均衡。用户可以指定将数据分布在多个数据中心，不过更多的数据中心将造成更多的延迟。用户需要在可靠性和延迟之间做权衡，一般来说复制1，2个数据中心足以保证可靠性。
 
@@ -82,35 +82,35 @@ Spanner是个可扩展，多版本，全球分布式还支持同步复制的数�
 
  
 
-## *体系结构*
+## 体系结构
 
 Spanner由于是全球化的，所以有两个其他分布式数据库没有的概念。
 
-*Universe。*一个Spanner部署实例称之为一个Universe。目前全世界有3个。一个开发，一个测试，一个线上。因为一个Universe就能覆盖全球，不需要多个。
+***\*Universe。\****一个Spanner部署实例称之为一个Universe。目前全世界有3个。一个开发，一个测试，一个线上。因为一个Universe就能覆盖全球，不需要多个。
 
-*Zones**。*每个Zone相当于一个数据中心，一个Zone内部物理上必须在一起。而一个数据中心可能有多个Zone。可以在运行时添加移除Zone。一个Zone可以理解为一个BigTable部署实例。
+***\*Zones\*******\*。\****每个Zone相当于一个数据中心，一个Zone内部物理上必须在一起。而一个数据中心可能有多个Zone。可以在运行时添加移除Zone。一个Zone可以理解为一个BigTable部署实例。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps11B0.tmp.jpg) 
 
 如图所示。一个Spanner有上面一些组件。实际的组件肯定不止这些，比如TrueTime API Server。如果仅仅知道这些知识，来构建Spanner是远远不够的。但Google都略去了。
 
-*Universemaster:* 监控这个universe里zone级别的状态信息
+***\*Universemaster:\**** 监控这个universe里zone级别的状态信息
 
-*Placement driver*：提供跨区数据迁移时管理功能
+***\*Placement driver\****：提供跨区数据迁移时管理功能
 
-*Zonemaster*：相当于BigTable的Master。管理Spanserver上的数据。
+***\*Zonemaster\****：相当于BigTable的Master。管理Spanserver上的数据。
 
-*Location proxy*：存储数据的Location信息。客户端要先访问他才知道数据在那个Spanserver上。
+***\*Location proxy\****：存储数据的Location信息。客户端要先访问他才知道数据在那个Spanserver上。
 
-*Spanserver*：相当于BigTable的ThunkServer。用于存储数据。
+***\*Spanserver\****：相当于BigTable的ThunkServer。用于存储数据。
 
 可以看出来这里每个组件都很有料，但是Google的论文里只具体介绍了Spanserver的设计。
 
-### Spanserver
+### **Spanserver**
 
 Spanserver的设计和BigTable非常的相似。参照下图:
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps11C0.tmp.jpg) 
 
 从下往上看。每个数据中心会运行一套Colossus (GFS II) 。每个机器有100-1000个tablet。Tablet概念上将相当于数据库一张表里的一些行，物理上是数据文件。打个比方，一张1000行的表，有10个tablet，第1-100行是一个tablet，第101-200是一个tablet。但和BigTable不同的是BigTable里面的tablet存储的是Key-Value都是string，Spanner存储的Key多了一个时间戳：
 
@@ -124,7 +124,7 @@ Spanserver的设计和BigTable非常的相似。参照下图:
 
 每个leader replica的spanserver上还有一个transaction manager。如果事务在一个paxos group里面，可以绕过transaction manager。但是一旦事务跨多个paxos group，就需要transaction manager来协调。其中一个Transactionmanager被选为leader，其他的是slave听他指挥。这样可以保证事务。
 
-### Directories and Placement
+### **Directories and Placement**
 
 之所以Spanner比BigTable有更强的扩展性，在于Spanner还有一层抽象的概念directory, directory是一些key-value的集合，一个directory里面的key有一样的前缀。更妥当的叫法是bucketing。Directory是应用控制数据位置的最小单元，可以通过谨慎的选择Key的前缀来控制。据此笔者可以猜出，在设计初期，Spanner是作为F1的存储系统而设立，甚至还设计有类似directory的层次结构，这样的层次有很多好处，但是实现太复杂被摒弃了。
 
@@ -148,7 +148,7 @@ Directory还是记录地理位置的最小单元。数据的地理位置是由�
 
 前面对directory还是被简化过的，还有很多无法详述。
 
-## *数据模型*
+## 数据模型
 
 Spanner的数据模型来自于Google内部的实践。在设计之初，Spanner就决心有以下的特性：
 
@@ -164,13 +164,13 @@ Query语句
 
 Spanner的数据模型也不是纯正的关系模型，每一行都必须有一列或多列组件。看起来还是Key-value。主键组成Key,其他的列是Value。但这样的设计对应用也是很有裨益的，应用可以通过主键来定位到某一行。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps11C1.tmp.jpg) 
 
 上图是一个例子。对于一个典型的相册应用，需要存储其用户和相册。可以用上面的两个SQL来创建表。Spanner的表是层次化的，最顶层的表是directory table。其他的表创建的时候，可以用interleave in parent来什么层次关系。这样的结构，在实现的时候，Spanner可以将嵌套的数据放在一起，这样在分区的时候性能会提升很多。否则Spanner无法获知最重要的表之间的关系。
 
-## *TrueTime*
+## TrueTime
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps11C2.tmp.jpg) 
 
 TrueTime API 是一个非常有创意的东西，可以同步全球的时间。上表就是TrueTime API。TT.now()可以获得一个绝对时间TTinterval，这个值和UnixTime是相同的，同时还能够得到一个误差e。TT.after(t)和TT.before(t)是基于TT.now()实现的。
 
@@ -180,7 +180,7 @@ TrueTime API 是一个非常有创意的东西，可以同步全球的时间。�
 
 每个Slave后台进程会每个30秒从若干个Master更新自己的时钟。为了降低误差，使用Marzullo算法。每个slave还会计算出自己的误差。这里的误差包括的通信的延迟，机器的负载。如果不能访问Master，误差就会越走越大，知道重新可以访问。
 
-## *Google Spanner并发控制*
+## Google Spanner并发控制
 
 Spanner使用TrueTime来控制并发，实现外部一致性。支持以下几种事务。
 
@@ -194,7 +194,7 @@ Spanner使用TrueTime来控制并发，实现外部一致性。支持以下几�
 
 例如一个读写事务发生在时间t，那么在全世界任何一个地方，指定t快照读都可以读到写入的值。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps11D3.tmp.jpg) 
 
 上表是Spanner现在支持的事务。单独的写操作都被实现为读写事务 ； 单独的非快照被实现为只读事务。事务总有失败的时候，如果失败，对于这两种操作会自己重试，无需应用自己实现重试循环。
 
@@ -204,7 +204,7 @@ Spanner使用TrueTime来控制并发，实现外部一致性。支持以下几�
 
 还有一个有趣的特性的是，对于只读事务，如果执行到一半，该replica出现了错误。客户端没有必要在本地缓存刚刚读过的时间，因为是根据时间戳读取的。只要再用刚刚的时间戳读取，就可以获得一样的结果。
 
-## *读写事务*
+## 读写事务
 
 正如BigTable一样，Spanner的事务是会将所有的写操作先缓存起来，在Commit的时候一次提交。这样的话，就读不出在同一个事务中写的数据了。不过这没有关系，因为Spanner的数据都是有版本的。
 
@@ -218,7 +218,7 @@ Coordinatorleader一开始也会上个写锁，当大家发送时间戳给他之
 
 在让replica写入数据生效之前，coordinator还有再等一会。需要等两倍时间误差。这段时间也刚好让Paxos来同步。因为等待之后，在任意机器上发起的下一个事务的开始时间，都比如不会比这个事务的结束时间早了。然后coordinator将提交时间戳发送给客户端还有其他的replica。他们记录日志，写入生效，释放锁。
 
-## *只读事务*
+## 只读事务
 
 对于只读事务，Spanner首先要指定一个读事务时间戳。还需要了解在这个读操作中，需要访问的所有的读的Key。Spanner可以自动确定Key的范围。
 
