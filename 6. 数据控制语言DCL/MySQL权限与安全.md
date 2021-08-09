@@ -14,7 +14,7 @@ https://www.cnblogs.com/qlqwjy/p/8022575.html
 
 DCL语句主要是DBA用来管理系统中的对象权限时使用，一般的开发人员很少使用。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEA8D.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsC617.tmp.jpg) 
 
 ## 原理
 
