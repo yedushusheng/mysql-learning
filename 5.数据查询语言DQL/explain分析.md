@@ -1,4 +1,4 @@
-# 概述
+# **概述**
 
 explain可用来分析SQL的执行计划。格式如下：
 
@@ -58,21 +58,21 @@ explainable_stmt: {
 
 ​	
 
-# 分析
+# **分析**
 
 用来查看索引是否正在被使用，并且输出其使用的索引的信息。
 
 ​	在未添加索引时：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEB58.tmp.jpg) 
 
 ​	在添加索引后：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEB59.tmp.jpg) 
 
 ​	具体包含的参数：
 
-## id
+## **id**
 
 id：SELECT标识符，这是SELECT的查询序列号，也就是一条语句中，该SELECT是第几次出现，在此语句中，SELECT就只有一个，所以是1。
 
@@ -80,7 +80,7 @@ id：SELECT标识符，这是SELECT的查询序列号，也就是一条语句中
 
  
 
-## selecy_type
+## **selecy_type**
 
 ​	selecy_type：所使用的SELECT查询类型，SIMPLE表示为简单的SELECT，不使用UNION或子查询，就为简单的SELECT。
 
@@ -101,13 +101,13 @@ id：SELECT标识符，这是SELECT的查询序列号，也就是一条语句中
 | UNCACHEABLE SUBQUERY | 子查询，结果无法缓存，必须针对外部查询的每一行重新评估       |
 | UNCACHEABLE UNION    | UNION属于UNCACHEABLE SUBQUERY的第二个或后面的查询            |
 
-## table
+## **table**
 
 ​	table：数据表的名字，他们按照被读取的先后顺序排序。
 
 如果SQL定义了别名，则展示表的别名。
 
-## partitions
+## **partitions**
 
 partitions：当前查询匹配记录的分区。
 
@@ -115,7 +115,7 @@ partitions：当前查询匹配记录的分区。
 
  
 
-## type
+## **type**
 
 type：指定本数据表和其他数据表之间的关联关系，该表中所有符合检索值的记录都会被取出来和上一个表中取出来的记录作联合。
 
@@ -199,31 +199,31 @@ SELECT * FROM tbl_name
 
 （3）ALL：全表扫描，性能最差。
 
-## key
+## **key**
 
 ​	key：实际选用的索引。
 
-## possible_keys
+## **possible_keys**
 
 possible_keys：展示当前查询可以使用哪些索引，这一列的数据是在优化过程的早期创建的，因此有些索引可能对于后续优化过程是没用的。
 
-## key_len
+## **key_len**
 
 key_len显示了MySQL使用索引的长度（也就是使用索引的个数），索引使用的字节数。由于存储格式，当字段允许为NULL时，索引的长度就是NULL，key_len比不允许为空时大1字节。
 
 key_len计算公式： https://www.cnblogs.com/gomysql/p/4004244.html
 
-## ref
+## **ref**
 
-​	ref：表示将哪个字段或常量和key列所使用的字段进行比较。
+ref：表示将哪个字段或常量和key列所使用的字段进行比较。
 
 如果ref是一个函数，则使用的值是函数的结果。要想查看是哪个函数，可在EXPLAIN语句之后紧跟一个SHOW WARNING语句。
 
-## rows
+## **rows**
 
 rows：MySQL估算会扫描的行数，数值越小越好。
 
-## filtered
+## **filtered**
 
 filtered：表示符合查询条件的数据百分比，最大100。用rows × filtered可获得和下一张表连接的行数。
 
@@ -235,7 +235,7 @@ filtered：表示符合查询条件的数据百分比，最大100。用rows × f
 
 ● MySQL.5.7及更高版本，explain默认就会展示filtered
 
-## Extra
+## **Extra**
 
 展示有关本次查询的附加信息，取值如下：
 
@@ -473,7 +473,7 @@ explain SELECT * FROM t1 where id > 5
 
 explain SELECT name FROM resource_template limit 0
 
-# 扩展explain
+# **扩展explain**
 
 EXPLAIN可产生额外的扩展信息，可通过在EXPLAIN语句后紧跟一条SHOW WARNING语句查看扩展信息。
 
@@ -485,17 +485,13 @@ EXPLAIN可产生额外的扩展信息，可通过在EXPLAIN语句后紧跟一条
 
  
 
- 
-
- 
-
 使用示例：
 
 mysql> EXPLAIN
 
 ​    SELECT t1.a, t1.a IN (SELECT t2.a FROM t2) FROM t1\G
 
-*** 1. row ***
+*************************** 1. row ***************************
 
 ​      id: 1
 
@@ -519,7 +515,7 @@ possible_keys: NULL
 
 ​    Extra: Using index
 
-*** 2. row ***
+*************************** 2. row ***************************
 
 ​      id: 2
 
@@ -549,27 +545,27 @@ possible_keys: a
 
 mysql> SHOW WARNINGS\G
 
-*** 1. row ***
+*************************** 1. row ***************************
 
  Level: Note
 
   Code: 1003
 
-Message: /* select#1 */ select test.t1.a AS a,
+Message: /* select#1 */ select `test`.`t1`.`a` AS `a`,
 
-​     <in_optimizer>(test.t1.a,test.t1.a in
+​     <in_optimizer>(`test`.`t1`.`a`,`test`.`t1`.`a` in
 
-​     ( <materialize> (/* select#2 */ select test.t2.a
+​     ( <materialize> (/* select#2 */ select `test`.`t2`.`a`
 
-​     from test.t2 where 1 having 1 ),
+​     from `test`.`t2` where 1 having 1 ),
 
-​     <primary_index_lookup>(test.t1.a in
+​     <primary_index_lookup>(`test`.`t1`.`a` in
 
 ​     <temporary table> on <auto_key>
 
-​     where ((test.t1.a = materialized-subquery.a))))) AS `t1.a
+​     where ((`test`.`t1`.`a` = `materialized-subquery`.`a`))))) AS `t1.a
 
-​     IN (SELECT t2.a FROM t2)fromtest.t1`
+​     IN (SELECT t2.a FROM t2)` from `test`.`t1`
 
 1 row in set (0.00 sec)
 
@@ -633,7 +629,7 @@ SELECT与非扩展的EXPLAIN输出中id=N的那行关联
 
 当某些表是const或system类型时，这些表中的列所涉及的表达式将由优化器尽早评估，并且不属于所显示语句的一部分。但是，当使用FORMAT=JSON时，某些const表的访问将显示为ref。
 
-# 估计查询性能
+# **估计查询性能**
 
 多数情况下，你可以通过计算磁盘的搜索次数来估算查询性能。对于比较小的表，通常可以在一次磁盘搜索中找到行（因为索引可能已经被缓存了），而对于更大的表，你可以使用B-tree索引进行估算：你需要进行多少次查找才能找到行：log(row_count) / log(index_block_length / 3 * 2 / (index_length + data_pointer_length)) + 1
 
