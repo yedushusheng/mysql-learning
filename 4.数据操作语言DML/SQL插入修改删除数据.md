@@ -1,6 +1,6 @@
-# *INSERT*
+# INSERT
 
-## 语法
+## **语法**
 
 INSERT INTO tb() VALUES();
 
@@ -18,55 +18,55 @@ INSERT INTO ON DUPLICATE KEY UPDATE：
 
 例如，如果列a被定义为UNIQUE，并且包含值1，则以下两个语句具有相同的效果：
 
-INSERT INTO table (a, b, c) VALUES (1, 2, 3) ON DUPLICATE KEY UPDATE c=c+1; 
+INSERT INTO `table` (`a`, `b`, `c`) VALUES (1, 2, 3) ON DUPLICATE KEY UPDATE `c`=`c`+1; 
 
-UPDATE table SET c=c+1 WHERE a=1;
+UPDATE `table` SET `c`=`c`+1 WHERE `a`=1;
 
 如果行作为新记录被插入，则受影响行的值为1；如果原有的记录被更新，则受影响行的值为2。
-	*注释：*如果列b也是唯一列，则INSERT与此UPDATE语句相当：
+	***\*注释：\****如果列b也是唯一列，则INSERT与此UPDATE语句相当：
 
-UPDATE table SET c=c+1 WHERE a=1 OR b=2 LIMIT 1;
+UPDATE `table` SET `c`=`c`+1 WHERE `a`=1 OR `b`=2 LIMIT 1;
 
  
 
-## 锁
+## **锁**
 
-## 应用
+## **应用**
 
-### INSERT INTO SELECT
+### **INSERT INTO SELECT**
 
 insert into select性能问题：
 
 https://mp.weixin.qq.com/s/HbRrvQwW_QmKlxhZG5x0Xw
 
-#### *背景*
+#### 背景
 
 存在这样的应用场景：需要将表A的数据迁移到表B中去做一个备份。如果采用查询出来，然后批量插入的方式，会消耗大量的网络I/O，是否可以采用insert into select，这样不通过网络I/O，直接利用数据库自身I/O完成？
 
-#### *问题*
+#### 问题
 
-*订单表*
+***\*订单表\****
 
-CREATE TABLE order_today (
- id varchar(32) NOT NULL COMMENT '主键',
- merchant_id varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '商户编号',
- amount decimal(15,2) NOT NULL COMMENT '订单金额',
- pay_success_time datetime NOT NULL COMMENT '支付成功时间',
- order_status varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '支付状态 S：支付成功、F：订单支付失败',
- remark varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
- create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
- update_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间 -- 修改时自动更新',
- PRIMARY KEY (id) USING BTREE,
- KEY idx_merchant_id (merchant_id) USING BTREE COMMENT '商户编号'
+CREATE TABLE `order_today` (
+ `id` varchar(32) NOT NULL COMMENT '主键',
+ `merchant_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '商户编号',
+ `amount` decimal(15,2) NOT NULL COMMENT '订单金额',
+ `pay_success_time` datetime NOT NULL COMMENT '支付成功时间',
+ `order_status` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '支付状态 S：支付成功、F：订单支付失败',
+ `remark` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
+ `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+ `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间 -- 修改时自动更新',
+ PRIMARY KEY (`id`) USING BTREE,
+ KEY `idx_merchant_id` (`merchant_id`) USING BTREE COMMENT '商户编号'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-*订单记录表*
+***\*订单记录表\****
 
 CREATE TABLE order_record like order_today;
 
  
 
-*模拟迁移：*
+***\*模拟迁移：\****
 
 INSERT INTO order_record SELECT
 	* 
@@ -79,13 +79,13 @@ INSERT INTO order_record SELECT
 
  
 
-#### *分析*
+#### 分析
 
 在默认的事务隔离级别下：insert into order_record select * from order_today 加锁规则是：order_record表锁，order_today逐步锁（扫描一个锁一个）。
 
 分析执行过程：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps30A0.tmp.jpg) 
 
 通过观察迁移sql的执行情况你会发现order_today是全表扫描，也就意味着在执行insert into select from 语句时，mysql会从上到下扫描order_today内的记录并且加锁，这样一来不就和直接锁表是一样了。
 
@@ -93,7 +93,7 @@ INSERT INTO order_record SELECT
 
  
 
-#### *解决方案*
+#### 解决方案
 
 由于查询条件会导致order_today全表扫描，什么能避免全表扫描，给pay_success_time字段添加一个idx_pay_suc_time索引就可以了，由于走索引查询，就不会出现扫描全表的情况而锁表了，只会锁定符合条件的记录。
 
@@ -108,9 +108,9 @@ INSERT INTO order_record SELECT
 
 执行过程：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps30A1.tmp.jpg) 
 
-#### *总结*
+#### 总结
 
 使用insert into tablA select * from tableB语句时，一定要确保tableB后面的where，order或者其他条件，都需要有对应的索引，来避免出现tableB全部记录被锁定的情况。
 
@@ -120,15 +120,15 @@ INSERT INTO SELECT性能分析拓展：
 
 http://blog.itpub.net/7728585/viewspace-2215202/
 
-https://mp.weixin.qq.com/s?__biz=MjM5NzAzMTY4NQ==&mid=2653933861&idx=1&sn=9e9ef3aca804a34b55db537245c75d29&chksm=bd3b4b4f8a4cc2594bc384e5f609adb673f6e78ff89df6f743f83184d028eaceceb2d6c00639&mpshare=1&scene=24&srcid=&sharer_sharetime=1591749192443&sharer_shareid=33f795d236f19ac7c128b2e279563f84#rd
+[https://mp.weixin.qq.com/s?__biz=MjM5NzAzMTY4NQ==&mid=2653933861&idx=1&sn=9e9ef3aca804a34b55db537245c75d29&chksm=bd3b4b4f8a4cc2594bc384e5f609adb673f6e78ff89df6f743f83184d028eaceceb2d6c00639&mpshare=1&scene=24&srcid=&sharer_sharetime=1591749192443&sharer_shareid=33f795d236f19ac7c128b2e279563f84#rd](#rd)
 
  
 
-### RR模式下insert..select sending data
+### **RR模式下insert..select sending data**
 
 sending data是什么意思。隔离级别为RR，语句为insert..select。
 
-#### *关于sending data*
+#### 关于sending data
 
 以前就说过这个问题，实际上sending data可能包含如下：
 
@@ -146,7 +146,7 @@ MySQL层发送数据给客户端
 
  
 
-#### *原因总结*
+#### 原因总结
 
 RR模式下对于insert..selcet处于sending data的原因总结：
 
@@ -158,7 +158,7 @@ RR模式下对于insert..selcet处于sending data的原因总结：
 
  
 
-#### *每行数据处理方式*
+#### 每行数据处理方式
 
 929 T@4: | | | | | | THD::enter_stage: 'Sending data' /cdh/mysqldebug/percona-server-5.7.29-32/sql/sql_executor.cc:202
   930 T@4: | | | | | | >PROFILING::status_change
@@ -238,9 +238,9 @@ http://blog.itpub.net/7728585/viewspace-2215202/
 
  
 
-# *UPDATE*
+# ***\*UPDATE\****
 
-## 语法
+## **语法**
 
 UPDATE tb SET ... WHERE...
 
@@ -250,39 +250,39 @@ update common_cbd a, common_cbd b set a.latitude= b.longitude, a.longitude= b.la
 
  
 
-## 原理
+## **原理**
 
-基于row模式时，server层匹配到要更新的记录，发现新值和旧值一致，不做更新，就直接返回，也不记录binlog（*这也是为什么row模式binlog会占用磁盘小的一个原因*）。
+基于row模式时，server层匹配到要更新的记录，发现新值和旧值一致，不做更新，就直接返回，也不记录binlog（***\*这也是为什么row模式binlog会占用磁盘小的一个原因\****）。
 
 基于statement或者mixed格式，MySQL执行 update 语句，并把更新语句记录到binlog。
 
  
 
-## 加锁
+## **加锁**
 
-## 应用
+## **应用**
 
-### UPDATE卡顿
+### **UPDATE卡顿**
 
 参考：
 
-https://mp.weixin.qq.com/s?__biz=MjM5MDAxOTk2MQ==&mid=2650285587&idx=1&sn=cc9492e89dd01c9544267bde86f8cfe4&chksm=be47be058930371347bd06294db4be26fc17d74c92dc8006ec24befa40373292b502ae5f8d7d&mpshare=1&scene=24&srcid=0711LnyyRGkZaNOYkl7zIqU9&sharer_sharetime=1594424547396&sharer_shareid=33f795d236f19ac7c128b2e279563f84#rd
+[https://mp.weixin.qq.com/s?__biz=MjM5MDAxOTk2MQ==&mid=2650285587&idx=1&sn=cc9492e89dd01c9544267bde86f8cfe4&chksm=be47be058930371347bd06294db4be26fc17d74c92dc8006ec24befa40373292b502ae5f8d7d&mpshare=1&scene=24&srcid=0711LnyyRGkZaNOYkl7zIqU9&sharer_sharetime=1594424547396&sharer_shareid=33f795d236f19ac7c128b2e279563f84#rd](#rd)
 
 注：在GoldenDB分布式数据库中，对于非乐观锁的情况下，update需要先下发select for update加行锁，然后执行update操作，如果select中where条件查询索引失效会导致全表扫描，成本太高，所以做了一个优化，即下发语句使用force index强制索引，这样可以避免全表扫描。
 
  
 
-### 互换表中字段的值
+### **互换表中字段的值**
 
 update common_cbd a, common_cbd b set a.latitude= b.longitude, a.longitude= b.latitude  where a.id = b.id
 
  
 
-# *DELETE*
+# DELETE
 
-## 语法
+## **语法**
 
-*单表语法：*
+***\*单表语法：\****
 
 DELETE [LOW_PRIORITY] [QUICK] [IGNORE] FROM tbl_name
 
@@ -292,11 +292,11 @@ DELETE [LOW_PRIORITY] [QUICK] [IGNORE] FROM tbl_name
 
   [LIMIT row_count]
 
-*多表语法：*
+***\*多表语法：\****
 
 DELETE [LOW_PRIORITY] [QUICK] [IGNORE]
 
-  tbl_name[.] [, tbl_name[.] ...]
+  tbl_name[.*] [, tbl_name[.*] ...]
 
   FROM table_references
 
@@ -306,7 +306,7 @@ DELETE [LOW_PRIORITY] [QUICK] [IGNORE]
 
 DELETE [LOW_PRIORITY] [QUICK] [IGNORE]
 
-  FROM tbl_name[.] [, tbl_name[.] ...]
+  FROM tbl_name[.*] [, tbl_name[.*] ...]
 
   USING table_references
 
@@ -332,7 +332,7 @@ DELETE语句支持以下修饰符：
 
  
 
-## 原理
+## **原理**
 
 在InnoDB中，delete操作并不会真的把数据删除，mysql实际上只是给删除的数据打了个标记，标记为删除，因此使用delete删除表中的数据，表文件在磁盘上所占空间不会变小，我们这里暂且称之为假删除。
 
@@ -364,9 +364,9 @@ optimize table t
 
  
 
-## 应用
+## **应用**
 
-### 删除**重复数据**
+### 删除重复数据
 
 参考：
 
@@ -378,7 +378,7 @@ https://www.cnblogs.com/qlqwjy/p/8270011.html
 
  
 
-#### *原因*
+#### 原因
 
 ​	产生重复数据的原因：
 
@@ -386,19 +386,19 @@ https://www.cnblogs.com/qlqwjy/p/8270011.html
 
 2、 系统原因：由于系统升级或设计的原因使原来可以重复的数据变为不能重复的
 
-#### *查询*
+#### 查询
 
 ​	如何查询数据是否重复？
 
 ​	使用GROUP BY和HAVING从句处理
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps30B2.tmp.jpg) 
 
 注：GROUP BY分组后相同值的数据放在一起，HAVING过滤结果集大于1的（即存在多个相同的分组数据，只有一个的不需要过滤）。
 
  
 
-##### *查询全部重复记录*
+##### 查询全部重复记录
 
 1、查找所有重复标题的记录：
 
@@ -408,7 +408,7 @@ SELECT * FROM t_info a WHERE ((SELECT COUNT(*) FROM t_info WHERE Title = a.Title
 
  
 
-##### *过滤重复记录*
+##### 过滤重复记录
 
 2、过滤重复记录(只显示一条)
 
@@ -418,7 +418,7 @@ Select * From HZT Where ID In (Select Max(ID) From HZT Group By Title)
 
  
 
-###### *方法一*
+###### 方法一
 
 SELECT
 
@@ -472,7 +472,7 @@ AND deptno NOT IN (
 
 上面这种写法正确，但是查询的速度太慢，可以试一下下面这种方法：
 
-###### *方法二*
+###### 方法二
 
 根据dname分组，查找出deptno最小的。然后再查找deptno不包含刚才查出来的。这样就查询出了所有的重复数据（除了deptno最小的那行）
 
@@ -510,53 +510,27 @@ WHERE
 
 ​	)
 
-###### *方法三*
+###### 方法三
 
-SELECT
+SELECT 
 
- 
-
- 
-
-* 
-
- 
-
- 
+\* 
 
 FROM
 
- 
-
- 
-
 table_name AS ta 
-
- 
-
- 
 
 WHERE
 
- 
-
- 
-
 ta.唯一键 <> ( SELECT max( tb.唯一键 ) FROM table_name AS tb WHERE ta.判断重复的列 = tb.判断重复的列 );
 
- 
-
- 
-
- 
-
-#### *删除*
+#### 删除
 
 ​	删除重复数据（name重复），对于相同数据保留ID最大的：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps30B3.tmp.jpg) 
 
-##### *删除全部重复记录*
+##### 删除全部重复记录
 
 1、删除全部重复记录（慎用）
 
@@ -600,11 +574,11 @@ count(1) > 1
 
 解决办法：把要更新的几列数据查询出来做为一个第三方表，然后筛选更新。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps30B4.tmp.jpg) 
 
  
 
-##### *保留一条重复记录*
+##### 保留一条重复记录
 
 2、保留一条（这个应该是大多数人所需要的）
 
@@ -614,7 +588,7 @@ delete from HZT Where ID not in (select max(ID) from HZT group by Title)
 
  
 
-###### *方法一*
+###### 方法一
 
 DELETE
 
@@ -684,7 +658,7 @@ FROM
 
 )
 
-###### *方法二*
+###### 方法二
 
 DELETE
 
@@ -720,7 +694,7 @@ WHERE
 
 ​	)
 
-###### *方法三*
+###### 方法三
 
 DELETE 
 
@@ -742,7 +716,7 @@ FROM
 
 ​	);
 
-##### *rowid删除*
+##### rowid删除
 
 1、查找表中多余的重复记录，重复记录是根据单个字段（peopleId）来判断
 
@@ -758,23 +732,23 @@ select * from vitae a where (a.peopleId,a.seq) in (select peopleId,seq from vita
 
 4、删除表中多余的重复记录（多个字段），只留有rowid最小的记录
 
-delete from vitae a where (a.peopleId,a.seq) in (select peopleId,seq from vitae group by peopleId,seq having count() > 1) and rowid not in (select min(rowid) from vitae group by peopleId,seq having count()>1)
+delete from vitae a where (a.peopleId,a.seq) in (select peopleId,seq from vitae group by peopleId,seq having count(*) > 1) and rowid not in (select min(rowid) from vitae group by peopleId,seq having count(*)>1)
 
 5、查找表中多余的重复记录（多个字段），不包含rowid最小的记录
 
-select * from vitae a where (a.peopleId,a.seq) in (select peopleId,seq from vitae group by peopleId,seq having count() > 1) and rowid not in (select min(rowid) from vitae group by peopleId,seq having count()>1)
+select * from vitae a where (a.peopleId,a.seq) in (select peopleId,seq from vitae group by peopleId,seq having count(*) > 1) and rowid not in (select min(rowid) from vitae group by peopleId,seq having count(*)>1)
 
  
 
-### 安全delete巨大量数据行
+### **安全delete巨大量数据行**
 
-#### *delete分批删除*
+#### delete分批删除
 
 根据前辈多年的删表经验来说，删除大量数据时一定要分批缓慢删除，否则很容易阻塞整个表，还有可能因为产生的 binlog 过大造成从库同步出问题。
 
 delete * from where create_time <= ? limit ?;
 
-#### *pt-archiver**删除*
+#### pt-archiver删除
 
 确定删除方案后，我们就可以使用pt-archiver进行删除，这个工具不只可以用个归档，删除数据也是行家。
 
@@ -788,9 +762,9 @@ delete * from where create_time <= ? limit ?;
 
 如果这张大表仍然还有被高频的访问，直接drop table&truncate显然是无法接受的！
 
-*使用pt-archiver进行分批缓慢删除*
+**使用pt-archiver进行分批缓慢删除**
 
-##### *参数*
+##### 参数
 
 pt-archiver --help 
 	--progress 每多少行打印进度信息
@@ -800,7 +774,7 @@ pt-archiver --help
 	--bulk-delete 用单个DELETE语句批量删除每个行块。该语句删除块的第一行和最后一行之间的每一行，隐含--commit-each
 	--dry-run 打印查询，不做任何操作后退出
 
-##### *删除数据*
+##### 删除数据
 
 分三步：
 
@@ -810,16 +784,16 @@ pt-archiver --help
 
 3、执行删除
 
-# 打印查询
+\# 打印查询
 	$ pt-archiver --source h=10.186.65.19,P=3306,u=root,p='123',D=sbtest,t=sbtest1 --purge --charset=utf8mb4 --where "id <= 400000" --progress=200 --limit=200 --sleep=1 --txn-size=200 --statistics --dry-run
 	# 解释：删除sbtest库，sbtest1表数据，字符集为utf8mb4，删除条件是id <= 400000，每次取出200行进行处理，每处理200行则进行一次提交，每完成一次处理sleep 1s
-	SELECT /*!40001 SQL_NO_CACHE / id,k,c,pad FROM sbtest.sbtest1 FORCE INDEX(PRIMARY) WHERE (id <= 400000) AND (id < '23132073') ORDER BY id LIMIT 200
-	SELECT /!40001 SQL_NO_CACHE / id,k,c,pad FROM sbtest.sbtest1 FORCE INDEX(PRIMARY) WHERE (id <= 400000) AND (id < '23132073') AND ((id >= ?)) ORDER BY id LIMIT 200
-	DELETE FROM sbtest.sbtest1 WHERE (id = ?)
-	*# 打开会话保持功能***
-*	screen -S archiver
-	*# 执行删除**
-*	$ pt-archiver --source h=10.186.65.19,P=3306,u=root,p='123',D=sbtest,t=sbtest1 --purge --charset=utf8mb4 --where "id <= 400000" --progress=200 --limit=200 --sleep=1 --txn-size=200 --statistics
+	SELECT /*!40001 SQL_NO_CACHE */ `id`,`k`,`c`,`pad` FROM `sbtest`.`sbtest1` FORCE INDEX(`PRIMARY`) WHERE (id <= 400000) AND (`id` < '23132073') ORDER BY `id` LIMIT 200
+	SELECT /*!40001 SQL_NO_CACHE */ `id`,`k`,`c`,`pad` FROM `sbtest`.`sbtest1` FORCE INDEX(`PRIMARY`) WHERE (id <= 400000) AND (`id` < '23132073') AND ((`id` >= ?)) ORDER BY `id` LIMIT 200
+	DELETE FROM `sbtest`.`sbtest1` WHERE (`id` = ?)
+	***\*# 打开会话保持功能\*******\*
+\****	screen -S archiver
+	***\*# 执行删除\*******\*
+\****	$ pt-archiver --source h=10.186.65.19,P=3306,u=root,p='123',D=sbtest,t=sbtest1 --purge --charset=utf8mb4 --where "id <= 400000" --progress=200 --limit=200 --sleep=1 --txn-size=200 --statistics
 	......
 	2021-02-16T17:52:24  2115 398200
 	2021-02-16T17:52:25  2116 398400
@@ -844,7 +818,7 @@ pt-archiver --help
 	commit     2001   1.4004    0.07
 	other       0  30.0424    1.41
 
-*在删除数据后的处理：*
+***\*在删除数据后的处理：\****
 
 MySQL的机制下delete后磁盘不会立即释放，在业务空闲时间进行分析表以便真正从磁盘上移除数据解除空间占用（极端情况可能需要重启释放），非必做（一般可不做）；视场景而定。
 
@@ -854,25 +828,25 @@ https://dev.mysql.com/doc/refman/8.0/en/optimize-table.html
 
  
 
-# *闪回*
+# 闪回
 
 参考：
 
-https://mp.weixin.qq.com/s?__biz=MzIzOTA2NjEzNQ==&mid=2454780189&idx=1&sn=2013c2f62cbdffa7f274f6ccf60cbd09&chksm=fe8b9465c9fc1d7373226dfeb4bf7cb27cece721140819d30118af9b8dcddce12e6c365490a5&mpshare=1&scene=24&srcid=0315yBplX63k706DextFWkT7&sharer_sharetime=1615768697494&sharer_shareid=33f795d236f19ac7c128b2e279563f84#rd
+[https://mp.weixin.qq.com/s?__biz=MzIzOTA2NjEzNQ==&mid=2454780189&idx=1&sn=2013c2f62cbdffa7f274f6ccf60cbd09&chksm=fe8b9465c9fc1d7373226dfeb4bf7cb27cece721140819d30118af9b8dcddce12e6c365490a5&mpshare=1&scene=24&srcid=0315yBplX63k706DextFWkT7&sharer_sharetime=1615768697494&sharer_shareid=33f795d236f19ac7c128b2e279563f84#rd](#rd)
 
  
 
-# *RENAME*
+# RENAME
 
-# *TRUNCATE*
+# TRUNCATE
 
-## 语法
+## **语法**
 
-## 原理
+## **原理**
 
-## 应用
+## **应用**
 
-### 清空数据库全部表
+### **清空数据库全部表**
 
 参考：
 
@@ -882,9 +856,9 @@ https://m.php.cn/article/53312.html
 
 Mysql清空表是很重要的操作，也是最常见的操作之一，下面详细介绍Mysql清空表的实现方法。
 
-#### *重建库和表*
+#### 重建库和表
 
-*1、**只导出表结构*
+***\*1、\*******\*只导出表结构\****
 
 导出整个数据库结构（不包含数据）
 	mysqldump -h localhost -uroot -p123456 -d database > dump.sql
@@ -894,7 +868,7 @@ Mysql清空表是很重要的操作，也是最常见的操作之一，下面详
 
  
 
-*2、**只导出表数据*
+***\*2、\*******\*只导出表数据\****
 
 导出整个数据库数据
 
@@ -902,7 +876,7 @@ mysqldump -h localhost -uroot -p123456 -t database > dump.sql
 
  
 
-*3、**导出结构+数据*
+***\*3、\*******\*导出结构+数据\****
 
 导出整个数据库结构和数据
 	mysqldump -h localhost -uroot -p123456 database > dump.sql
@@ -941,9 +915,7 @@ mysql -N -s information_schema -e "SELECT CONCAT('TRUNCATE TABLE ',TABLE_NAME,';
 
  
 
- 
-
-# *分布式数据库实践*
+# 分布式数据库实践
 
 在分布式数据库GoldenDB中，对于配置为悲观锁的情况，对于update/delete操作都是先执行select for update加锁（乐观锁的情况是不断重试），然后再真正去执行update/delete操作。
 
