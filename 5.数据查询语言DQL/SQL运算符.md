@@ -6,7 +6,7 @@
 
 算术运算符用于各类数值运算，包括加（+）、减（-）、乘（*）、除（/）、求余（或称模运算，%）。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsAFF2.tmp.jpg) 
 
  
 
@@ -14,7 +14,7 @@
 
 比较运算符用于比较运算，包括大于（>）、小于（<）、等于（=）、大于等于（>=）、小于等于（<=）、不等于（!=），以及IN、BETWEEN AND、IS NULL、GREATEST、LEAST、LIKE、REGEXP等。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsAFF3.tmp.jpg) 
 
  
 
@@ -72,7 +72,7 @@
 
 逻辑运算符的求值所得结果均为1（TRUE）、0（FALSE），这类运算符有逻辑非（NOT或者!）、逻辑与（AND或者&&）、逻辑或（OR或者||）、逻辑异或（XOR）。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsAFF4.tmp.jpg) 
 
 ## NOT/！
 
@@ -94,7 +94,7 @@
 
 位运算符参与运算的操作数按二进制位进行运算，包括位与（&）、位或（|）、位非（~）、位异或（^）、左移（<<）、右移（>>）6种。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsAFF5.tmp.jpg) 
 
 ## &
 
@@ -122,4 +122,4 @@
 
 # 优先级
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsB006.tmp.jpg) 
