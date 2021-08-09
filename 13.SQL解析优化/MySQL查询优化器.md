@@ -56,7 +56,7 @@
 
 通常，数据库调优主要分为5阶段，如表1-1所示。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsE4C6.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1678.tmp.jpg) 
 
 涉及的技术主要有以下几种：
 
@@ -322,7 +322,7 @@ MySQL查询优化器在逻辑查询执行计划阶段，基于关系代数规则
 
 MySQL查询优化器在物理查询执行计划阶段，在解决多表连接的问题时，有两套算法：一是用户指定表连接次序的算法；二是混杂了贪婪和穷举思想的算法，解决的是较多表的连接或非用户指定连接次序的多表连接，但不能保证得到最优的查询执行计划。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsE4C7.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1679.tmp.jpg) 
 
 ## 数据结构
 
