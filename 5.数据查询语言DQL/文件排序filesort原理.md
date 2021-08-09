@@ -12,7 +12,7 @@ Using filesort经常出现在order by、group by、distinct、join等情况下�
 
  
 
-文件排序是通过相应的排序算法，将取得的数据在内存中进行排序：MySQL需要将数据在内存中进行排序，所使用的内存区域也就是我们通过sort_buffer_size系统变量所设置的sort buffer（排序区）。这个sort buffer是每个Thread独享的，所以说可能在同一时刻在MySQL中可能存在多个sort buffer内存区域。
+文件排序是通过相应的排序算法，将取得的数据在内存中进行排序：MySQL需要将数据在内存中进行排序，所使用的内存区域也就是我们通过sort_buffer_size系统变量所设置的sort buffer（排序区）。***\*这个\*******\*sort buffer\*******\*是每个Thread独享的\****，所以说可能在同一时刻在MySQL中可能存在多个sort buffer内存区域。
 
 参考：
 
@@ -40,7 +40,7 @@ select * from film where Producer like '东京热%' and prod_time>'2015-12-01' o
 
 ​      "attaching_conditions_to_tables": {
 
-​       "original_condition": "((film.Producer like '东京热%') and (film.prod_time > '2015-12-01'))",
+​       "original_condition": "((`film`.`Producer` like '东京热%') and (`film`.`prod_time` > '2015-12-01'))",
 
 ​       "attached_conditions_computation": [
 
@@ -50,9 +50,9 @@ select * from film where Producer like '东京热%' and prod_time>'2015-12-01' o
 
 ​        {
 
-​         "table": "film",
+​         "table": "`film`",
 
-​         "attached": "((film.Producer like '东京热%') and (film.prod_time > '2015-12-01'))"
+​         "attached": "((`film`.`Producer` like '东京热%') and (`film`.`prod_time` > '2015-12-01'))"
 
 ​        }
 
@@ -76,7 +76,7 @@ select * from film where Producer like '东京热%' and prod_time>'2015-12-01' o
 
 ​        "direction": "asc",
 
-​        "table": "film",
+​        "table": "`film`",
 
 ​        "field": "actor_age"
 
@@ -124,7 +124,7 @@ select * from film where Producer like '东京热%' and prod_time>'2015-12-01' o
 
 ​        "direction": "asc",
 
-​        "table": "film",
+​        "table": "`film`",
 
 ​        "field": "actor_age"
 
@@ -168,7 +168,7 @@ MySQL的sort_mode有三种。摘录5.7.13中sql/filesort.cc源码如下：
 
  
 
-## 回表排序模式
+## **回表排序模式**
 
 根据索引或者全表扫描，按照过滤条件获得需要查询的排序字段值和row ID；
 
@@ -182,13 +182,13 @@ MySQL的sort_mode有三种。摘录5.7.13中sql/filesort.cc源码如下：
 
 根据结果文件中的row ID按序读取用户需要返回的数据。由于row ID不是顺序的，导致回表时是随机IO，为了进一步优化性能（变成顺序IO），MySQL会读一批row ID，并将读到的数据按排序字段顺序插入缓存区中(内存大小read_rnd_buffer_size)。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA2D0.tmp.jpg) 
 
-## 不回表排序模式
+## **不回表排序模式**
 
 根据索引或者全表扫描，按照过滤条件获得需要查询的数据；
 
-将要排序的列值和用户需要返回的字段组成键值对，存入sort buffer中；
+将要排序的列值和***\*用户需要返回的字段\****组成键值对，存入sort buffer中；
 
 如果sort buffer内存大于这些键值对的内存，就不需要创建临时文件了。否则，每次sort buffer填满以后，需要直接用qsort(快速排序算法)在内存中排好序，并写到临时文件中；
 
@@ -198,9 +198,9 @@ MySQL的sort_mode有三种。摘录5.7.13中sql/filesort.cc源码如下：
 
 直接从结果文件中返回用户需要的字段数据，而不是根据row ID再次回表查询。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA2D1.tmp.jpg) 
 
-## 打包数据排序模式
+## **打包数据排序模式**
 
 第三种排序模式的改进仅仅在于将char和varchar字段存到sort buffer中时，更加紧缩。
 
@@ -208,7 +208,7 @@ MySQL的sort_mode有三种。摘录5.7.13中sql/filesort.cc源码如下：
 
  
 
-## 三种模式比较
+## **三种模式比较**
 
 第二种模式是第一种模式的改进，避免了二次回表，采用的是用空间换时间的方法。
 
@@ -216,7 +216,7 @@ MySQL的sort_mode有三种。摘录5.7.13中sql/filesort.cc源码如下：
 
 所以，MySQL给用户提供了一个max_length_for_sort_data的参数。当“排序的键值对大小”> max_length_for_sort_data时，MySQL认为磁盘外部排序的IO效率不如回表的效率，会选择第一种排序模式；反之，会选择第二种不回表的模式。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA2D2.tmp.jpg) 
 
 第三种模式主要是解决变长字符数据存储空间浪费的问题，对于实际数据不多，字段定义较长的改进效果会更加明显。
 
@@ -224,9 +224,9 @@ MySQL的sort_mode有三种。摘录5.7.13中sql/filesort.cc源码如下：
 
 # 外部排序
 
-## 普通外部排序
+## **普通外部排序**
 
-### 两路外部排序
+### **两路外部排序**
 
 我们先来看一下最简单，最普遍的两路外部排序算法。
 
@@ -242,9 +242,9 @@ MySQL的sort_mode有三种。摘录5.7.13中sql/filesort.cc源码如下：
 
 5、对这些数据进行一个“9路归并”，并将结果写入输出缓存。如果输出缓存满了，则直接写入最终排序结果文件并清空输出缓存；如果9个10MB的输入缓存空了，从对应的文件再读10MB的数据，直到读完整个文件。最终输出的排序结果文件就是900MB排好序的数据了。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA2D3.tmp.jpg) 
 
-### 多路外部排序
+### **多路外部排序**
 
 上述排序算法是一个两路排序算法（先排序，后归并）。但是这种算法有一个问题，假设要排序的数据是50GB而内存只有100MB，那么每次从500个排序好的分片中取200KB（100MB / 501 约等于200KB）就是很多个随机IO。效率非常慢，对应可以这样来改进：
 
@@ -260,11 +260,11 @@ MySQL的sort_mode有三种。摘录5.7.13中sql/filesort.cc源码如下：
 
 对应的数据量更大的情况可以进行更多次归并。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA2E4.tmp.jpg) 
 
-## MySQL外部排序
+## **MySQL外部排序**
 
-### MySQL外部排序算法
+### **MySQL外部排序算法**
 
 那MySQL使用的外部排序是怎么样的列，我们以回表排序模式为例：
 
@@ -300,7 +300,7 @@ MySQL把外部排序好的分片写入同一个文件中，通过保存文件偏
 
 MySQL每MERGEBUFF (7)个分片做一个归并，最终分片数达到MERGEBUFF2 (15)时，做最后一次归并。
 
-### sort_merge_passes
+### **sort_merge_passes**
 
 MySQL手册中对Sort_merge_passes的描述只有一句话
 
@@ -380,17 +380,17 @@ int merge_buffers(Sort_param *param, IO_CACHE *from_file,
 
  
 
-## trace结果解释
+## **trace结果解释**
 
 说明白了三种排序模式和外部排序的方法，我们回过头来看一下trace的结果。
 
-### 是否存在磁盘外部排序
+### **是否存在磁盘外部排序**
 
 "number_of_tmp_files": 0,
 
 number_of_tmp_files表示有多少个分片，如果number_of_tmp_files不等于0，表示一个sort_buffer_size大小的内存无法保存所有的键值对，也就是说，MySQL在排序中使用到了磁盘来排序。
 
-### 是否存在优先队列优化排序
+### **是否存在优先队列优化排序**
 
 由于我们的这个SQL里面没有对数据进行分页限制，所以filesort_priority_queue_optimization并没有启用
 
@@ -406,11 +406,11 @@ number_of_tmp_files表示有多少个分片，如果number_of_tmp_files不等于
 
 算法稍微有点改变，以回表排序模式为例。
 
-sort_buffer_size足够大
+***\*sort_buffer_size足够大\****
 
 如果Limit限制返回N条数据，并且N条数据比sort_buffer_size小，那么MySQL会把sort buffer作为priority queue，在第二步插入priority queue时会按序插入队列；在第三步，队列满了以后，并不会写入外部磁盘文件，而是直接淘汰最尾端的一条数据，直到所有的数据都正常读取完成。
 
-算法如下：
+***\*算法如下：\****
 
 1、根据索引或者全表扫描，按照过滤条件获得需要查询的数据
 
@@ -424,7 +424,7 @@ sort_buffer_size足够大
 
 6、根据结果文件中的row ID按序读取用户需要返回的数据。为了进一步优化性能，MySQL会读一批row ID，并将读到的数据按排序字段要求插入缓存区中(内存大小read_rnd_buffer_size)。
 
-sort_buffer_size不够大
+***\*sort_buffer_size不够大\****
 
 否则，N条数据比sort_buffer_size大的情况下，MySQL无法直接利用sort buffer作为priority queue，正常的文件外部排序还是一样的，只是在最后返回结果时，只根据N个row ID将数据返回出来。具体的算法我们就不列举了。
 
@@ -440,17 +440,17 @@ sort_buffer_size不够大
 
 MySQL对排序有两种实现：
 
-## 双路排序
+## **双路排序**
 
-### 原理
+### **原理**
 
 第一遍扫描出需要排序的字段，然后进行排序后，根据排序结果，第二遍再扫描一下需要select的列数据。这样会引起大量的随机IO，效率不高，但是节约内存。排序使用quick sort。但是如果内存不够则会按照block进行排序，将排序结果写入磁盘文件，然后再将结果合并。
 
-具体过程：
+***\*具体过程：\****
 
 1、读取所有满足条件的记录。
 
-2、对于每一行，存储一对值到缓冲区（排序列，行记录指针），一个是排序的索引列的值，即order by用到的列值，和指向该行数据的行指针（缓冲区的大小为sort_buffer_size大小）。
+2、对于每一行，存储一对值到缓冲区***\*（排序列，行记录指针）\****，一个是排序的索引列的值，即order by用到的列值，和指向该行数据的行指针（缓冲区的大小为sort_buffer_size大小）。
 
 3、当缓冲区满后，运行一个快速排序（qsort）来将缓冲区中数据排序，并将排序完的数据存储到一个临时文件，并保存一个存储块的指针，当然如果缓冲区不满，则不会重建临时文件了。
 
@@ -464,19 +464,19 @@ MySQL对排序有两种实现：
 
  
 
-### 特点
+### **特点**
 
 采取的方法为：快速排序 + 归并排序。
 
 但有一个问题，就是，一行数据会被读两次，第一次是where条件过滤时，第二个是排完序后还得用行指针去读一次，一个优化的方法是，直接读入数据，排序的时候也根据这个排序，排序完成后，就直接发送到客户端了。
 
-## 单路排序
+## **单路排序**
 
 在MySQL4.1版本之前只有第一种排序算法双路排序，第二种算法是从MySQL4.1开始的改进算法，主要目的是为了减少第一次算法中需要两次访问表数据的IO操作，将两次变成了一次，但相应也会耗用更多的sortbuffer空间。当然，MySQL4.1开始的以后所有版本同时也支持第一种算法。
 
-### 原理
+### **原理**
 
-即一遍扫描数据后将select需要的列数据以及排序的列数据都取出来，**然后在sort buffer中排序，这样就不需要进行第二遍扫描了，当然内存不足时也会使用磁盘临时文件进行外排。
+即***\*一遍扫描数据后将select需要的列数据以及排序的列数据都取出来，\*******\*然后在sort buffer中排序\****，这样就不需要进行第二遍扫描了，当然内存不足时也会使用磁盘临时文件进行外排。
 
 ​	过程如下：
 
@@ -488,7 +488,7 @@ MySQL对排序有两种实现：
 
 ​	4、读取排序完成的文件，并直接根据数据位置读取数据返回客户端，而不是去访问表
 
-### 特点
+### **特点**
 
 单路排序一次性将结果读取出来，然后在sort buffer中排序，避免了双路排序的两次读的随机IO。
 
@@ -500,7 +500,7 @@ MySQL根据sort_buffer_size来判断是否使用磁盘临时文件，如果需�
 
 # 参数
 
-## max_sort_length
+## **max_sort_length**
 
 这里需要区别max_sort_length和max_length_for_sort_data。
 
@@ -510,13 +510,13 @@ max_length_for_sort_data是为了让MySQL选择”< sort_key, rowid >”还是�
 
  
 
-## innodb_disable_sort_file_cache
+## **innodb_disable_sort_file_cache**
 
 innodb_disable_sort_file_cache设置为ON的话，表示在排序中生成的临时文件不会用到文件系统的缓存，类似于O_DIRECT打开文件。
 
  
 
-## innodb_sort_buffer_size
+## **innodb_sort_buffer_size**
 
 这个参数其实跟我们这里讨论的SQL排序没有什么关系。innodb_sort_buffer_size设置的是在创建InnoDB索引时，使用到的sort buffer的大小。
 
@@ -548,7 +548,7 @@ MySQL主要通过比较我们所设定的系统参数max_length_for_sort_data的
 
 3、增大sort_buffer_size参数设置
 
-增大sort_buffer_size并不是为了让MySQL选择改进版的单路排序算法，而是为了让MySQL尽量减少在排序过程中对需要排序的数据进行分段，因为分段会造成MySQL不得不使用临时表来进行交换排序。
+增大sort_buffer_size并不是为了让MySQL选择改进版的单路排序算法，而是为了让MySQL尽量***\*减少在排序过程中对需要排序的数据进行分段\****，因为分段会造成MySQL不得不使用临时表来进行交换排序。
 
 如果大量的查询较小的话，这个很好，就缓存中就搞定了。
 
