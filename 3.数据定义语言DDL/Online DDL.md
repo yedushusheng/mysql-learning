@@ -1,20 +1,20 @@
-# 背景
+# **背景**
 
-## MySQL5.4
+## **MySQL5.4**
 
 MySQL5.5之前的版本DDL实现方式：
 
- 
+![image-20210809105435134](C:\Users\大力\AppData\Roaming\Typora\typora-user-images\image-20210809105435134.png)
 
 存在的问题：
 
 1、copydata的过程需要耗费额外的存储空间，并且执行过程耗时较长；
 
-2、copydata的过程有写锁，无法持续的对外进行服务。
+2、copydata的过程有***\*写锁\****，无法持续的对外进行服务。
 
  
 
-## MySQL5.5
+## **MySQL5.5**
 
 FAST INDEX CREATE（FIC）
 
@@ -22,7 +22,7 @@ IN-PLACE方式，但依旧阻塞INSERT、UPDATE、DELETE操作
 
  
 
-## MySQL5.6
+## **MySQL5.6**
 
 参考：
 
@@ -34,7 +34,7 @@ MySQL5.6开始支持在线ddl，在线ddl能够提供下面的好处；
 
 2、在ddl执行期间，获得性能和并发性的平衡，可以指定LOCK从句与algorithm从句，lock=exclusize会阻塞整个表的访问，lock=shared会允许查询但不允许dml，lock=none允许查询和dml操作，lock=default或是没有指定，mysql使用最低级别的锁，algorithm指定是拷贝表还是不拷贝表直接内部操作
 
-3、只对需要的地方做改变，不是创建一个新的临时表。
+**3、*****\*只对需要的地方做改变，不是创建一个新的临时表\****。
 
 之前ddl操作的代价是很昂贵的，许多的alter table语句是创建一个新的，按需要的选项创建的空表，然后拷贝已经存在的行到新表中，在更新插入行的索引，在所有的行被拷贝之后，老的表被删除，拷贝的表被重命名成原来表的名。
 
@@ -58,7 +58,7 @@ https://www.cnblogs.com/zengkefu/p/5674945.html
 
  
 
-# 概述
+# **概述**
 
 DDL是用于描述数据库中要存储的现实世界实体的语言，例如创建数据库、创建表、添加索引、添加字段等。
 
@@ -68,7 +68,7 @@ MySQL 5.6版本开始引入Online DDL功能，并在MySQL5.7版本和8.0版本�
 
  
 
-# 种类
+# **种类**
 
 DDL的种类有很多，比较常见的包含：
 
@@ -88,45 +88,45 @@ DDL的种类有很多，比较常见的包含：
 
 每个操作里面又包含了很多种类，比如，索引操作中包含新增索引、删除索引等操作，列操作中有新增列、修改列、删除列等等，这些ddl操作执行过程中的状态究竟是什么样的？我们一一来看。
 
-## 索引DDL操作
+## **索引DDL操作**
 
 可以用下面的表来表示：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps819D.tmp.jpg) 
 
 从上面的表中可以看出，创建或者添加二级索引的时候，使用了inplace的操作，不需要重建表，并且允许并发的DML，也就是说，在创建索引的过程中，原表是可读可写的。它数据新增元数据的操作，没有修改数据库的元数据。
 
  
 
-## 主键DDL操作
+## **主键DDL操作**
+
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps81AE.tmp.jpg) 
 
  
 
- 
+## **列DDL操作**
 
-## 列DDL操作
-
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps81AF.tmp.jpg) 
 
  
 
-## 外键操作
+## **外键操作**
+
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps81B0.tmp.jpg) 
 
  
 
- 
+## **表操作**
 
-## 表操作
-
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps81C0.tmp.jpg) 
 
  
 
-# 特点
+# **特点**
 
-## 优点
+## **优点**
 
-online ddl操作支持表的本地更改(无需拷贝)和并发DML操作，一般有以下几个优点：  
+***\*online ddl操作支持表的本地更改(无需拷贝)和并发DML操作\****，一般有以下几个优点：  
 
 1、一般的线上环境都是比较忙碌的，想要在一个大表中比较平滑的执行DDL变更几乎不太可能，但是线上的环境又不会接受几分钟的延迟，使用online ddl操作可以尽可能的降低这种影响。
 
@@ -166,7 +166,7 @@ ALGORITHM=INPLACE,LOCK=NONE;
 
  
 
-## 系统空间
+## **系统空间**
 
 Online DDL对系统空间的要求：
 
@@ -176,7 +176,7 @@ b、如果DDL执行过程中支持并发DML，则DML操作产生的临时日志�
 
 c、如果DDL执行过程中需要对数据进行排序，则需要额外的系统空间来存储额外的临时排序文件
 
-## 限制
+## **限制**
 
 1、使用lock=none模式的时候，不允许有外键约束，如果表中有外键的时候，使用Online DDL会出现一些问题
 
@@ -186,7 +186,7 @@ c、如果DDL执行过程中需要对数据进行排序，则需要额外的系�
 
 4、optimize table操作会使用重建表的方法来释放聚集索引中未使用的空间，它类似alter table的操作，因为要重建表，它的处理效率不高。
 
-5、再对大表进行online ddl的操作时，还需要注意以下3点：
+***\*5、再对大表进行online ddl的操作时，还需要注意以下3点：\****
 
 a、没有任何操作能够停止Online DDL操作或者限制该操作过程中IO和磁盘使用率
 
@@ -202,13 +202,13 @@ c、大表的Online DDL会导致复制出现巨大的延迟，这一点在主从
 
  
 
-# 元数据锁
+# **元数据锁**
 
 Offline DDL和Online DDL最重要的区别：DDL执行过程中是否支持对表写擦做，该区别是由DDL执行过程中加不同的元数据锁决定的。
 
 元数据锁是Server层的锁（不是InnoDB存储引擎层面的），主要用于隔离DML和DDL以及 DDL之间的干扰。
 
-## 类型
+## **类型**
 
 DDL中的元数据锁：
 
@@ -222,7 +222,7 @@ DDL中的元数据锁：
 
  
 
-元数据锁之间的关系：
+***\*元数据锁之间的关系：\****
 
 1、MDL_EXCLUSIVE和MDL_SHARED_READ互斥
 
@@ -242,7 +242,7 @@ DDL中的元数据锁：
 
 7、MDL_SHARED_NO_WRITE和MDL_SHARED_WRITE互斥
 
-## 锁冲突
+## **锁冲突**
 
 开启元数据锁统计功能：
 
@@ -332,17 +332,17 @@ kill 336218；
 
  
 
-# Offline DDL
+# **Offline DDL**
 
-## 执行过程
+## **执行过程**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps81C1.tmp.jpg) 
 
 根据元数据锁的关系可知，从第1步加SHARED_NO_WRITE元数据锁，一直到第6步释放元数据锁，整个DDL期间，只允许对该表进行查询操作，不允许对该表进行写操作。
 
  
 
-## 监控
+## **监控**
 
 打开监控DDL进度功能。
 
@@ -356,13 +356,13 @@ DDL类型：新增字段
 
 分别采用offline DDL和online DDL方式新增字段，offline DDL耗时2min，online DDL耗时38s。
 
-# 过程
+# **过程**
 
 online ddl操作的执行过程一般被分为3个阶段，如下：
 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps81C2.tmp.png)
 
-
-## 阶段1：初始化阶段（准备阶段）
+## **阶段1：初始化阶段（准备阶段）**
 
 在初始化阶段，服务器将考虑存储引擎功能，语句中指定的操作以及用户指定的ALGORITHM和LOCK选项，以确定在操作期间允许多少并发。在此阶段，将使用共享的元数据锁来保护当前表定义。
 
@@ -384,9 +384,9 @@ online-rebuild：重新组织表,online-norebuild：改数据字典即可
 
  
 
-### ALGORITHM
+### **ALGORITHM**
 
-#### COPY
+#### **COPY**
 
 1、新建带索引(主键索引)的临时表
 
@@ -402,7 +402,7 @@ online-rebuild：重新组织表,online-norebuild：改数据字典即可
 
  
 
-#### INPLACE
+#### **INPLACE**
 
 1、创建索引(二级索引，主键+普通字段)数据字典
 
@@ -418,7 +418,7 @@ online-rebuild：重新组织表,online-norebuild：改数据字典即可
 
  
 
-#### DEFAULT
+#### **DEFAULT**
 
 1、alter table后面什么都不加的时候，默认是这个方式
 
@@ -434,15 +434,15 @@ online-rebuild：重新组织表,online-norebuild：改数据字典即可
 
  
 
-### 执行方式
+### **执行方式**
 
 根据DDL是否需要重建表空间，可以分为no-build和rebuild两种方式。
 
-#### no-rebuild
+#### **no-rebuild**
 
 no-rebuild不涉及表的重建（例如修改字段名），只修改元数据项（添加索引，会产生二级索引的写入操作），即只在原表路径下产生.frm文件，是代价最小、速度最快的DDL类型。
 
-#### rebuild
+#### **rebuild**
 
 rebuild涉及表的重建（例如新增字段），在原表路径下创建新的.frm和.ibd文件，拷贝ibd文件时消耗的IO较多。
 
@@ -452,7 +452,7 @@ Rebuild方式的DDL，对空间有要求，对IO消耗比较大，是代价最�
 
  
 
-### LOCK
+### **LOCK**
 
 控制是否锁表，根据不同的DDL操作类型表现不同，mysql原则是尽量不锁表，但是修改主键这样的昂贵操作不得不锁表
 
@@ -480,7 +480,7 @@ Rebuild方式的DDL，对空间有要求，对IO消耗比较大，是代价最�
 
 https://www.cnblogs.com/zengkefu/p/5674945.html
 
-## 阶段2：执行
+## **阶段2：执行**
 
 在此阶段，准备并执行该语句。元数据锁是否升级到排它锁取决于初始化阶段评估的因素。如果需要排他元数据锁，则仅在语句准备期间进行短暂锁定。
 
@@ -506,7 +506,7 @@ https://www.cnblogs.com/zengkefu/p/5674945.html
 
  
 
-## 阶段3：提交阶段
+## **阶段3：提交阶段**
 
 在提交表定义阶段，将元数据锁升级为排它锁，以退出旧表定义并提交新表定义，在获取排它锁的过程中，如果其他事务正在占有元数据的排它锁，那么本事务的提交操作可能会出现锁等待。
 
@@ -530,7 +530,7 @@ http://blog.itpub.net/22664653/viewspace-2056953
 
  
 
-## 总结
+## **总结**
 
 1、执行阶段加的锁是SHARED_UPGRADABLE，该阶段允许并行读写
 
@@ -540,11 +540,11 @@ http://blog.itpub.net/22664653/viewspace-2056953
 
 3、MDL_SHARED_UPGRADABLE之间是互斥的，所以可以保证同一张表不会并行执行多个DDL
 
-# 主备机DDL处理
+# **主备机DDL处理**
 
-# 监控
+# **监控**
 
-# 失败
+# **失败**
 
 官方文档上给出了可能失败的几种情况：
 
@@ -560,13 +560,13 @@ http://blog.itpub.net/22664653/viewspace-2056953
 
  
 
-## prepare阶段锁冲突
+## **prepare阶段锁冲突**
 
-场景描述：
+***\*场景描述：\****
 
 在DDL开始时，如果当前有其他长事务（不论是读还是写）涉及该表，则DDL处于Waiting for table metadata lock阶段，可能会锁等待超时“ERROR 1205(HY000):Lock wait timeout exceeded;try restarting transaction”。
 
-例如：
+***\*例如：\****
 
 事务1：begin;select * from t1 where id=1;
 
@@ -574,11 +574,11 @@ http://blog.itpub.net/22664653/viewspace-2056953
 
 如果先执行事务1，并且不提交，再执行事务2，事务2的DDL就会锁等待超时。
 
-异常影响：
+***\*异常影响：\****
 
 DDL失败，业务无影响。
 
-解决办法：
+***\*解决办法：\****
 
 1、对长事务处理：等待提交或者强制杀掉
 
@@ -586,17 +586,17 @@ DDL失败，业务无影响。
 
  
 
-## commit阶段锁冲突
+## **commit阶段锁冲突**
 
-场景描述：
+***\*场景描述：\****
 
 在DDL commit阶段，如果当前有其他长事务（不论是读还是写）涉及该表，则DDL处于Waiting for metadata lock阶段，可能会锁等待超时“ERROR 1205(HY000):Lock wait timeout exceeded;try restarting transaction”，此时DDL失败，对原表无影响，期间产生的DML无影响，继续使用原表。
 
-异常影响：
+***\*异常影响：\****
 
 DDL失败回滚，DDL执行和回滚期间的IO消耗可能会对业务性能产生影响。
 
-解决方法：
+***\*解决方法：\****
 
 1、对长事务处理：等待提交或者强制杀掉
 
@@ -604,47 +604,47 @@ DDL失败回滚，DDL执行和回滚期间的IO消耗可能会对业务性能产
 
  
 
-## Row_log空间不足
+## **Row_log空间不足**
 
-场景描述：
+***\*场景描述：\****
 
 row log空间每次申请的大小由innodb_sort_buffer_size决定，最大值是由参数innodb_online_alter_log+max_size，默认是128M，支持动态修改。对于更新频繁的表来讲，如果预计在DDL期间对表的更新操作存储可能超过128M时，需要为本次操作增大该值。当然如果不涉及rebuild操作时，不需要考虑该值。如果提示DB_ONLINE_LOG_TOO_BIG错误，则是由innodb_online_alter_log_max_size空间不足造成的。
 
-异常影响：
+***\*异常影响：\****
 
 DDL失败回滚，业务无影响。
 
-解决办法：
+***\*解决办法：\****
 
 1、调大innodb_online_alter_log_max_size值
 
  
 
-## 备机回放时延
+## **备机回放时延**
 
-场景描述：
+***\*场景描述：\****
 
 备机收到DDL的binlog信息后，做Online DDL操作，DDL耗时比较长的情况下，由于备机回放线程串行处理，阻塞后续的DML的回放，造成回放延迟。
 
-异常影响：无
+***\*异常影响：\****无
 
-解决办法：无
+***\*解决办法：\****无
 
  
 
-# 分布式数据库实践
+# **分布式数据库实践**
 
-## TDSQL
+## **TDSQL**
 
-## GoldenDB
+## **GoldenDB**
 
-### DDL流程设计
+### **DDL流程设计**
 
-#### 离线DDL
+#### **离线DDL**
 
 OMM界面执行的DDL属于离线DDL，均不锁表，是因为运维人员能保证当前没有业务在执行。
 
-#### Proxy DDL
+#### **Proxy DDL**
 
 ##### 流程
 
@@ -724,19 +724,19 @@ alter table modify/change column类型兼容，详细如下：
 
 不锁表流程如下：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps81D3.tmp.jpg) 
 
 不锁表流程图：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps81D4.tmp.jpg) 
 
 ###### 锁表
 
 锁表流程图：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps81E5.tmp.jpg) 
 
-### Proxy和DB差异
+### **Proxy和DB差异**
 
 | 场景                                   | Proxy                                                        | DB                         |
 | -------------------------------------- | ------------------------------------------------------------ | -------------------------- |
@@ -749,9 +749,9 @@ alter table modify/change column类型兼容，详细如下：
 
  
 
-### 使用建议
+### **使用建议**
 
-#### 批量处理
+#### **批量处理**
 
 通过合并多个DDL，达到性能最大化。例如，如果新增多个字段，可以通过一条DDL完成，这样可以达到只复制一次ibd文件，减少IO消耗和执行时间。
 
@@ -759,7 +759,7 @@ alter table t add column t1,add column t2;
 
  
 
-#### 定制DDL的执行方式
+#### **定制DDL的执行方式**
 
 语法：alter table xxx,ALGORITHM=xx,Lock=xx;
 
@@ -821,7 +821,7 @@ alter table t1 add column f20 varcahr(10),lock=exclusive;
 
  
 
-#### 采用最小代价方式
+#### **采用最小代价方式**
 
 1、从对业务的影响、对资源消耗以及执行时间等角度考虑，不同类型的DDL代价差别比较大
 
@@ -837,7 +837,7 @@ Online DDL no-rebuild < Online DDL rebuild < Offline DDL
 
 2、对于online DDL rebuild方式，并行的DML对DDL执行时间和IO影响，DDL尽量在业务量小的时候进行
 
-#### Proxy和DB分开执行DDL
+#### **Proxy和DB分开执行DDL**
 
 通过在proxy和DB上分别执行DDL，来达到proxy上不支持的DDL语法，以及达到最佳性能。
 
@@ -851,7 +851,7 @@ Proxy不支持“alter table ta add column f1 int,add column t2,add column t3;�
 
 2、待第一步完成后，再通过proxy执行3个拆分后的DDL，是元数据和DB上的表结构保持一致
 
-#### 新增字段
+#### **新增字段**
 
 | 方案                 | 从proxy发起，每次新增一个字段；增加多个字段时，分多个时间段，每个时间段只增加一个字段 |
 | -------------------- | ------------------------------------------------------------ |
@@ -863,7 +863,7 @@ Proxy不支持“alter table ta add column f1 int,add column t2,add column t3;�
 
  
 
-#### 修改字段类型
+#### **修改字段类型**
 
 | 方案                 | 从proxy发起                                                  |
 | -------------------- | ------------------------------------------------------------ |
@@ -875,7 +875,7 @@ Proxy不支持“alter table ta add column f1 int,add column t2,add column t3;�
 
  
 
-#### 修改字段comment
+#### **修改字段comment**
 
 | 方案                 | 从proxy发起                                                  |
 | -------------------- | ------------------------------------------------------------ |
@@ -887,7 +887,7 @@ Proxy不支持“alter table ta add column f1 int,add column t2,add column t3;�
 
  
 
-#### 新增索引
+#### **新增索引**
 
 | 方案                 | 从proxy发起                                         |
 | -------------------- | --------------------------------------------------- |
@@ -899,7 +899,7 @@ Proxy不支持“alter table ta add column f1 int,add column t2,add column t3;�
 
  
 
-#### 新增分区
+#### **新增分区**
 
 | 方案                 | 从proxy发起                                                  |
 | -------------------- | ------------------------------------------------------------ |
