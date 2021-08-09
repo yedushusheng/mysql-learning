@@ -4,7 +4,7 @@
 
 MySQL数据库优化是多方面的，原则是减少系统的瓶颈，减少资源的占用，增加系统的反应速度。例如，通过优化文件系统，提高磁盘I\O的读写速度；通过优化操作系统调度策略，提高MySQL在高负荷情况下的负载能力；优化表结构、索引、查询语句等使查询响应更快。在MySQL中，可以使用SHOW STATUS语句查询一些MySQL数据库的性能参数。SHOW STATUS语句的语法如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9CA7.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED4E.tmp.jpg) 
 
 其中，value是要查询的参数值，一些常用的性能参数如下：
 
@@ -24,11 +24,11 @@ MySQL数据库优化是多方面的，原则是减少系统的瓶颈，减少资
 
 查询MySQL服务器的连接次数，可以执行如下语句：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9CA8.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED4F.tmp.jpg) 
 
 查询MySQL服务器的慢查询次数，可以执行如下语句：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9CA9.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED50.tmp.jpg) 
 
 查询其他参数的方法和两个参数的查询方法相同。慢查询次数参数可以结合慢查询日志，找出慢查询语句，然后针对慢查询语句进行表结构优化或者查询语句优化。
 
@@ -36,7 +36,7 @@ MySQL数据库优化是多方面的，原则是减少系统的瓶颈，减少资
 
 数据库优化一方面是找出系统的瓶颈，提高MySQL数据库的整体性能，而另一方面需要合理的结构设计和参数调整，以提高用户的相应速度，同时还要尽可能的节约系统资源，以便让系统提供更大的负荷。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9CAA.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED61.tmp.jpg) 
 
 ## **概述**
 
@@ -44,7 +44,7 @@ MySQL数据库优化是多方面的，原则是减少系统的瓶颈，减少资
 
 ### **问题**
 
-***\*优化可能带来的问题：\****
+**优化可能带来的问题：**
 
 优化不总是对一个单纯的环境进行，还很可能是一个复杂的已投产的系统。
 
@@ -60,7 +60,7 @@ MySQL数据库优化是多方面的，原则是减少系统的瓶颈，减少资
 
 ### **需求**
 
-***\*优化的需求：\****
+**优化的需求：**
 
 稳定性和业务可持续性，通常比性能更重要。
 
@@ -94,7 +94,7 @@ MySQL数据库优化是多方面的，原则是减少系统的瓶颈，减少资
 
 ​	很多数据库问题都是由于低效的查询引起的
 
-​	**3****、优化用户体验**
+​	**3、优化用户体验**
 
 ​	流畅页面的访问速度
 
@@ -106,7 +106,7 @@ MySQL数据库优化是多方面的，原则是减少系统的瓶颈，减少资
 
 在进行MySQL的优化之前必须要了解的就是MySQL的查询过程，很多的查询优化工作实际上就是遵循一些原则让MySQL的优化器能够按照预想的合理方式运行而已。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9CBB.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED62.tmp.jpg) 
 
 ## **诊断工具**
 
@@ -118,7 +118,7 @@ MySQL数据库优化是多方面的，原则是减少系统的瓶颈，减少资
 
 优化可以分为两大类：软优化和硬优化。软优化一般是操作数据库即可，而硬优化则是操作服务器硬件及参数设置。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9CBC.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED63.tmp.jpg) 
 
 ### **软优化**
 
@@ -344,13 +344,13 @@ mysql> explain select * from category;
 
 字段解释：
 
-***\*id\****
+**id**
 
 \1) id：select查询序列号（该语句的唯一标识）。id相同，执行顺序由上至下；id不同，id值越大优先级越高，越先被执行。
 
 有几个select就有几个id，并且id的顺序是按select出现的顺序增长的。MySQL将select查询分为简单查询和复杂查询。复杂查询分为三类：简单子查询、派生表（from语句中的子查询）、union查询。
 
-***\*select_type\****
+**select_type**
 
 \2) select_type：查询数据的操作类型，其值如下：
 
@@ -378,17 +378,17 @@ UNCACHEABLE UNION：UNION属于UNCACHEABLE SUBQUERY的第二个或后面的查�
 
 UNION RESULT：从union表获取结果的select
 
-***\*table\****
+**table**
 
 \3) table：显示该行数据是关于哪张表
 
 表示explain的一行正在访问哪个表。当from子句中有子查询时，table列是<derivenN> 格式，表示当前查询依赖id=N的查询，于是先执行id=N的查询。当有union时，UNIONRESULT的table列的值为<union1,2>，1和2表示参与union的select行id。
 
-***\*partitions\****
+**partitions**
 
 \4) partitions：匹配的分区
 
-***\*type\****
+**type**
 
 \5) type：表的连接类型，MySQL在表中找到所需行的方式，又称“访问类型”。其值，性能由高到底排列如下：
 
@@ -553,7 +553,7 @@ TIPS
 
  
 
-###### profile
+###### *profile*
 
 使用 profiling 命令可以了解 SQL 语句消耗资源的详细信息（每个执行步骤的开销）。
 
@@ -727,13 +727,13 @@ clipboard.png
 
 **explain返回各列的含义：**
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9CCC.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED73.tmp.jpg) 
 
 table：显示这一行的数据是关于哪张表的
 
 type：这是重要的列，显示连接使用了何种类型，从最好到最差的连接类型为const、eq_reg、ref、range、index和ALL
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9CDD.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED74.tmp.jpg) 
 
 注：
 
@@ -741,7 +741,7 @@ const常数时间查找，一般对于主键或唯一索引都是常数时间查
 
 eq_reg范围查找，一般是主键或唯一索引的范围查找
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9CDE.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED75.tmp.jpg) 
 
 possible_key：显示可能应用在这张表中的索引，如果为空，没有可能的索引
 
@@ -919,7 +919,7 @@ mysqldumpslow -s t -t 10 -g "left join" /var/lib/mysql/slow-query.log
 
  
 
-###### 系统层面分析
+###### *系统层面分析*
 
 cpu方面：
 
@@ -969,7 +969,7 @@ SQL问题的几率比较大；
 
  
 
-##### 慢查询
+##### *慢查询*
 
 ​	通过show processlist或开启慢查询，获取有问题的SQL。
 
@@ -1027,23 +1027,23 @@ InnoDB层行锁消耗的时间。
 
 SHOWVARIABLESLIKE'%slow_query_log%';
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9CDF.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED86.tmp.jpg) 
 
 ②如果没有开启，通过命令开启慢查询日志
 
 SETGLOBAL slow_query_log=1;
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9CE0.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED87.tmp.jpg) 
 
 ③设置慢查询日志的时间，这里的单位是秒，意思是只要是执行时间超过X秒的查询语句被记录到这个日志中。这里的X就是你要设置的。（下面的例子设置的是3秒）
 
 SETGLOBAL long_query_time=3;
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9CF1.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED88.tmp.jpg) 
 
 ④查看多少 SQL 语句是超过查询阀值的（3秒）
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9CF2.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED89.tmp.jpg) 
 
  
 
@@ -1117,7 +1117,7 @@ SETGLOBAL long_query_time=3;
 
 ​	如何通过慢查询日志发现有问题的SQL？
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D02.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED9A.tmp.jpg) 
 
 1、 查询次数多且每次查询占用时间长的SQL
 
@@ -1139,21 +1139,21 @@ SELECT * 增加很多不必要的消耗（cpu、io、内存、网络带宽）；
 
 ##### 聚合函数优化
 
-###### m**ax()**函数优化
+###### max()函数优化
 
 ​	查找最后支付时间：
 
 ​	select max(payment_date) from payment;
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D03.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED9B.tmp.jpg) 
 
 ​	可以通过在查询字段上建索引优化：
 
 ​	create index inx_payment_date on payment(payment_date);
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D04.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED9C.tmp.jpg) 
 
-###### c**ount**()函数优化
+###### count()函数优化
 
 ​	在一条SQL中同时查出2006年和2007年电影的数量
 
@@ -1161,7 +1161,7 @@ SELECT * 增加很多不必要的消耗（cpu、io、内存、网络带宽）；
 
 ​	SELECT COUNT(release_year=’2006’ OR release_year=’2007’) FROM film;
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D05.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsED9D.tmp.jpg) 
 
 ​	无法分开计算2006和2007年的电影数量：
 
@@ -1177,7 +1177,7 @@ SELECT * 增加很多不必要的消耗（cpu、io、内存、网络带宽）；
 
 ​	FROM film;
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D06.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDAD.tmp.jpg) 
 
 ​	注：count(*)包括内容为NULL的行，count(id)不包括为NULL的行。
 
@@ -1205,11 +1205,11 @@ select user_id,user_project from table_name where age=36/2;
 
 反例：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D17.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDAE.tmp.jpg) 
 
 正例：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D18.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDAF.tmp.jpg) 
 
 理由：
 
@@ -1239,7 +1239,7 @@ select * from user where userid ='123';
 
 where子句中出现column字段的类型和传入的参数类型不一致的时候发生的类型转换，建议先确定where中的参数类型（尤其是字符类型不加’’的情况）。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D29.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDB0.tmp.jpg) 
 
 ###### 不建议使用%前缀模糊匹配
 
@@ -1249,7 +1249,7 @@ where子句中出现column字段的类型和传入的参数类型不一致的时
 
 如下图所示，虽然给secret字段添加了索引，但在explain结果果并没有使用
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D2A.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDC1.tmp.jpg) 
 
 那么如何解决这个问题呢，答案：使用全文索引
 
@@ -1273,13 +1273,13 @@ select id,fnum,fdst from table_name where match(user_name) against('zhangsan' in
 
 ###### BETWEEN AND优化
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D2B.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDC2.tmp.jpg) 
 
 速度也很快，id上有主键索引，这个采用的上面介绍的范围查找可以快速定位目标数据。
 
 但是如果范围太大，跨度的page也太多，速度也会比较慢，如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D2C.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDC3.tmp.jpg) 
 
 上面id的值跨度太大，1所在的页和200万所在页中间有很多页需要读取，所以比较慢。
 
@@ -1423,7 +1423,7 @@ mysql> explain select*from user_info where address='Beijing' or user_id=1;
 
 ​	通常情况下，需要***\*把子查询优化为join查询，但在优化时需要注意关联键是否有一对多的关系，如果\*******\*存在\*******\*1对\*******\*多的关系，则需\*******\*要注意重复数据，可以使用distinct去重\****。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D3C.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDD3.tmp.jpg) 
 
  
 
@@ -1459,7 +1459,7 @@ select * from A where A.deptId = B.deptId
 
 可以抽象成这样的一个循环：  
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D3D.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDD4.tmp.jpg) 
 
 显然，除了使用in，我们也可以用exists实现一样的查询功能，如下：
 
@@ -1475,7 +1475,7 @@ select * from B where A.deptId = B.deptId,再从B表做循环.
 
 同理，可以抽象成这样一个循环：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D4E.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDD5.tmp.jpg) 
 
 数据库最费劲的就是跟程序链接释放。假设链接了两次，每次做上百万次的数据集查询，查完就走，这样就只做了两次；相反建立了上百万次链接，申请链接释放反复重复，这样系统就受不了了。即mysql优化原则，就是小表驱动大表，小的数据集驱动大的数据集，从而让性能更优。
 
@@ -1507,7 +1507,7 @@ select colname … from A表 Left join B表 on where a.id = b.id where b.id is n
 
 取出的结果集如下图表示，A表不在B表中的数据：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D4F.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDD6.tmp.jpg) 
 
  
 
@@ -1583,11 +1583,11 @@ mysql> select*from user_1;
 
 不禁止排序，即不使用ORDER BY NULL时：有明显的Using filesort。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D50.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDD7.tmp.jpg) 
 
 当使用ORDER BY NULL禁止排序后，Using filesort不存在
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D51.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDE8.tmp.jpg) 
 
  
 
@@ -1599,9 +1599,9 @@ mysql> select*from user_1;
 
 ​	GROUP BY film_actor.actor_id;
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D52.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDE9.tmp.jpg) 
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D62.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDEA.tmp.jpg) 
 
 ​	为了避免临时表和文件排序，可以采用如下优化：
 
@@ -1615,11 +1615,11 @@ SELECT actor.id, COUNT(*) AS cnt FROM sakila.film_actor GROUP BY actor_id
 
 ) AS c USING(actor_id);
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D63.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDEB.tmp.jpg) 
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D64.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDFC.tmp.jpg) 
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D65.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDFD.tmp.jpg) 
 
 ​	注：如果需要在关联表中某一列采用group by，最好选择同一表的列进行group by。
 
@@ -1679,7 +1679,7 @@ select id from `table_name` t1 join (select rand() * (select max(id) from `table
 
 ​	SELECT film_id,description FROM sakila.film ORDER BY title LIMIT 50,5;
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D76.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDFE.tmp.jpg) 
 
 ​	优化limit查询：
 
@@ -1689,7 +1689,7 @@ SELECT film_id,description FROM sakila.film ORDER BY film_id LIMIT 50,5;
 
 注：使用主键排序，不会再使用文件排序，会使用索引，避免很多IO操作，扫描的行数比之前少了很多。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D77.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEDFF.tmp.jpg) 
 
 ​	但是上述方法存在一个问题，分页查询的越大，则扫描的行越多。
 
@@ -1697,7 +1697,7 @@ SELECT film_id,description FROM sakila.film ORDER BY film_id LIMIT 50,5;
 
 SELECT film_id,description FROM sakila.film WHERE film_id>55 AND film_id<=60 ORDER BY film_id LIMIT 1,5;
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D78.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE0F.tmp.jpg) 
 
 ​	注：使用这种方式的缺点就是要求主键顺序增长排序且连续的，如果出现了空缺的某几行，可能会出现最后的结果不足5行的情况。
 
@@ -1723,7 +1723,7 @@ select DISTINCT name from user;
 
 JOIN 子句里面的列尽量被索引。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D89.tmp.png) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE10.tmp.png) 
 
 •LEFT JOIN A表为驱动表
 
@@ -1767,7 +1767,7 @@ right join在两张表进行连接查询时，会返回右表所有的行，即�
 
 ###### 利用小表去驱动大表
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D8A.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE11.tmp.jpg) 
 
 从原理图能够直观的看出如果能够减少驱动表的话，减少嵌套循环中的循环次数，以减少 IO总量及CPU运算的次数。
 
@@ -1777,7 +1777,7 @@ right join在两张表进行连接查询时，会返回右表所有的行，即�
 
 inner join是由mysql选择驱动表，但是有些特殊情况需要选择另个表作为驱动表，比如有group by、order by等Using filesort、Using temporary时。STRAIGHT_JOIN来强制连接顺序，在STRAIGHT_JOIN左边的表名就是驱动表，右边则是被驱动表。在使用STRAIGHT_JOIN有个前提条件是该查询是内连接，也就是inner join。其他链接不推荐使用STRAIGHT_JOIN，否则可能造成查询结果不准确。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D8B.tmp.png) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE12.tmp.png) 
 
 这个方式有时可能减少3倍的时间。
 
@@ -1907,7 +1907,7 @@ mysql> explain select* from user_info force index(id_index) where user_id>0;
 
 将大的DELETE，UPDATE or INSERT 查询变成多个小查询。为了达到更好的性能以及更好的数据控制，你可以将他们变成多个小查询。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D9B.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE23.tmp.jpg) 
 
 如果插入数据过多，考虑批量插入。
 
@@ -1937,7 +1937,7 @@ insert into user(name,age) values
 
  
 
-#### *使用索引*
+#### 使用索引
 
 ##### 如何选择合适的列建立索引？
 
@@ -1955,7 +1955,7 @@ SELECT * FROM payment WHERE staff_id=2 AND customer_id=584;
 
 首先，判断字段的离散程度：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9D9C.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE24.tmp.jpg) 
 
 ​	判断离散程度可以对列进行count统计操作，唯一值越多则离散程度越好。
 
@@ -1973,7 +1973,7 @@ SELECT * FROM payment WHERE staff_id=2 AND customer_id=584;
 
 ###### 重复及冗余索引
 
-***\*重复索引\****
+*重复索引*
 
 ​	重复索引是指相同的列以相同的顺序建立的同类型的索引，如下表中primary_key和ID列上的索引都是重复索引：
 
@@ -2033,7 +2033,7 @@ a.COLUMN_NAME=b.COLUMN_NAME WHERE a.SEQ_IN_INDEX=1 AND
 
 a.INDEX_NAME<>b.INDEX_NAME
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DAD.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE25.tmp.jpg) 
 
 还可以使用pt-duplicate-key-checker工具检查重复及冗余索引：
 
@@ -2151,13 +2151,13 @@ innodb_flush_log_at_trx_commit=1，表示每个事务提交时，把事务日志
 
 innodb_flush_log_at_trx_commit=2，表示每个事务提交时，把事务日志数据从缓存区写到日志文件中；每隔一秒，刷新一次日志文件，但不一定刷新到磁盘上，而是取决于操作系统的调度。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DAE.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE36.tmp.jpg) 
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DAF.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE37.tmp.jpg) 
 
 使用命令“show innodb status\G; ”可以看到当前刷新事务日志的情况：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DB0.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE38.tmp.jpg) 
 
 除了记录事务日志以外，数据库还会记录一定量的撤销日志（undo log）, undo与redo正好相反，在对数据进行修改时，由于某种原因失败了，或者人为执行了rollback回滚语句，就可以利用这些撤销日志将数据回滚到修改之前的样子，就如前面举的那个ATM取款机取钱的例子。redo日志保存在ib_logfile0/1/2里，而undo日志保存在ibdata1里，在MySQL5.6里还可以把undo日志单拆分出去。
 
@@ -2199,7 +2199,7 @@ ORACLE/SQL SERVER的默认隔离级别是Read Committed（读提交），而MySQ
 
 ❑ 序列化（Serializable）：提供严格的事务隔离。它要求事务序列化执行，事务只能一个接着一个地执行，不能并发执行。如果仅仅通过“行级锁”是无法实现事务序列化的，必须通过其他机制保证新插入的数据不会被刚执行查询操作的事务访问到。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DB1.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE39.tmp.jpg) 
 
 隔离级别越高，越能保证数据的完整性和一致性，但是对并发性能的影响也越大。对于多数应用程序来说，可以优先考虑把数据库系统的隔离级别设为Read Committed，它能够避免脏读取，而且具有较好的并发性能。尽管它会导致不可重复读、虚读和第二类丢失更新这些并发问题，一般来说，还是可以接受的，因为读到的是已经提交的数据，本身并不会带来很大的问题。
 
@@ -2251,7 +2251,7 @@ CREATE TABLE sessions(id INT AUTO_INCREMENT NOT NULL
 
 ​	范式化是指数据库设计的规范，***\*目前说到范式化一般是指第三设计范式\****，也就是要求数据表中不存在非关键字段。对任意候选关键字段的传递函数依赖则符合第三范式。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DC2.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE49.tmp.jpg) 
 
 ​	存在以下传递函数依赖关系：
 
@@ -2269,13 +2269,13 @@ CREATE TABLE sessions(id INT AUTO_INCREMENT NOT NULL
 
 4、 数据的删除异常
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DC3.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE4A.tmp.jpg) 
 
 ##### 反范式化优化
 
 ​	***\*反范式化是指为了查询效率的考虑把原来符合第三范式的表适当的增加冗余，以达到优化查询效率的目的\****。反范式化是一种以空间换取时间的操作。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DD3.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE4B.tmp.jpg) 
 
 ##### 垂直拆分
 
@@ -2289,13 +2289,13 @@ CREATE TABLE sessions(id INT AUTO_INCREMENT NOT NULL
 
 操作：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DD4.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE4C.tmp.jpg) 
 
 该表垂直拆分为下面的两张表：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DD5.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE5D.tmp.jpg) 
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DD6.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE5E.tmp.jpg) 
 
 ##### 水平拆分
 
@@ -2313,7 +2313,7 @@ CREATE TABLE sessions(id INT AUTO_INCREMENT NOT NULL
 
 表的水平拆分是为了解决单标的数据量多大的问题，水平拆分的表每一个表的结构都是完全一致的。以下面的payment表为例：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DD7.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE5F.tmp.jpg) 
 
 #### 分解表
 
@@ -2369,7 +2369,7 @@ MySQL-v>=5.5建立索引会造成主从延迟（mysql建立索引，先在组上
 
 1、分析表: 使用ANALYZE关键字,如ANALYZE TABLE user;
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DE8.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE60.tmp.jpg) 
 
 Op:表示执行的操作.
 
@@ -2705,13 +2705,13 @@ numactl命令未找到，numa就是未开启吗？
 
 如图18-2所示的是一个SMP系统。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DE9.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE70.tmp.jpg) 
 
 在这样的系统中，所有的CPU共享全部资源，如总线、内存和I/O系统等，多CPU之间没有区别，均可平等地访问内存和外部资源。因为CPU共享相同的物理内存，每个CPU访问内存中的任何地址所需要的时间也是相同的，因此SMP也被称为一致存储器访问结构（Uniform Memory Access，UMA），尤其是在和NUMA架构对比的时候。***\*对于SMP服务器而言，每一个共享的环节都可能是瓶颈所在。\****由于所有处理器都共享系统总线，所以当处理器的数目增多时，系统总线的竞争冲突也会加大，系统总线成为了性能瓶颈，所以其扩展性有限，这种架构已经被逐步淘汰，但在CPU内部还有应用，单个CPU的所有核共享访问该CPU的本地内存。
 
 如图18-3所示的是NUMA系统。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DEA.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE71.tmp.jpg) 
 
 在这种架构中，每颗CPU有自己独立的本地内存，CPU节点之间通过互联模块进行连接，***\*访问本地内存的开销很小，延时比访问远端内存（系统内其他节点的内存）小得多\****。这也是非一致存储访问NUMA的由来。
 
@@ -2727,7 +2727,7 @@ numactl命令未找到，numa就是未开启吗？
 
 如图所示，NUMA使用了default策略，这将导致内存分配的不均衡，numastat命令的输出如下。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DEB.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE72.tmp.jpg) 
 
 各项输出的含义如下。
 
@@ -2761,7 +2761,7 @@ numactl命令未找到，numa就是未开启吗？
 
 我们可以检查程序具体的内存分配信息，假设pid是mysqld的进程ID，通过查看/proc/pid/numa_maps这个文件，我们可以看到所有mysqld所做的分配操作。各字段的显示如下。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DFB.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE83.tmp.jpg) 
 
 各字段及其解析如下。
 
@@ -2781,7 +2781,7 @@ numactl命令未找到，numa就是未开启吗？
 
 我们可以使用numactl命令显示可用的节点。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9DFC.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE84.tmp.jpg) 
 
 如上命令告诉我们，系统有两个CPU节点：node0、node1。每个节点分配了64GB的内存。
 
@@ -2809,15 +2809,15 @@ MySQL是单进程多线程架构数据库，当NUMA采用默认内存分配策�
 
 可用类似如下的方式进行修改。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E0D.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE85.tmp.jpg) 
 
 确认NUMA是否关闭，检查numactl--show的输出信息。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E0E.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE86.tmp.jpg) 
 
 关闭之前这个命令会显示多个节点的信息，输出结果如下所示。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E0F.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE97.tmp.jpg) 
 
 而关闭之后则只会显示一个节点的信息，nodebind项只有一个值0。我们也可以检查启动信息dmesg|grep-i numa。
 
@@ -2827,11 +2827,11 @@ MySQL是单进程多线程架构数据库，当NUMA采用默认内存分配策�
 
 也可以修改启动脚本和参数，绑定MySQL的各个实例到固定的CPU节点，笔者更推荐使用这种方式。下面的例子，在节点0的CPU上运行名为program的程序，并且只在节点0和1上分配内存。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E10.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE98.tmp.jpg) 
 
 下面的例子，在节点1上运行$MYSQLD程序，只在节点内分配内存。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E11.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEE99.tmp.jpg) 
 
 3）设置参数memlock。
 
@@ -2971,7 +2971,7 @@ OLTP类型数据一般内存是cpu核心数量的2倍到4倍，没有最佳实�
 
 ###### 磁盘选择
 
-传统磁盘
+***\*传统磁盘\****
 
 传统磁盘本质上是一种机械装置，影响磁盘的关键因素是磁盘服务时间，即磁盘完成一个I/O请求所花费的时间，它由寻道时间、旋转延迟和数据传输时间三部分构成。
 
@@ -3053,7 +3053,7 @@ SSD也称为固态硬盘，目前SSD设备主要分为两类，基于PCI-E的SSD
 
  
 
-###### D**isk IO**/RAID优化
+###### Disk IO/RAID优化
 
 磁盘I/O相关
 
@@ -3133,7 +3133,7 @@ kernel /boot/vmlinuz-2.6.18-8.el5 ro root=LABEL=/ elevator=deadline rhgb quiet
 
 注意：以上这些规划应该在初始设计系统时就应该考虑好。
 
-##### 总结	
+##### 总结
 
 1、配置多核心和频率高的cpu，多核心可以执行多个线程.
 
@@ -3279,7 +3279,7 @@ Linux有4种I/O调度算法：CFQ、Deadline、Anticipatory和NOOP，CFQ是默�
 
 如下命令将实时修改I/O调度算法：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E31.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEEA9.tmp.jpg) 
 
 如果你需要永久生效，则可以把命令写入/etc/rc.local文件内，或者写入grub.conf文件中。
 
@@ -3507,7 +3507,7 @@ Direct I/O允许应用程序在使用文件系统的同时绕过文件系统的�
 
  
 
-##### 最多用户
+##### *最多用户*
 
 用户限制参数（MySQL可以不设置以下配置）：
 
@@ -3687,7 +3687,7 @@ MySQL有InnoDB缓冲区，但是其更多地只是属于数据库的一个组件
 
 缓存命中率和性能的关系如图17-1所示。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E32.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEEAA.tmp.jpg) 
 
 由图17-1可以得知缓存命中率和性能的关系，98%~99%命中率的性能提升远远大于10%~11%命中率的性能提升。这种非线性的图形，主要是因为缓存命中（cache hit）和缓存未命中（cachemiss）所访问的存储的速度差异比较大而形成的，比如内存和磁盘。由于这样一个非线性的图形，我们在模拟缓存故障的情况下要留意缓存的命中率，如果缓存的命中率不高，那么即使缓存挂了，对后端数据库的冲击也不会很大，但是如果缓存命中率很高，那么如果缓存挂了，可能就会对后端的数据库造成很大冲击。
 
@@ -3731,7 +3731,7 @@ MySQL有InnoDB缓冲区，但是其更多地只是属于数据库的一个组件
 
 对数据库进行的一些大操作，我们可以通过小批量操作的方式减少操作对生产系统的影响，比如下面的这个删除大量数据的例子。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E43.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEEAB.tmp.jpg) 
 
 执行SQL会删除千万级别的记录，由于删除的记录过多，可能会导致执行计划变为全表扫描，从而导致不能写入数据，影响生产环境。
 
@@ -4041,7 +4041,7 @@ sort_buffer_size #定义了每个线程排序缓存区的大小，MySQL在有查
 
 在表进行order by和group by排序操作时，由于排序的字段没有索引，会出现Using filesort，为了提高性能，可用此参数增加每个线程分配的缓冲区大小。默认为2 MB。这个参数不要设置过大，一般在128 ～256 KB即可。另外，一般出现Using filesort的时候，要通过增加索引来解决。比如，图5-100所示的这个例子：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E54.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEEBC.tmp.jpg) 
 
 ***\*join_buffer_size\**** 
 
@@ -4049,7 +4049,7 @@ join_buffer_size #定义了每个线程所使用的连接缓冲区的大小，�
 
 表进行join连接操作时，如果关联的字段没有索引，会出现Using join buffer，为了提高性能，可用此参数增加每个线程分配的缓冲区大小。默认为128 KB。这个参数不要设置过大，一般在128 ～256KB即可。一般出现Using join buffer的时候，要通过增加索引来解决。比如，图5-101所示的这个例子：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E55.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEEBD.tmp.jpg) 
 
  
 
@@ -4208,7 +4208,7 @@ Max_connections = 1024
 
 达到最大的连接数会报错：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E56.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEEBE.tmp.jpg) 
 
  
 
@@ -4366,7 +4366,7 @@ innodb_additional_mem_pool_size   #小于2G内存的机器，推荐值是20M。3
 
 因为数据库压力过大，首先一个问题就是高峰期系统性能可能会降低，因为数据库负载过高对性能会有影响。另外一个，压力过大把你的数据库给搞挂了怎么办？所以此时你必须得对系统做分库分表 + 读写分离，也就是把一个库拆分为多个库，部署在多个数据库服务上，这时作为主库承载写入请求。然后每个主库都挂载至少一个从库，由从库来承载读请求。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E66.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEECF.tmp.jpg) 
 
  
 
@@ -4376,7 +4376,7 @@ innodb_additional_mem_pool_size   #小于2G内存的机器，推荐值是20M。3
 
 但是这里有一个很大的问题：数据库其实本身不是用来承载高并发请求的，所以通常来说，数据库单机每秒承载的并发就在几千的数量级，而且数据库使用的机器都是比较高配置，比较昂贵的机器，成本很高。如果你就是简单的不停的加机器，其实是不对的。所以在高并发架构里通常都有缓存这个环节，缓存系统的设计就是为了承载高并发而生。所以单机承载的并发量都在每秒几万，甚至每秒数十万，对高并发的承载能力比数据库系统要高出一到两个数量级。所以你完全可以根据系统的业务特性，对那种写少读多的请求，引入缓存集群。具体来说，就是在写数据库的时候同时写一份数据到缓存集群里，然后用缓存集群来承载大部分的读请求。这样的话，通过缓存集群，就可以用更少的机器资源承载更高的并发。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E67.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEED0.tmp.jpg) 
 
  
 
@@ -4390,7 +4390,7 @@ innodb_additional_mem_pool_size   #小于2G内存的机器，推荐值是20M。3
 
 基本分析思路：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E68.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEED1.tmp.jpg) 
 
 ​	首先，需要通过脚本不断刷新服务器的状态，查看是不是周期性出现问题。而不是先查看SQL语句，应该先把服务器的性能瓶颈摸清楚。
 
@@ -4566,9 +4566,9 @@ logging slow query：记录慢查询
 
 注：重现前把临时表内存变小，这样方便复现出问题。 
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E69.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEEE1.tmp.jpg) 
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E7A.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEEE2.tmp.jpg) 
 
 ​	注：Sending data表示发送数据，如果查询数据结果集过大，则这个数据会很大，即大部分时间都浪费在发送数据上。
 
@@ -4584,7 +4584,7 @@ https://www.cnblogs.com/mydriverc/p/7086523.html
 
 ​	查看状态：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E7B.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEEE3.tmp.jpg) 
 
 ​	注：profiling表示是否开启，profiling_history_size表示历史记录查询语句个数。
 
@@ -4624,7 +4624,7 @@ SWAPS 显示SWAP的次数
 
 SHOW PROFILE FOR QUERY n，这里的n就是对应SHOW PROFILES输出中的Query_ID。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9E8B.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEEE4.tmp.jpg) 
 
 ​	注：通过这个指令可以分析查询语句在启动、打开表、系统锁、表锁、初始化、优化器、准备、执行、发送数据等耗时。这里显然发送数据耗时大，查询语句过大。
 
