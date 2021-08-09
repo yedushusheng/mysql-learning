@@ -14,6 +14,8 @@
 
 在mysql>提示符后面输入所要执行的SQL语句，每个SQL语句以分号（；）或者“\g”结束，按回车键执行。
 
+ 
+
 # **表分类**
 
 在SQL中，并不是所有的表都是相同的。有些表是永久的，有些表则是临时的。有些表是模式对象，而有些表则包含在模块中，所有的模块表也是临时的。
@@ -32,33 +34,37 @@
 
 而与全局临时表不同之处在于：我们在SQL会话内的任何地方都可以访问全局临时表；而局部临时表只有在相关的SQL模块内才能被访问。局部临时表的创建语句为CREAT LOCALTEMPORARY TABLE。
 
+ 
+
 当操作非常大的表时，你可能偶尔需要运行很多查询获得一个大量数据小的子集，不是对整个表运行这些查询，而是让MySQL每次找出所需的少数记录，将记录选择到一个临时表可能更快些，然后再这些表上运行查询。
 
-创建临时表很容易，给正常的CREATE TABLE语句加上TEMPORARY关键字即可。
+​	创建临时表很容易，给正常的CREATE TABLE语句加上TEMPORARY关键字即可。
 
-临时表将在连接MySQL期间存在，当你断开的时候，MySQL将自动删除表并释放所有空间，当然你可以在仍然连接的时候删除表并释放空间。
+​	临时表将在连接MySQL期间存在，当你断开的时候，MySQL将自动删除表并释放所有空间，当然你可以在仍然连接的时候删除表并释放空间。
 
-如果在你创建名为tmp_table临时表时名为tmp_table的表在数据库中已经存在，临时表将有必要屏蔽（隐藏）非临时表tmp_table。
+​	如果在你创建名为tmp_table临时表时名为tmp_table的表在数据库中已经存在，临时表将有必要屏蔽（隐藏）非临时表tmp_table。
 
-如果声明临时表是一个HEAP表，MySQL允许你指定在内存中创建它：
+​	如果声明临时表是一个HEAP表，MySQL允许你指定在内存中创建它：
 
-CREATE TEMPORARY TABLE tmp_table(
+​	CREATE TEMPORARY TABLE tmp_table(
 
-)TYPE=HEAP;
+​	)TYPE=HEAP;
 
-因为HEAP表存储在内存中，对它运行的查询比磁盘上的临时表快些。然而，HEAP表与一般的表有些不同，且有自身的限制。
+​	因为HEAP表存储在内存中，对它运行的查询比磁盘上的临时表快些。然而，HEAP表与一般的表有些不同，且有自身的限制。
 
-# **派生表****/虚表**
+ 
 
-当主查询中包含派生表，或者当select语句中包含union子句，或者select语句语句中包含一个字段的order by子句（对另一个字段的group by子句）时，MySQL为了完成查询，则需要自动创建临时表存储临时结果集，这种临时表是由MySQL自行创建，自行维护。
+# 派生表/虚表
 
-对于自动创建的临时表，由于内存临时表的性能更加优越，MySQL总是首先使用内存临时表，而当内存临时表变得太大时，达到某个预知的时候，内存临时表就转存为外存临时表。也就是说，外存临时表是内存临时表在存储空间上的一种延伸。内存临时表转存为外存临时表的阈值由系统变量max_heap_table_size和tmp-table_size的较小值决定。
+​	当主查询中包含派生表，或者当select语句中包含union子句，或者select语句语句中包含一个字段的order by子句（对另一个字段的group by子句）时，MySQL为了完成查询，则需要自动创建临时表存储临时结果集，这种临时表是由MySQL自行创建，自行维护。
 
-派生表是从select语句返回的虚拟表，派生表类似于临时表，但是在select语句中使用派生表比临时表简单的多，因此它不需要创建临时表的步骤，所以当select语句的from子句中使用独立子查询时，我们将其称为派生表。
+​	对于自动创建的临时表，由于内存临时表的性能更加优越，MySQL总是首先使用内存临时表，而当内存临时表变得太大时，达到某个预知的时候，内存临时表就转存为外存临时表。也就是说，外存临时表是内存临时表在存储空间上的一种延伸。内存临时表转存为外存临时表的阈值由系统变量max_heap_table_size和tmp-table_size的较小值决定。
 
-派生表一般在from子句中使用，如：
+​	派生表是从select语句返回的虚拟表，派生表类似于临时表，但是在select语句中使用派生表比临时表简单的多，因此它不需要创建临时表的步骤，所以当select语句的from子句中使用独立子查询时，我们将其称为派生表。
 
-select * from (select * from table) table1;	
+​	派生表一般在from子句中使用，如：
+
+​	select * from (select * from table) table1;	
 
 # **元数据表**
 
@@ -86,6 +92,8 @@ COLUMNS：该表提供了表中的列信息，详细表述了某张表的所有�
 
 STATISTICS：该表提供了关于表索引的信息。show index from schemaname.tablename的结果取之此表。
 
+ 
+
 # **操作**
 
 ## **数据库操作**
@@ -110,6 +118,8 @@ test：系统自动创建的测试数据库，任何用户都可以使用。
 
 **注意：**数据库删除后，下面的所有表数据都会全部删除，所以删除前一定要仔细检查并做好相应备份。
 
+ 
+
 ## **表操作**
 
 ### **创建**
@@ -120,7 +130,7 @@ test：系统自动创建的测试数据库，任何用户都可以使用。
 
 在SQL中，创建数据库表的基本关键字为Create Table，在其后要指明创建的数据库表的名称，接着要分别定义表中各列的名称、数据类型等。语法如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEB13.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps91AE.tmp.jpg) 
 
 表的名字对大小写不敏感。表名要紧接在Create Table关键词的后面，且第一个字符必须是A～Z之一，其余的字符可以是字母，也可以是“_”、“#”、“$”和“@”等符号。表中各列的定义在括号中完成，且各列之间以逗号隔开。不同的表，其列名可以相同，但是在同一个表中，不允许出现相同的列名。在定义了列名后，我们一定要指明该列的数据类型。
 
@@ -132,7 +142,7 @@ test：系统自动创建的测试数据库，任何用户都可以使用。
 
 创建表的同时插入数据，但是这种方式创建的表会丢失索引信息，不建议使用。
 
-**参考：**
+参考：
 
 [https://mp.weixin.qq.com/s?__biz=MzI1OTU2MDA4NQ==&mid=2247489202&idx=1&sn=d02bd20bb31f6f563013049f2bbf900f&chksm=ea765148dd01d85e97c6535655641ae336e3da43608d3ca1a4506790f1ed2278faa001c71f47&mpshare=1&scene=24&srcid=0311SVyjA00yyiXosDoSLCFH&sharer_sharetime=1615462574981&sharer_shareid=33f795d236f19ac7c128b2e279563f84#rd](#rd)
 
@@ -147,6 +157,8 @@ SQL语句“create table <table_name> as select ...”用于创建普通表或�
 3、使用基于GTID的复制时不支持 CREATE TABLE ... SELECT
 
 4、在语句完成之前，元数据锁不会释放
+
+ 
 
 ##### 事务问题
 
@@ -174,7 +186,9 @@ sql
 
 General error: 1786 CREATE TABLE ... SELECT is forbidden when @@GLOBAL.ENFORCE_GTID_CONSISTENCY = 1.
 
-应用程序代码可能会中断。
+ 应用程序代码可能会中断。
+
+ 
 
 ##### 元数据锁问题
 
@@ -261,9 +275,13 @@ create table new_table as select ... join ... group by ... limit 0;
 
 第一个语句创建一个表结构，不插入任何行（LIMIT 0）。第一个语句持有元数据锁。但是，它非常快。第二个语句实际上是在表中插入行，而不持有元数据锁。
 
+ 
+
 ### **查看**
 
 使用SQL语句创建好数据表之后，可以查看表结构的定义，以确认表的定义是否正确。在MySQL中，查看表结构可以使用DESCRIBE和SHOW CREATE TABLE语句。
+
+ 
 
 ### **修改**
 
@@ -271,9 +289,11 @@ create table new_table as select ... join ... group by ... limit 0;
 
 注意：对表定义的修改，不同的数据库系统有不同的限制。例如，Oracle数据库就限制对列的修改只能是加大列的宽度而不能是缩小，而且不能删除列。
 
+ 
+
 对于已经创建好的表，尤其是已经有大量数据的表，如果需要做一些结构上的改变，可以先将表删除（drop），然后再按照新的表定义重建表。这样做没有问题，但是必然要做一些额外的工作，比如数据的重新加载。而且，如果有服务在访问表，也会对服务产生影响。因此，在大多数情况下，表结构的更改都使用 alter table语句。
 
-注意：change和modify都可以修改表的定义，不同的是change后面需要写两次列名，不方便。但是change的优点是可以修改列名称，modify则不能。
+***\*注意：\****change和modify都可以修改表的定义，不同的是change后面需要写两次列名，不方便。***\*但是change的优点是可以修改列名称，modify则不能\****。
 
  
 
@@ -281,7 +301,7 @@ create table new_table as select ... join ... group by ... limit 0;
 
 #### **增加新列**
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEB14.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps91BE.tmp.jpg) 
 
 table_name指的是要修改的表的名字，ADD关键字后面接要创建列的列名、数据类型等，当然也可以对列设置非空约束和缺省值。
 
@@ -293,23 +313,23 @@ table_name指的是要修改的表的名字，ADD关键字后面接要创建列�
 
 同样，在使用数据库表的过程中，如果其某列信息已经无效或不再需要，为了节省数据库空间，提高查询性能，我们可以采用DROP COLUMN关键字删除表中的某列，语法如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEB25.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps91BF.tmp.jpg) 
 
 table_name是要修改的表的名字，DROP COLUMN关键字后面接要删除列的名字。当然，一次可以删除多个列，只需要在DROP COLUMN关键字后面依次列出要删除的列的名字，中间用逗号分开即可。
 
 #### **修改列**
 
-##### ***\*MODIFY\****
+##### MODIFY
 
 如果发现数据库表中某列的结构不能满足实际的需求，在不破坏数据的情况下，SQL允许利用MODIFY关键字修改表中某列的结构。常用的修改操作主要包括字符长度限制的修定和非空约束的限制或取消，语法如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEB26.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps91C0.tmp.jpg) 
 
 table_name是要修改的表的名字，MODIFY关键字后面接要修改列的列名和修改后的数据条件。
 
  
 
-***\*添加NOT NULL约束语法\****
+**添加NOT NULL约束语法**
 
 使用ALTER TABLE给某列添加NOT NULL约束 的基本语法如下：
 
@@ -319,7 +339,7 @@ MODIFY column_name datatype NOT NULL;
 
  
 
-***\*注意\*******\*：\****
+**注意：**
 
 在SQL Server数据库系统中，并不支持MODIFY关键字。要修改数据库中的列，我们可以通过ALTER COLUMN关键字实现，即将MODIFY替换为ALTER COLUMN即可。
 
@@ -327,7 +347,7 @@ MODIFY column_name datatype NOT NULL;
 
 当然，我们也可以通过MODIFY或者ALTER COLUMN关键字增加或取消表中某列的非空约束。
 
-##### ***\*CHANGE\****
+##### CHANGE
 
 语法格式：
 
@@ -335,19 +355,19 @@ MODIFY column_name datatype NOT NULL;
 
 ALTER TABLE tablename CHANGE [COLUMN] old_col_name column_definition[FIRST|AFTER col_name]
 
-***\*注意：\****change和modify都可以修改表的定义，不同的是change后面需要写两次列名，不方便。但是change的优点是可以修改列名称，modify则不能。
+**注意：**change和modify都可以修改表的定义，不同的是change后面需要写两次列名，不方便。但是change的优点是可以修改列名称，modify则不能。
 
 2、修改字段排序顺序
 
 前面介绍的字段增加和修改语法（ADD/CHANGE/MODIFY）中，都有一个可选项first|aftercolumn_name，这个选项可以用来修改字段在表中的位置，ADD增加的新字段默认是加在表的最后位置，而CHANGE/MODIFY默认都不会改变字段的位置。
 
-***\*注意：\****CHANGE/FIRST|AFTER COLUMN这些关键字都属于MySQL在标准 SQL上的扩展，在其他数据库上不一定适用。
+**注意：**CHANGE/FIRST|AFTER COLUMN这些关键字都属于MySQL在标准 SQL上的扩展，在其他数据库上不一定适用。
 
  
 
 #### **增加约束**
 
-##### ***\*添加NOT NULL约束语法\****
+##### 添加NOT NULL约束语法
 
 使用ALTER TABLE给某列添加NOT NULL约束的基本语法如下：
 
@@ -357,7 +377,7 @@ MODIFY column_name datatype NOT NULL;
 
  
 
-##### ***\*添加唯一约束语法\****
+##### 添加唯一约束语法
 
 使用ALTER TABLE给数据表添加唯一约束的基本语法如下：
 
@@ -369,7 +389,7 @@ UNIQUE(column1, column2...);
 
  
 
-##### ***\*添加CHECK约束语法\****
+##### 添加CHECK约束语法
 
 使用ALTER TABLE给数据表添加CHECK约束的基本语法如下：
 
@@ -381,7 +401,7 @@ CHECK (CONDITION);
 
  
 
-##### ***\*添加主键约束语法\****
+##### 添加主键约束语法
 
 使用ALTER TABLE给数据表添加主键约束的基本语法如下：
 
@@ -407,7 +427,7 @@ DROP CONSTRAINT MyUniqueConstraint;
 
 表的删除非常容易，使用DROP TABLE关键词即可实现。语法如下。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEB36.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps91D1.tmp.jpg) 
 
 只要在DROP TABLE关键词后面接上要删除表的名字即可。这里表的删除不仅删除了表内存储的数值，而是整个表结构都被删除了，也就是该表不存在了。
 
@@ -466,11 +486,11 @@ MYSQL 8.0为了提高临时表相关的性能，对临时表相关的部分进�
 
 InnoDB临时表元数据不再存储于InnoDB系统表，而是存储在INNODB_TEMP_TABLE_INFO中，包含所有用户和系统创建的临时表信息。该表在第一次运行select时被创建，下面举例说明。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEB37.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps91E2.tmp.jpg) 
 
 MySQL 8.0使用了独立的临时表空间来存储临时表数据，但不能是压缩表。临时表空间在实例启动的时候进行创建、shutdown的时候进行删除，即为所有非压缩的innodb临时表提供一个独立的表空间。默认的临时表空间文件为ibtmp1，位于数据目录中。通过innodb_temp_data_file_path参数可指定临时表空间的路径和大小，默认为12MB。只有重启实例才能回收临时表空间文件ibtmp1的大小。create temporary table和using temporary table将共用这个临时表空间。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEB38.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps91E3.tmp.jpg) 
 
 在MySQL 8.0中，临时表在连接断开或者数据库实例关闭的时候会进行删除，从而提高了性能。只有临时表的元数据使用了redo保护，保护元数据的完整性，以便异常启动后进行清理工作。
 
@@ -480,7 +500,7 @@ MySQL 8.0使用了独立的临时表空间来存储临时表数据，但不能�
 
 查看结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsEB49.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps91E4.tmp.jpg) 
 
  
 
