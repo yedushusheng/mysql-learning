@@ -1,112 +1,114 @@
 # 8.0新特性
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A4F.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9986.tmp.jpg) 
 
 # 账户与安全
 
 ## **用户创建和授权**
 
-MySQL8.0用户创建和授权分开执行：
+​	MySQL8.0用户创建和授权分开执行：
 
-`create user ‘tony’@’%’ identified by ‘Tony@2018’`
+​	create user ‘tony’@’%’ identified by ‘Tony@2018’
 
-`grant all privileges on *.* to ‘tony’@’%’;`
+​	grant all privileges on *.* to ‘tony’@’%’;
 
-MySQL5.7用户创建和授权可以使用grant语句一次性完成：
+​	MySQL5.7用户创建和授权可以使用grant语句一次性完成：
 
-`grant all privileges on *.* to ‘tony’@’%’ identified by ‘passwd’;`
+​	grant all privileges on *.* to ‘tony’@’%’ identified by ‘passwd’;
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A50.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9987.tmp.jpg) 
 
 ## **认证插件更新**
 
-<u>MySQL8.0中默认的身份认证插件是caching_sha2_password，替代了之前的mysql_native_password。</u>
+​	MySQL8.0中默认的身份认证插件是caching_sha2_password，替代了之前的mysql_native_password。
 
-用户可以通过defalt_authentication_plugin或mysql.user表看到这种变化：
+​	用户可以通过defalt_authentication_plugin或mysql.user表看到这种变化：
 
-MySQL5.7：
+​	MySQL5.7：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A51.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9998.tmp.jpg) 
 
-MySQL8.0：
+​	MySQL8.0：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A52.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9999.tmp.jpg) 
 
-注：如果服务端mysql升级了，但是客户端没有升级，可能使用新的插件会导致连接错误。可以修改系统配置文件修改为原来的认证。
+​	注：如果服务端mysql升级了，但是客户端没有升级，可能使用新的插件会导致连接错误。可以修改系统配置文件修改为原来的认证。
 
 ## **密码管理**
 
-MySQL8.0开始允许限制重复使用以前的密码：
+​	MySQL8.0开始允许限制重复使用以前的密码：
 
-password_history=3	//新密码不能和最近3次使用的相同
+​	password_history=3	//新密码不能和最近3次使用的相同
 
-password_reuse_internal=90	//新密码不能和最近90天使用的密码相同
+​	password_reuse_internal=90	//新密码不能和最近90天使用的密码相同
 
-password_require_current=ON	//修改密码时需要提供当前密码
+​	password_require_current=ON	//修改密码时需要提供当前密码
 
 ## **角色管理**
 
-MySQL8.0提供了角色管理的新功能，角色是一组权限的集合。
+​	MySQL8.0提供了角色管理的新功能，角色是一组权限的集合。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A53.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps999A.tmp.jpg) 
 
 在MySQL 8.0数据库中，角色可以看成是一些权限的集合，为用户赋予统一的角色，权限的修改直接通过角色来进行，无须为每个用户单独授权。
 
-**操作步骤：**
+操作步骤：
 
 创建角色，执行语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A64.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps999B.tmp.jpg) 
 
 给角色授予权限，执行语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A65.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99AC.tmp.jpg) 
 
 创建用户myuser1，执行语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A66.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99AD.tmp.jpg) 
 
 为用户myuser1赋予角色role_tt，执行语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A67.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99AE.tmp.jpg) 
 
 给角色role_tt增加insert权限，执行语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A68.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99AF.tmp.jpg) 
 
 给角色role_tt删除insert权限，执行语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A78.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99BF.tmp.jpg) 
 
 查看默认角色信息，执行语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A79.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99C0.tmp.jpg) 
 
 查看角色与用户关系，执行语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A8A.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99C1.tmp.jpg) 
 
 删除角色，执行语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A8B.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99C2.tmp.jpg) 
+
+ 
 
 # 全局变量持久化
 
 在MySQL数据库中，全局变量可以通过SET GLOBAL语句来设置。例如，设置服务器语句超时的限制，可以通过设置系统变量max_execution_time来实现：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A8C.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99C3.tmp.jpg) 
 
 使用SET GLOBAL语句设置的变量值只会临时生效。数据库重启后，服务器又会从MySQL配置文件中读取变量的默认值。
 
 MySQL 8.0版本新增了SET PERSIST命令。例如，设置服务器的最大连接数为1000：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A8D.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99D4.tmp.jpg) 
 
 MySQL会将该命令的配置保存到数据目录下的mysqld-auto.cnf文件中，下次启动时会读取该文件，用其中的配置来覆盖默认的配置文件。
 
 # Atomic DDL
 
-**参考：**
+参考：
 
 https://mp.weixin.qq.com/s/yym9E9gkrxqflL5dOTU6BA
 
@@ -120,7 +122,7 @@ Server层的Metadata是记录在文件中的。例如表结构信息保存在frm
 
 3、Binlog和数据的不一致
 
-比如crash重启后，表已经存在了但是CREATE TABLE却没有记录到Binlog中。
+比如Crash重启后，表已经存在了但是CREATE TABLE却没有记录到Binlog中。
 
 MySQL-8.0中为了实现Atomic DDL，彻底解决以上的问题做了三个方面的改动：
 
@@ -136,27 +138,69 @@ InnoDBL中实现了DDL_log表，在DDL操作过程中会记录一些DDL的操作
 
 在DDL的Binlog Event中会记录DDL操作的XID，通过XID来保证binlog的crash safe。
 
+ 
+
 # 检查约束
 
-**参考：**https://mp.weixin.qq.com/s/9nEDzURmOh5OytCssGO7sA
+参考：https://mp.weixin.qq.com/s/9nEDzURmOh5OytCssGO7sA
+
+ 
 
 检查约束就是在INSERT或UPDATE操作之前，会根据指定条件CHECK要INSERT或UPDATE的字段值是否满足约束。
 
 MySQL在8.0.16之后支持check constraint作为新特性，语法为：
 
-`CREATE TABLE t1( c1 INT CHECK (c1 > 10), c2 INT CHECK (c2 < 100) );`
+CREATE TABLE t1( c1 INT CHECK (c1 > 10), c2 INT CHECK (c2 < 100) );
 
 在早期版本中，该语法依旧支持，但不会起作用，也就是会被解析，但不会被存储层引用。
+
+ 
+
+# 临时表
+
+在MySQL 8.0中，用户可以把数据库和表归组到逻辑和物理表空间中，这样做可以提高资源的利用率。
+
+MySQL 8.0使用CREATE TABLESPACE语句来创建一个通用表空间。这个功能可以让用户自由地选择表和表空间之间的映射。例如，创建表空间和设置这个表空间应该含有什么样的表。这也让在同一个表空间的用户对所有的表分组，因此在文件系统一个单独的文件内持有他们所有的数据，同时为通用表空间实现了元数据锁。
+
+优化普通SQL临时表性能是MySQL 8.0的目标之一。首先，通过优化临时表在磁盘中的不必要步骤，使得临时表的创建和移除成为一个轻量级的操作。将临时表移动到一个单独的表空间中，恢复临时表的过程就变得非常简单，就是在启动时重新创建临时表的单一过程。
+
+MySQL 8.0去掉了临时表中不必要的持久化。临时表仅仅在连接和会话内被创建，然后通过服务的生命周期绑定它们。通过移除不必要的UNDO和REDO日志，改变缓冲和锁，从而为临时表做了优化操作。
+
+MySQL 8.0增加了UNDO日志一个额外的类型，这个类型的日志被保存在一个单独的临时表空间中，在恢复期间不会被调用，而是在回滚操作中才会被调用。
+
+MySQL 8.0为临时表设定了一个特别类型，称之为“内在临时表”。内在临时表和普通临时表很像，只是内在临时表使用宽松的ACID和MVCC语义。
+
+MYSQL 8.0为了提高临时表相关的性能，对临时表相关的部分进行了大幅修改，包括引入新的临时表空间（ibtmp1）；对于临时表的DDL，不持久化相关表定义；对于临时表的DML，不写redo、关闭change buffer等。
+
+InnoDB临时表元数据不再存储于InnoDB系统表，而是存储在INNODB_TEMP_TABLE_INFO中，包含所有用户和系统创建的临时表信息。该表在第一次运行select时被创建，下面举例说明。
+
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99D5.tmp.jpg) 
+
+MySQL 8.0使用了独立的临时表空间来存储临时表数据，但不能是压缩表。临时表空间在实例启动的时候进行创建、shutdown的时候进行删除，即为所有非压缩的innodb临时表提供一个独立的表空间。默认的临时表空间文件为ibtmp1，位于数据目录中。通过innodb_temp_data_file_path参数可指定临时表空间的路径和大小，默认为12MB。只有重启实例才能回收临时表空间文件ibtmp1的大小。create temporary table和using temporary table将共用这个临时表空间。
+
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99D6.tmp.jpg) 
+
+在MySQL 8.0中，临时表在连接断开或者数据库实例关闭的时候会进行删除，从而提高了性能。只有临时表的元数据使用了redo保护，保护元数据的完整性，以便异常启动后进行清理工作。
+
+临时表的元数据在MySQL 8.0之后使用了一个独立的表（innodb_temp_table_info）进行保存，不用使用redo保护，元数据也只保存在内存中。但这有一个前提，即必须使用共享的临时表空间，如果使用file-per-table，仍然需要持久化元数据，以便异常恢复清理。临时表需要undo log，用于MySQL运行时的回滚。
+
+在MySQL 8.0中，新增一个系统选项internal_tmp_disk_storage_engine，可定义磁盘临时表的引擎类型，默认为InnoDB，可选MyISAM。在这以前，只能使用MyISAM。在MySQL 5.6.3以后新增的参数default_tmp_storage_engine是控制create temporary table创建的临时表存储引擎，在以前默认是MEMORY。
+
+查看结果如下：
+
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99E7.tmp.jpg) 
+
+ 
 
 # 日志
 
 在MySQL 8.0版本中，日志分类将更加详细。例如，在错误信息中添加了错误信息编号[MY-010311]和错误所属子系统[Server]。在MySQL 5.7版本中，部分错误日志如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A9E.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99E8.tmp.jpg) 
 
 在MySQL 8.0版本中，部分错误日志如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1A9F.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99E9.tmp.jpg) 
 
 # 缓存
 
@@ -172,9 +216,11 @@ MySQL查询缓存是查询结果缓存。它将以SEL开头的查询与哈希表
 
 其次，查询缓存的另一个大问题是它受到单个互斥锁的保护。在具有多个内核的服务器上，大量查询会导致大量的互斥锁争用。
 
+ 
+
 通过基准测试发现，大多数工作负载最好禁用查询缓存（5.6的默认设置）：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AAF.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99EA.tmp.jpg) 
 
 如果你认为会从查询缓存中获得好处，请按照实际情况进行测试。
 
@@ -184,101 +230,101 @@ MySQL查询缓存是查询结果缓存。它将以SEL开头的查询与哈希表
 
 查询越复杂，扫描范围越大，则越受益
 
-MySQL8.0取消查询缓存的另外一个原因是，研究表明，缓存越靠近客户端，获得的好处越大。
-
-关于这份研究请参考：
-
-https://proxysql.com/blog/scaling-with-proxysql-query-cache/
+MySQL8.0取消查询缓存的另外一个原因是，研究表明，缓存越靠近客户端，获得的好处越大。关于这份研究请参考：	https://proxysql.com/blog/scaling-with-proxysql-query-cache/
 
 除此之外，MySQL8.0新增加了对性能干预的工具，例如，现在可以利用查询重写插件，在不更改应用程序的同时，插入优化器提示语句。另外，还有像ProxySQL这样的第三方工具，它们可以充当中间缓存。
 
 综合以上原因，MySQL8.0不再提供对查询缓存的支持，如果用户从5.7版本升级至8.0，考虑使用查询重写或其他缓存。
 
+ 
+
 # 优化器索引
 
 ## **隐藏索引**
 
-MySQL8.0开始支持隐藏索引（invisible index），不可见索引。
+​	MySQL8.0开始支持隐藏索引（invisible index），不可见索引。
 
-**隐藏索引不会被优化器使用，但仍然需要进行维护。**
+​	隐藏索引不会被优化器使用，但仍然需要进行维护。
 
-应用场景：软删除、灰度发布。
+​	应用场景：软删除、灰度发布。
 
-软删除：比如我们需要测试不使用某个索引对系统性能的影响，以前的方案是删除当前索引，如果有影响，需要这个索引就必须重新建立，这样维护成本太高了。在8.0版本可以将这个待测试的索引设置为隐藏索引，这样实际查询中就不会使用这个索引了，测试后如果真需要删除再执行删除索引操作。
+​	软删除：比如我们需要测试不使用某个索引对系统性能的影响，以前的方案是删除当前索引，如果有影响，需要这个索引就必须重新建立，这样维护成本太高了。在8.0版本可以将这个待测试的索引设置为隐藏索引，这样实际查询中就不会使用这个索引了，测试后如果真需要删除再执行删除索引操作。
 
 ## **降序索引**
 
-在MySQL 8.0之前，MySQL在语法上已经支持降序索引，但实际上创建的仍然是升序索引。MySQL8.0开始真正支持降序索引（descending index）。
+​	在MySQL 8.0之前，MySQL在语法上已经支持降序索引，但实际上创建的仍然是升序索引。MySQL8.0开始真正支持降序索引（descending index）。
 
-只有InnoDB存储引擎支持降序索引，只支持BTREE降序索引。
+​	只有InnoDB存储引擎支持降序索引，只支持BTREE降序索引。
 
-MySQL8.0不再对GROUP BY操作进行隐式排序。
+​	MySQL8.0不再对GROUP BY操作进行隐式排序。
 
-MySQL5.7：
+​	MySQL5.7：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AB0.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99FA.tmp.jpg) 
 
-MySQL8.0：
+​	MySQL8.0：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AB1.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99FB.tmp.jpg) 
+
+ 
 
 分别在MySQL 5.7版本和MySQL 8.0版本中创建数据表ts1，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AB2.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99FC.tmp.jpg) 
 
 在MySQL 5.7版本中查看数据表ts1的结构，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AB3.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps99FD.tmp.jpg) 
 
 从结果可以看出，索引仍然是默认的升序。
 
 在MySQL 8.0版本中查看数据表ts1的结构，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AC4.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A0E.tmp.jpg) 
 
 从结果可以看出，索引已经是降序了。下面继续测试降序索引在执行计划中的表现。
 
 分别在MySQL 5.7版本和MySQL 8.0版本中的数据表ts1中插入8万条随机数据，执行语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AC5.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A0F.tmp.jpg) 
 
 在MySQL 5.7版本中查看数据表ts1的执行计划，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AC6.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A10.tmp.jpg) 
 
 从结果可以看出，执行计划中扫描数为79999，而且使用了Using filesort。
 
-**提示：**Using filesort是MySQL里一种速度比较慢的外部排序，如果能避免是最好的结果。多数情况下，管理员可以通过优化索引来尽量避免出现Using filesort，从而提高数据库执行速度。
+***\*提示\*******\*：\****Using filesort是MySQL里一种速度比较慢的外部排序，如果能避免是最好的结果。多数情况下，管理员可以通过优化索引来尽量避免出现Using filesort，从而提高数据库执行速度。
 
 在MySQL 8.0版本中查看数据表ts1的执行计划，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AD7.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A11.tmp.jpg) 
 
 从结果可以看出，执行计划中扫描数为5，而且没有使用Using filesort。
 
-**注意：**降序索引只是对查询中特定的排序顺序有效，如果使用不当，反而查询效率更低。例如上述查询排序条件改为“order by a desc, b desc”，MySQL 5.7的执行计划要明显好于MySQL 8.0。
+***\*注意\*******\*：\****降序索引只是对查询中特定的排序顺序有效，如果使用不当，反而查询效率更低。例如上述查询排序条件改为“order by a desc, b desc”，MySQL 5.7的执行计划要明显好于MySQL 8.0。
 
 将排序条件修改为“order by a desc, b desc”后，下面来对比不同版本中执行计划的效果。在MySQL 5.7版本中查看数据表ts1的执行计划，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AD8.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A12.tmp.jpg) 
 
 在MySQL 8.0版本中查看数据表ts1的执行计划，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AD9.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A22.tmp.jpg) 
 
 从结果可以看出，修改后MySQL 5.7的执行计划要明显好于MySQL 8.0。
 
 ## **函数索引**
 
-MySQL8.0.13开始支持在索引中使用函数（表达式）的值。
+​	MySQL8.0.13开始支持在索引中使用函数（表达式）的值。
 
-支持降序索引，支持JSON数据的索引。
+​	支持降序索引，支持JSON数据的索引。
 
-函数索引基于虚拟列功能实现。
+​	函数索引基于虚拟列功能实现。
 
-**参考：**
+参考：https://blog.csdn.net/horses/article/details/85059678
 
-https://blog.csdn.net/horses/article/details/85059678
+ 
 
 ## **直方图**
 
@@ -294,7 +340,7 @@ MySQL 8.0实现了统计直方图。利用直方图，用户可以对一张表�
 
 例如，销售表production包括id、tm、count三个字段，分别表示编号、销售时间和销售数量。对比以下两个查询语句：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1ADA.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A23.tmp.jpg) 
 
 如果销售时间大部分集中在上午8点到12点，在查询销售情况时，第一个查询语句耗费的时间会远远大于第二个查询语句。
 
@@ -304,17 +350,17 @@ MySQL 8.0实现了统计直方图。利用直方图，用户可以对一张表�
 
 创建直方图的语法格式如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1ADB.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A24.tmp.jpg) 
 
 buckets的默认值是100。统计直方图的信息存储在数据字典表"column_statistcs"中，可以通过视图information_schema.COLUMN_STATISTICS访问。直方图以灵活的JSON格式存储。ANALYZETABLE会基于表大小自动判断是否要进行取样操作。ANALYZE TABLE也会基于表中列的数据分布情况以及bucket的数量来决定是否要建立等宽直方图（singleton）还是等高直方图（equi-height）。
 
 创建用于测试的数据表production，语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1ADC.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A25.tmp.jpg) 
 
 在数据表production的字段tm上创建直方图，执行语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AEC.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A36.tmp.jpg) 
 
 buckets的值必须指定，可以设置为1到1024，默认值是100。设置buckets值时，可以先设置低一些，如果没有满足需求，可以再往上增大。
 
@@ -328,13 +374,13 @@ buckets的值必须指定，可以设置为1到1024，默认值是100。设置bu
 
 在数据表production的字段tm和字段count上创建直方图，执行语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AED.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A37.tmp.jpg) 
 
 再次创建直方图时，将会将上一个直方图重写。
 
 如果需要删除已经创建的直方图，用DROP HISTOGRAM就可以实现：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AFE.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A38.tmp.jpg) 
 
 直方图统计了表中某些字段的数据分布情况，为优化选择高效的执行计划提供参考。直方图与索引有着本质的区别：维护一个索引有代价，每一次的INSERT、UPDATE、DELETE都会需要更新索引，会对性能有一定的影响；而直方图一次创建永不更新，除非明确去更新它，所以不会影响INSERT、UPDATE、DELETE的性能。
 
@@ -342,15 +388,13 @@ buckets的值必须指定，可以设置为1到1024，默认值是100。设置bu
 
 设置histogram_generation_max_mem_size值的方法如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1AFF.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A39.tmp.jpg) 
 
 # 锁
 
 ## **锁读取**
 
-参考：
-
-https://blog.51cto.com/fengfeng688/2147171
+参考：https://blog.51cto.com/fengfeng688/2147171
 
 MySQL8.0 InnoDB支持 NOWAIT和SKIP LOCKED选项SELECT ... FOR SHARE以及SELECT ... FOR UPDATE锁定读取语句。 NOWAIT如果请求的行被另一个事务锁定，则会立即返回该语句。SKIP LOCKED从结果集中删除锁定的行。
 
@@ -358,13 +402,15 @@ MySQL8.0 InnoDB支持 NOWAIT和SKIP LOCKED选项SELECT ... FOR SHARE以及SELECT
 
 FOR SHARE 语法是 MySQL 8.0 时加入的，FOR SHARE 和 LOCK IN SHARE MODE 是等价的，但，FOR SHARE 用于替代 LOCK IN SHARE MODE，不过，为了向后兼容，LOCK IN SHARE MODE依然可用。
 
+ 
+
 ## **行锁观测方式**
 
-参考：
-
-https://mp.weixin.qq.com/s/w7OovGTZe6ypw6obKtZaMg
+参考：https://mp.weixin.qq.com/s/w7OovGTZe6ypw6obKtZaMg
 
 MySQL5.7及之前，可以通过information_schema.innodb_locks查看事务的锁情况，但，只能看到阻塞事务的锁；如果事务并未被阻塞，则在该表中看不到该事务的锁情况。
+
+ 
 
 MySQL8.0删除了information_schema.innodb_locks，添加了performance_schema.data_locks，可以通过performance_schema.data_locks查看事务的锁情况，和MySQL5.7及之前不同，performance_schema.data_locks不但可以看到阻塞该事务的锁，还可以看到该事务所持有的锁，也就是说即使事务并未被阻塞，依然可以看到事务所持有的锁（不过，正如文中最后一段所说，performance_schema.data_locks并不总是能看到全部的锁）。表名的变化其实还反映了8.0的performance_schema.data_locks更为通用了，即使你使用InnoDB之外的存储引擎，你依然可以从performance_schema.data_locks看到事务的锁情况。
 
@@ -372,7 +418,7 @@ MySQL8.0删除了information_schema.innodb_locks，添加了performance_schema.d
 
 全新的MySQL 8.0新增了全新的锁观测方式，在performance_schema下新增了data_locks表和data_lock_waits表。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B00.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A3A.tmp.jpg) 
 
 ### **data_locks表**
 
@@ -402,7 +448,7 @@ Create Table: CREATE TABLE `data_locks` (
 ) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 1 row in set (0.00 sec)
 
-**说明：**
+说明：
 
 ENGINE：持有或请求锁定的存储引擎
 
@@ -442,6 +488,8 @@ LOCK_STATUS：锁状态，可能为GRANTED或者WAITING
 
 LOCK_DATA：锁对应的数据，例如如果锁定的是主键，那么该列对应的就是加锁的主键值
 
+ 
+
 ### **data_lock_waits表**
 
 mysql> show create table data_lock_waits\G
@@ -468,7 +516,7 @@ Create Table: CREATE TABLE `data_lock_waits` (
 ) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 1 row in set (0.00 sec)
 
-**说明：**
+***\*说明：\****
 
 ENGINE：请求的锁的引擎
 
@@ -494,15 +542,15 @@ BLOCKING_OBJECT_INSTANCE_BEGIN：阻塞的锁内存地址
 
 实例：
 
-**主键|Lock_X**
+***\*主键|Lock_X\****
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B10.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A4B.tmp.jpg) 
 
 查看data_locks表和data_lock_waits表
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B11.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A4C.tmp.jpg) 
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B12.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A5C.tmp.jpg) 
 
 分析：
 
@@ -510,15 +558,15 @@ BLOCKING_OBJECT_INSTANCE_BEGIN：阻塞的锁内存地址
 
 结合data_lock_waits表可以看出，线程ID为445的会话等待xucl.t1表的主键上的排他记录锁
 
-**二级索引|next-key lock**
+***\*二级索引|next-key lock\****
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B13.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A5D.tmp.jpg) 
 
 查看data_locks表和data_lock_waits表
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B14.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A5E.tmp.jpg) 
 
-**分析：**
+***\*分析：\****
 
 1、从data_locks表可以看到，线程ID为444的会话持有的锁有
 
@@ -534,37 +582,41 @@ xucl.t1表上的IX锁
 
 等待的锁为xucl.t1表上索引idx_c1上的'd',4这条记录的next-key lock，类型为排他类型
 
-**总结：**
+ 
+
+***\*总结：\****
 
 区别于之前的通过innodb_lock_waits的方式，即便没有产生锁等待，data_locks也能显示出已经加锁的行，另外隐式锁能够显示，这对于DBA分析锁来说无疑是非常有帮助的。
 
+ 
+
 # 通用表达式
 
-MySQL8.0开始支持通用表表达式（CTE），即WITH子句。
+​	MySQL8.0开始支持通用表表达式（CTE），即WITH子句。
 
 通用表表达式简称为CTE（Common Table Expressions）。CTE是命名的临时结果集，作用范围是当前语句。CTE可以理解成一个可以复用的子查询，当然跟子查询还是有点区别的，CTE可以引用其他CTE，但子查询不能引用其他子查询。
 
 CTE的语法格式如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B25.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A5F.tmp.jpg) 
 
 使用WITH语句创建CTE的情况如下：
 
 （1）SELECT、UPDATE、DELETE语句的开头：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B26.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A60.tmp.jpg) 
 
 （2）在子查询的开头：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B37.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A71.tmp.jpg) 
 
 （3）紧接SELECT，在包含SELECT声明的语句之前：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B38.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A72.tmp.jpg) 
 
 ## **非递归CTE**
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B39.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A73.tmp.jpg) 
 
 ​	注：CTE更加清晰，后面可以任意实用前面定义的CTE表达式，更加方便，类似增加了一个编程功能的扩展。
 
@@ -574,15 +626,15 @@ WITH子句必须以WITH RECURSIVE开头。CTE递归子查询包括两部分：se
 
 ​	递归CTE在查询中引用自己的定义，实用RECURSIVE表示。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B3A.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A74.tmp.jpg) 
 
 ## **递归限制**
 
-递归表达式的查询中需要包含一个终止递归的条件：
+​	递归表达式的查询中需要包含一个终止递归的条件：
 
-cte_max_recursion_depth：最大递归深度/调用次数
+​	cte_max_recursion_depth：最大递归深度/调用次数
 
-max_execution_time：SQL最长执行时间（没有定义最大递归深度的时候通过这个限制）
+​	max_execution_time：SQL最长执行时间（没有定义最大递归深度的时候通过这个限制）
 
 # GROUP BY不再隐式排序
 
@@ -590,25 +642,25 @@ max_execution_time：SQL最长执行时间（没有定义最大递归深度的�
 
 下面通过案例来对比不同的版本中GROUP By字段的排序情况，分别在MySQL 5.7版本和MySQL 8.0版本中创建数据表、插入数据和查询数据，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B3B.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A85.tmp.jpg) 
 
 在MySQL 5.7中查看数据表bs1的结构，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B3C.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A86.tmp.jpg) 
 
 在MySQL 8.0中查看数据表bs1的结构，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B4C.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A87.tmp.jpg) 
 
 在MySQL 5.7中分组查询，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B4D.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A88.tmp.jpg) 
 
 从结果可以看出，字段bscount按升序自动排列。
 
 在MySQL 8.0中分组查询，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B5E.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A89.tmp.jpg) 
 
 # 加密函数
 
@@ -630,49 +682,49 @@ SHA2(str, hash_length)使用hash_length作为长度，加密str。hash_length支
 
 ## **概述**
 
-MySQL8.0支持窗口函数（Window Function），也称分析函数。
+​	MySQL8.0支持窗口函数（Window Function），也称分析函数。
 
-窗口函数与分组聚合函数类似，但是每一行数据都生成一个结果。
+​	窗口函数与分组聚合函数类似，但是每一行数据都生成一个结果。
 
-聚合窗口函数：SUM/AVG/COUNT/MAX/MIN等等。
+​	聚合窗口函数：SUM/AVG/COUNT/MAX/MIN等等。
 
  
 
-常规操作：
+​	常规操作：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B5F.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A99.tmp.jpg) 
 
-窗口函数：
+​	窗口函数：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B60.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A9A.tmp.jpg) 
 
 ## **专用窗口函数**
 
-ROW_NUMBER()/RANK()/DENSE_RANK()/PERCENT_RANK()
+​	ROW_NUMBER()/RANK()/DENSE_RANK()/PERCENT_RANK()
 
-FIRST_VALUE()/LAST_VALUE()/LEAD()/LAG()
+​	FIRST_VALUE()/LAST_VALUE()/LEAD()/LAG()
 
-CUME_DIST()/NTH_VALUE()/NTILE()
+​	CUME_DIST()/NTH_VALUE()/NTILE()
 
 ## **窗口**
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B61.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A9B.tmp.jpg) 
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B62.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A9C.tmp.jpg) 
 
-# JSON增强
+JSON增强
 
 MySQL是一个关系型数据库，在MySQL 8.0之前，没有提供对非结构化数据的支持，但是如果用户有这样的需求，也可以通过MySQL的BLOB来存储非结构化的数据。
 
 举例说明：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1C14.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9A9D.tmp.jpg) 
 
 在本例中，使用BLOB来存储JSON数据，需要用户保证插入的数据是一个能够转换成JSON格式的字符串，因为MySQL并不保证任何正确性。在MySQL看来，这就是一个普通的字符串，并不会进行任何有效性检查。此外，提取JSON中的字段也需要在用户的代码中完成。
 
 例如，在Python语言中提取JSON中的字段，代码如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1C15.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AAE.tmp.jpg) 
 
 这种方式虽然也能够实现JSON的存储，但是有诸多缺点，最为显著的缺点有：
 
@@ -690,7 +742,7 @@ MySQL 8.0对支持JSON的做法是在Server层提供一些便于操作JSON的函
 
 下面将举例说明：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1C25.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AAF.tmp.jpg) 
 
 MySQL 8.0提供了很多操作JSON的函数，都是为了提高易用性。
 
@@ -698,7 +750,7 @@ MySQL编码成BLOB对象，首先存放的是JSON的元素个数，然后存放�
 
 在MySQL 8.0中，key的长度只用2个字节（65535）保存，如果超过这个长度，MySQL将报错，如下所示：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1C26.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AB0.tmp.jpg) 
 
 在MySQL的源码中，与JSON相关的文件有：
 
@@ -718,15 +770,17 @@ MySQL编码成BLOB对象，首先存放的是JSON的元素个数，然后存放�
 
 对于JSON的解码，即将BLOB解析成JSON对象，入口是json_binary.cc文件中的parse_binary函数。只要搞清楚了JSON的存储格式，这两个函数是很好理解的。
 
-## **内联路径操作符**
+内联路径操作符
 
-## **JSON聚合函数**
+JSON聚合函数
 
-## **JSON实用函数**
+JSON实用函数
 
-## **JSON合并函数**
+JSON合并函数
 
-## **JSON表函数**
+JSON表函数
+
+ 
 
 # InnoDB增强
 
@@ -738,19 +792,19 @@ MySQL编码成BLOB对象，首先存放的是JSON的元素个数，然后存放�
 
 在MySQL 5.7版本中，查看数据库的默认编码，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B63.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AB1.tmp.jpg) 
 
 在MySQL 5.7版本中，查看数据表的默认编码，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B74.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AC1.tmp.jpg) 
 
 在MySQL 8.0版本中，测试数据库的默认编码，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B75.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AC2.tmp.jpg) 
 
 在MySQL 8.0版本中，查看数据表的默认编码，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B76.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AC3.tmp.jpg) 
 
 ## **系统表全部为InnoDB表**
 
@@ -760,47 +814,47 @@ MySQL编码成BLOB对象，首先存放的是JSON的元素个数，然后存放�
 
 在MySQL 5.7版本中查看系统表类型，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B86.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AC4.tmp.jpg) 
 
 在MySQL 8.0版本中查看系统表类型，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B87.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AC5.tmp.jpg) 
 
  
 
 ## **集成数据字典**
 
-MySQL8.0删除了之前版本的元数据文件，例如.frm，.opt等。
+​	MySQL8.0删除了之前版本的元数据文件，例如.frm，.opt等。
 
-将系统表（mysql）和数据字典全部改为InnoDB存储引擎。
+​	将系统表（mysql）和数据字典全部改为InnoDB存储引擎。
 
-简化了INFORMATION_SCHEMA的实现，提高了访问性能。
+​	简化了INFORMATION_SCHEMA的实现，提高了访问性能。
 
-提供了序列化字典信息（SDI）的支持，以及ibd2sdi工具。
+​	提供了序列化字典信息（SDI）的支持，以及ibd2sdi工具。
 
-数据字典使用上的差异，例如innodb_read_only影响所有的存储引擎；数据字典表不可见，不能直接查询和修改。
+​	数据字典使用上的差异，例如innodb_read_only影响所有的存储引擎；数据字典表不可见，不能直接查询和修改。
 
 ## **原子DDL操作**
 
-**MySQL8.0开始支持原子DDL操作，其中与表相关的原子DDL只支持InnoDB存储引擎**。DDL操作回滚日志写入到data dictionary数据字典表mysql.innodb_ddl_log（该表是隐藏的表，通过showtables无法看到）中，用于回滚操作。通过设置参数，可将DDL操作日志打印输出到MySQL错误日志中。
+​	MySQL8.0开始支持原子DDL操作，其中与表相关的原子DDL只支持InnoDB存储引擎。DDL操作回滚日志写入到data dictionary数据字典表mysql.innodb_ddl_log（该表是隐藏的表，通过showtables无法看到）中，用于回滚操作。通过设置参数，可将DDL操作日志打印输出到MySQL错误日志中。
 
-一个原子DDL操作内容包括：更新数据字典，存储引擎层的操作，在binlog中记录DDL操作。
+​	一个原子DDL操作内容包括：更新数据字典，存储引擎层的操作，在binlog中记录DDL操作。
 
-支持与表相关的DDL：数据库、表空间、表、索引的CREATE、ALTER、DROP以及TRUNCATE TABLE。
+​	支持与表相关的DDL：数据库、表空间、表、索引的CREATE、ALTER、DROP以及TRUNCATE TABLE。
 
-支持的其他DDL：存储程序、触发器、视图、UDF（用户自定义函数）的CREATE、DROP以及ALTER语句。
+​	支持的其他DDL：存储程序、触发器、视图、UDF（用户自定义函数）的CREATE、DROP以及ALTER语句。
 
-支持账户管理相关的DDL：用户和角色的CREATE、ALTER、DROP以及适用的RENAME，以及GRANT和REVOKE语句。
+​	支持账户管理相关的DDL：用户和角色的CREATE、ALTER、DROP以及适用的RENAME，以及GRANT和REVOKE语句。
 
 ## **自增列持久化**
 
-MySQL5.7以及早期版本，InnoDB自增列计数器（AUTO_INCREMENT）的值只存储在内存中。
+​	MySQL5.7以及早期版本，InnoDB自增列计数器（AUTO_INCREMENT）的值只存储在内存中。
 
-**在MySQL 8.0之前，自增主键AUTO_INCREMENT的值如果大于max(primary key)+1，在MySQL重启后，会重置AUTO_INCREMENT=max(primary key)+1，这种现象在某些情况下会导致业务主键冲突或者其他难以发现的问题。**
+在MySQL 8.0之前，自增主键AUTO_INCREMENT的值如果大于max(primary key)+1，在MySQL重启后，会重置AUTO_INCREMENT=max(primary key)+1，这种现象在某些情况下会导致业务主键冲突或者其他难以发现的问题。
 
-MySQL8.0每次变化时将自增计数器的最大值写入redo log，同时在每次检查点将其写入引擎私有的系统表。
+​	MySQL8.0每次变化时将自增计数器的最大值写入redo log，同时在每次检查点将其写入引擎私有的系统表。
 
-**解决了长期以来的自增字段值可能重复的bug。**
+​	解决了长期以来的自增字段值可能重复的bug。
 
  
 
@@ -810,53 +864,55 @@ MySQL8.0每次变化时将自增计数器的最大值写入redo log，同时在�
 
 创建的数据表中包含自增主键的id字段，语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B88.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AD6.tmp.jpg) 
 
 插入4个空值，执行如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B89.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AD7.tmp.jpg) 
 
 查询数据表test1中的数据，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B8A.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AD8.tmp.jpg) 
 
 删除id为4的记录，语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B9B.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AD9.tmp.jpg) 
 
 再次插入一个空值，语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B9C.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9ADA.tmp.jpg) 
 
 查询此时数据表test1中的数据，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B9D.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AEB.tmp.jpg) 
 
 从结果可以看出，虽然删除了id为4的记录，但是再次插入空值时，并没有重用被删除的4，而是分配了5。
 
 删除id为5的记录，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B9E.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AEC.tmp.jpg) 
 
 重启数据库，重新插入一个空值。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1B9F.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AED.tmp.jpg) 
 
 再次查询数据表test1中的数据，结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BAF.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AEE.tmp.jpg) 
 
 从结果可以看出，新插入的0值分配的是4，按照重启前的操作逻辑，此处应该分配6。出现上述结果的主要原因是自增主键没有持久化。在MySQL 5.7系统中，对于自增主键的分配规则，是由InnoDB数据字典内部一个计数器来决定的，而该计数器只在内存中维护，并不会持久化到磁盘中。当数据库重启时，该计数器会通过下面这种方式初始化。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BB0.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AFE.tmp.jpg) 
 
 在MySQL 8.0版本中，上述测试步骤最后一步的结果如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BC1.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9AFF.tmp.jpg) 
 
 从结果可以看出，自增变量已经持久化了。下面讲述MySQL 8.0的解决方案。
 
-MySQL 8.0将自增主键的计数器持久化到重做日志中。每次计数器发生改变，都会将其写入重做日志中。如果数据库重启，InnoDB会根据重做日志中的信息来初始化计数器的内存值。**为了尽量减小对系统性能的影响，计数器写入到重做日志时并不会马上刷新数据库系统。**
+MySQL 8.0将自增主键的计数器持久化到重做日志中。每次计数器发生改变，都会将其写入重做日志中。如果数据库重启，InnoDB会根据重做日志中的信息来初始化计数器的内存值。***\*为了尽量减小对系统性能的影响，计数器写入到重做日志时并不会马上刷新数据库系统\****。
+
+ 
 
 ## **全文索引加强**
 
@@ -866,33 +922,33 @@ MySQL 8.0支持更加灵活、更加优化的全文搜索。例如，全本索�
 
 在全文索引中，n-gram就是一段文字里面连续的n个字的序列。例如，用n-gram来对“春花秋月”进行分词，得到的结果如表21.18所示。其中，n由参数ngram_token_size控制，即分词的大小，默认是2。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BC2.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B00.tmp.jpg) 
 
 下面通过举例来说明全文搜索功能。
 
 创建数据表，并设置全文检索。SQL语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BC3.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B01.tmp.jpg) 
 
 插入演示数据，SQL语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BC4.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B12.tmp.jpg) 
 
 普通检索必须要是整个词才能检索到，SQL语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BC5.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B13.tmp.jpg) 
 
 部分词是不能检索出信息的，SQL语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BD6.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B14.tmp.jpg) 
 
 新的全文检索功能检索任意两个组合的记录，SQL语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BD7.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B15.tmp.jpg) 
 
 再次使用全文检索功能检索任意两个组合记录，SQL语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BE7.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B26.tmp.jpg) 
 
 ## **动态修改InnoDB缓冲池的大小**
 
@@ -904,29 +960,29 @@ MySQL 8.0支持更加灵活、更加优化的全文搜索。例如，全本索�
 
 查看当前缓冲池的大小，SQL语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BE8.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B27.tmp.jpg) 
 
 查看缓冲池中实例的个数，SQL语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BE9.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B28.tmp.jpg) 
 
 动态修改缓冲池的大小为1000MB，SQL语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BEA.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B29.tmp.jpg) 
 
 查看警告信息，SQL语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BEB.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B39.tmp.jpg) 
 
 出现上述警告信息的原因是，设置1000MB不是innodb_buffer_pool_chunk_size*innodb_buffer_pool_instances的倍数，即128MB的倍数。
 
 查看设置缓冲池的进度，SQL语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BEC.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B3A.tmp.jpg) 
 
 查看当前缓冲池的大小，SQL语句如下：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BFD.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B4B.tmp.jpg) 
 
 从结果可以看出，缓冲池的大小被设置成了1056964608字节（约1024MB），因为1024是128的整数倍，出现了缓冲池大小比配置文件里指定的size还大。
 
@@ -936,45 +992,49 @@ MySQL 8.0支持更加灵活、更加优化的全文搜索。例如，全本索�
 
 在PHP的配置文件my.ini中开启--early-plugin-load参数。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BFE.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B4C.tmp.jpg) 
 
 启动参数后，查看服务器是否支持加密功能：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1BFF.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B4D.tmp.jpg) 
 
 创建加密表空间：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1C10.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B4E.tmp.jpg) 
 
 ## **锁定实例**
 
 从MySQL 8开始，我们可以锁定实例进行备份了，这将允许在线备份期间的DML，并阻止可能导致快照不一致的所有操作。
 
-**操作步骤：**
+***\*操作步骤：\****
 
 1、在开始备份之前，请锁定需要备份的实例：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1C11.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B5E.tmp.jpg) 
 
 2、执行备份，完成后解锁实例：
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1C12.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B5F.tmp.jpg) 
+
+ 
 
 ## **死锁检查控制**
 
-**MySQL8.0（MySQL5.7.15）增加了一个新的动态变量（innodb_deadlock_detect），用于控制系统是否执行InnoDB死锁检查。**
+​	MySQL8.0（MySQL5.7.15）增加了一个新的动态变量（innodb_deadlock_detect），用于控制系统是否执行InnoDB死锁检查。
 
-对于高并发的系统，禁用死锁检查可能带来性能的提高。
+​	对于高并发的系统，禁用死锁检查可能带来性能的提高。
 
-## 锁定语句选项/跳过锁等待
+​	
 
-SELECT…FOR SHARE和SELECT…FOR UPDATE中支持NOWAIT、SKIP LOCKED选项：
+## **锁定语句选项****/跳过锁等待**
 
-<u>对于NOWAIT，如果请求的行被其他事务锁定时，语句立即返回。</u>
+​	SELECT…FOR SHARE和SELECT…FOR UPDATE中支持NOWAIT、SKIP LOCKED选项：
 
-<u>对于SKIP LOCKED，从返回的结果集中移除被锁定的行。</u>
+​	对于NOWAIT，如果请求的行被其他事务锁定时，语句立即返回。
 
+​	对于SKIP LOCKED，从返回的结果集中移除被锁定的行。
 
+ 
 
 在MySQL 5.7版本中，SELECT...FOR UPDATE语句在执行的时候，如果获取不到锁，会一直等待，直到innodb_lock_wait_timeout超时。
 
@@ -982,7 +1042,7 @@ SELECT…FOR SHARE和SELECT…FOR UPDATE中支持NOWAIT、SKIP LOCKED选项：
 
 下面通过案例来理解MySQL 8.0版本中如何跳过锁等待，如表21.19所示。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps1C13.tmp.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps9B60.tmp.jpg) 
 
 ## **其他改进功能**
 
@@ -992,7 +1052,7 @@ SELECT…FOR SHARE和SELECT…FOR UPDATE中支持NOWAIT、SKIP LOCKED选项：
 
 ## **MGR**
 
-**参考：**
+参考：
 
 [https://mp.weixin.qq.com/s?__biz=MjM5NzAzMTY4NQ==&mid=2653935539&idx=1&sn=07f9d004eedef048716ed02220376414&chksm=bd3b4dd98a4cc4cf57c42bfda63fbc5ab5640ad495707101b9874397ab4652e16aa9bbd76c42&mpshare=1&scene=24&srcid=0204gtEiVkA6wcYGLhjQ60bA&sharer_sharetime=1612424005665&sharer_shareid=33f795d236f19ac7c128b2e279563f84#rd](#rd)
 
