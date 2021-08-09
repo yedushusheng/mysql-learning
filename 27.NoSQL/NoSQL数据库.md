@@ -12,7 +12,7 @@
 
 1、Impedance Mismatch
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml22676\wps1.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA418.tmp.jpg) 
 
 我们使用Python、Ruby、Java、.Net等语言编写应用程序，这些语言有一个共同的特性——面向对象。但是我们使用MySQL、PostgreSQL、Oracle以及SQL Server，这些数据库同样有一个共同的特性——关系型数据库。这里就牵扯到了“Impedance Mismatch”这个术语：存储结构是面向对象的，但是数据库却是关系的，所以在每次存储或者查询数据时，我们都需要做转换。类似Hibernate、Entity Framework这样的ORM框架确实可以简化这个过程，但是在对查询有高性能需求时，这些ORM框架就捉襟见肘了。
 
@@ -70,7 +70,7 @@ NoSQL：泛指非关系型数据库
 
 NoSQL适用于可接受最终一致性的部分应用，例如社交媒体。用户并不关注看到的是否为不一致的数据库视图，并且考虑到数据的状态更新、发推文等，强一致性也并非必要的。但是，NoSQL数据库不宜用于对一致性要求高的系统，例如电子商务平台。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml22676\wps2.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA419.tmp.jpg) 
 
  
 
@@ -93,7 +93,7 @@ NoSQL适用于可接受最终一致性的部分应用，例如社交媒体。用
 
 针对key-value数据存储的细微不同，研究者又进一步将key-value存储细分为key-document存储（MongoDB，CouchDB）、 key-column存储（Cassandra，Voldemort，Hbase）和key-value存储（Redis，Tokyo Cabinet）。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml22676\wps3.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA42A.tmp.jpg) 
 
 键值数据库就像在传统语言中使用的哈希表。你可以通过key来添加、查询或者删除数据，鉴于使用主键访问，所以会获得不错的性能及扩展性。
 
@@ -123,7 +123,9 @@ NoSQL适用于可接受最终一致性的部分应用，例如社交媒体。用
 
 3、事务的支持。在Key-Value数据库中故障产生时不可以进行回滚。
 
-## 列存储数据库![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml22676\wps4.jpg) 
+## 列存储数据库
+
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA42B.tmp.jpg) 
 
  列存储数据库将数据储存在列族（column family）中，一个列族存储经常被一起查询的相关数据。
 
@@ -171,7 +173,7 @@ Apache的Cassandra，开源。
 
 ## 文档型数据库
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml22676\wps5.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA42C.tmp.jpg) 
 
  面向文档数据库会将数据以文档的形式储存。每个文档都是自包含的数据单元，是一系列数据项的集合。每个数据项都有一个名称与对应的值，值既可以是简单的数据类型，如字符串、数字和日期等；也可以是复杂的类型，如有序列表和关联对象。数据存储的最小单位是文档，同一个表中存储的文档属性可以是不同的，数据可以使用XML、JSON或者JSONB等多种形式存储。
 
@@ -205,7 +207,7 @@ Apache的Cassandra，开源。
 
 ## 图形（Graph）数据库
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml22676\wps6.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA42D.tmp.jpg) 
 
 图数据库允许我们将数据以图的方式储存。实体会被作为顶点，而实体之间的关系则会被作为边。比如我们有三个实体，Steve Jobs、Apple和Next，则会有两个“Founded by”的边将Apple和Next连接到Steve Jobs。
 
@@ -261,7 +263,7 @@ CP - 满足一致性，分区容忍性的系统，通常性能不是特别高。
 
 AP - 满足可用性，分区容忍性的系统，通常可能对一致性要求低一些。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml22676\wps7.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA43D.tmp.jpg) 
 
 大部分key-value数据库系统都会根据自己的设计目的进行相应的选择，如Cassandra，Dynamo满足AP；BigTable，MongoDB满足CP；而关系数据库，如Mysql和Postgres满足AC。
 
@@ -281,7 +283,7 @@ Soft-state --软状态/柔性事务。"Soft state"可以理解为"无连接"的,
 
 Eventually Consistency --最终一致性，也是ACID的最终目的。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml22676\wps8.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA43E.tmp.jpg) 
 
  
 
@@ -323,6 +325,8 @@ FIT是如下进行权衡：
 
 # 关键技术
 
+ 
+
 # 体系结构
 
 尽管目前流行的NoSQL数据存储系统的设计与实现方式各有不同，但是总结起来大体上有两种架构：master-slave结构和P2P环形结构，两者各具特色。
@@ -347,7 +351,7 @@ P2P环形结构没有master节点，可以灵活地添加节点来实现系统�
 
 ## K-V数据模型
 
-### **key-value型**
+### key-value型
 
 Key-Value键值对数据模型实际上是一个映射，即key是查找每条数据地址的唯一关键字，value是该数据实际存储的内容。例如键值对：(“20091234”,“张三”)，其key:“20091234”是该数据的唯一入口，而value：“张三”是该数据实际存储的内容。
 
@@ -359,7 +363,7 @@ Key-Value数据模型典型的是采用哈希函数实现关键字到值的映�
 
 Key-Column型数据模型主要来自Google的BigTable，目前流行的开源项目Hbase和Cassandra也采用了该种模型。Column型数据模型可以理解成一个多维度的映射，主要包含column，row和columnfamily等概念。
 
-![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml22676\wps9.jpg) 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wpsA43F.tmp.jpg) 
 
  如图1所示，在 key-column型数据模型中，column是数据库中最小的存储单元，它是一个三元组，包括name(如c1,c2)，value(如v1,v2)和timestamp(如 123456)，即一个带有时间戳的key-value键值对。每一个row也是一个key-value对，对于任意一个row，其key是该row下数据的唯一入口(如k1)，value是一个column的集合(如column:c1,c2)。Columnfamily是一个包含了多个row的结构，相当于关系库中表的概念。
 	简单来说，key-column型数据模型是通过多层的映射模拟了传统表的存储格式，实际上类似于key-value数据模型，需要通过key进行查找。因此，key-column型数据模型是key-value数据模型的一种扩展。

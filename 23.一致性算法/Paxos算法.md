@@ -2,7 +2,7 @@
 
 ## 简介
 
-分布式系统中的节点通信存在两种模型：共享内存（Shared memory）和消息传递（Messages passing）。
+分布式系统中的节点通信存在两种模型：**共享内存（Shared memory）和消息传递（Messages passing）**。
 
 基于消息传递通信模型的分布式系统，不可避免的会发生以下错误：
 
@@ -16,7 +16,7 @@
 
 Paxos算法解决的问题是在一个可能发生上述异常的分布式系统中如何就某个值达成一致，保证不论发生以上任何异常，都不会破坏决议的一致性。
 
-简而言之：Paxos的目的是让整个集群的结点对某个值的变更达成一致。Paxos可以说是一个民主选举的算法——大多数节点的决定会成个整个集群的统一决定。任何一个点都可以提出要修改某个数据的提案，是否通过这个提案取决于这个集群中是否有超过半数的节点同意。取值一旦确定将不再更改，并且可以被获取到（不可变性，可读取性）。
+简而言之：Paxos的目的是让整个集群的结点对某个值的变更达成一致。Paxos可以说是一个民主选举的算法——**大多数节点的决定会成个整个集群的统一决定**。任何一个点都可以提出要修改某个数据的提案，是否通过这个提案取决于这个集群中是否有超过半数的节点同意。取值一旦确定将不再更改，并且可以被获取到（不可变性，可读取性）。
 
 一致性问题普遍存在于计算机的各个领域，小到cpu cache，大到数据库事务，分布式系统。因为现实世界的复杂性，导致一致性问题在分布式领域更加突出。Paxos是当前解决分布式一致性问题最有效、理论最完美的算法，同时也是最难实现和理解的算法。
 
@@ -62,9 +62,9 @@ Raft协议比paxos的优点是容易理解，容易实现。它强化了leader�
 
 #### 相同
 
-Raft与Multi-Paxos中相似的概念：
+**Raft与Multi-Paxos中相似的概念：**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps825E.tmp.jpg) 
 
 Raft的Leader即Multi-Paxos的Proposer。
 
@@ -80,9 +80,9 @@ Raft的日志复制即Multi-Paxos的Accept阶段。
 
 #### 不同
 
-Raft与Multi-Paxos的不同：
+**Raft与Multi-Paxos的不同：**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps825F.tmp.jpg) 
 
 Raft假设系统在任意时刻最多只有一个Leader，提议只能由Leader发出（强Leader），否则会影响正确性；而Multi-Paxos虽然也选举Leader，但只是为了提高效率，并不限制提议只能由Leader发出（弱Leader）。
 
@@ -104,7 +104,7 @@ Raft在AppendEntries中携带Leader的commit index，一旦日志形成多数派
 
 开始启动的情况下就必要选主，然后再提供正常服务都有一个异常场景的恢复过程 
 
-共同点：都使用timeout来重新选择leader
+**共同点：都使用timeout来重新选择leader**
 
 采用quorum来确定整个系统的一致性(也就是对某一个值的认可)，这个quorum一般实现是集群中半数以上的服务器，zookeeper里还提供了带权重的quorum实现。
 
@@ -114,13 +114,13 @@ leader election都采用先到先得的投票方式
 
  
 
-区别：在于选主的方式 
+**区别：在于选主的方式** 
 
 ZAB是广播式互相计数方式，发现别人比自己牛逼的时候要帮助别人扩散消息，根据本机计数决定谁是主raft是个节点发起投票，大家根据规则选择投于不投，然后各自收到别人对自己的投票超过半数时宣布自己成为主。
 
 ZAB协议，只有当过半节点提交了事务，才会给客户端事务提交的回应，是一个类似二阶段提交的方式，重新选主后，特别有一个同步日志的阶段；而Raft协议，leader提交了事务，并且收到过半follower对准备完成事务的ACK后，自身节点提交事务，至于过半数节点提交事务这件事，是在之后通信过程中渐渐完成的，重新选主后，没有单独日志同步的阶段。
 
-这导致了一个问题，Raft中如果给客户端回应完，leader挂掉了，如何保证一致性。保证在集群中处理过的事务，不会被抹去？关于这点，Raft在选主阶段，提出了和ZAB类似的策略来解决：选择日志更多的服务器做leader，并给了更多选主的限制，以leader的日志为标准，同步日志。
+这导致了一个问题，Raft中如果给客户端回应完，leader挂掉了，如何保证一致性。保证在集群中处理过的事务，不会被抹去？关于这点，**Raft在选主阶段，提出了和ZAB类似的策略来解决：选择日志更多的服务器做leader，并给了更多选主的限制，以leader的日志为标准，同步日志**。
 
  
 
@@ -146,7 +146,7 @@ Multi-Paxos和Raft的Leader负载更高，各副本之间负载不均衡，Leade
 
 #### 消息复杂度
 
-Multi-Paxos和Raft选举出Leader之后，正常只需要一次网络来回就可以提交一条日志，但Multi-Paxos需要额外的异步Commit消息提交，Raft只需要推进本地的commit index，不使用额外的消息。
+**Multi-Paxos和Raft选举出Leader之后，正常只需要一次网络来回就可以提交一条日志，但Multi-Paxos需要额外的异步Commit消息提交，Raft只需要推进本地的commit index，不使用额外的消息。**
 
 因此消息复杂度，Raft最低，Paxos其次。
 
@@ -156,13 +156,13 @@ Multi-Paxos和Raft选举出Leader之后，正常只需要一次网络来回就�
 
 我们将Pipeline分为顺序Pipeline和乱序Pipeline。
 
-Multi-Paxos支持乱序Pipeline，Raft因为日志连续性假设，只支持顺序Pipeline。但Raft也可以实现乱序Pipeline，只需要在Leader上给每个Follower维护一个类似于TCP的滑动窗口，对应每个Follower上维护一个接收窗口，允许窗口里面的日志不连续，窗口外面是已经连续的日志，日志一旦连续则向前滑动窗口，窗口里面可乱序Pipeline。
+**Multi-Paxos支持乱序Pipeline，Raft因为日志连续性假设，只支持顺序Pipeline。但Raft也可以实现乱序Pipeline，只需要在Leader上给每个Follower维护一个类似于TCP的滑动窗口，对应每个Follower上维护一个接收窗口，允许窗口里面的日志不连续，窗口外面是已经连续的日志，日志一旦连续则向前滑动窗口，窗口里面可乱序Pipeline。**
 
  
 
 #### 并发处理
 
-Multi-Paxos沿用Paxos的策略，一旦发现并发冲突则回退重试，直到成功；Raft则使用强Leader来避免并发冲突，Follwer不与Leader竞争，避免了并发冲突。
+**Multi-Paxos沿用Paxos的策略，一旦发现并发冲突则回退重试，直到成功；Raft则使用强Leader来避免并发冲突，Follwer不与Leader竞争，避免了并发冲突。**
 
 Paxos是冲突回退，Raft是冲突避免。Paxos和Raft的日志都是线性的。
 
@@ -172,7 +172,7 @@ Paxos是冲突回退，Raft是冲突避免。Paxos和Raft的日志都是线性�
 
 Multi-Paxos和Raft均依赖Leader，Leader不可用了需要重新选举Leader，在新Leader未选举出来之前服务不可用。
 
-Raft是强Leader，Follower必须等旧Leader的Lease到期后才能发起选举，Multi-Paxos是弱Leader，Follwer可以随时竞选Leader，虽然会对效率造成一定影响，但在Leader失效的时候能更快的恢复服务，因此Multi-Paxos比Raft可用性更好。
+**Raft是强Leader，Follower必须等旧Leader的Lease到期后才能发起选举，Multi-Paxos是弱Leader，Follwer可以随时竞选Leader，虽然会对效率造成一定影响，但在Leader失效的时候能更快的恢复服务，因此Multi-Paxos比Raft可用性更好。**
 
  
 
@@ -200,13 +200,13 @@ Paxos各角色的职能：
 
 Client：产生议题者，发起新的请求（系统外部角色，像民众）；
 
-Proposer：提议者，接受Client请求，向集群提出提议propose（同时存在一个或者多个，他们各自发出提案，像议员，替民众提出议案）；
+Proposer：***\*提议者\****，接受Client请求，向集群提出提议propose（同时存在一个或者多个，他们各自发出提案，像议员，替民众提出议案）；
 
-Acceptor（Voter）：提议投票和接受者，收到议案后选择是否接受（只有在形成法定人数quorum，一般即为多数派majority时，提议才会最终被接受，像国会）；
+Acceptor（Voter）：***\*提议投票和接受者\****，收到议案后选择是否接受（只有在形成法定人数quorum，一般即为多数派majority时，提议才会最终被接受，像国会）；
 
-Learner：提议接受者，最终决策学习者，只学习正确的决议（backup备份，对集群一致性没有什么影响，像记录员）。
+Learner：***\*提议接受者\****，最终决策学习者，只学习正确的决议（backup备份，对集群一致性没有什么影响，像记录员）。
 
-注：互相发短信其实就是发消息进行通信，短信的时间戳就是“epoch”。
+**注：**互相发短信其实就是发消息进行通信，短信的时间戳就是“epoch”。
 
  
 
@@ -216,7 +216,7 @@ Learner：提议接受者，最终决策学习者，只学习正确的决议（b
 
 下面用一幅图来标识角色之间的关系。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps8270.tmp.jpg) 
 
 上图中是画了很多节点的，每个节点需要一台机器么？答案是不需要的。上面的图是逻辑图，物理中，可以将Acceptor和Proposer以及Client放在一台机器上，Acceptor启动端口进行TCP监听，Proposer来主动连接即可。所以完全可以将Client、Proposer、Acceptor、Learner合并到一个程序里面。
 
@@ -224,9 +224,9 @@ Learner：提议接受者，最终决策学习者，只学习正确的决议（b
 
 ## 步骤
 
-Paxos达成一个决议至少需要两个阶段（Prepare阶段和Accept阶段）。
+**Paxos达成一个决议至少需要两个阶段（Prepare阶段和Accept阶段）。**
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps8271.tmp.jpg) 
 
 Prepare阶段的作用：
 
@@ -260,41 +260,41 @@ Propose提出一个议案，编号为N，此N大于这个proposer之前提出的
 
 ​	基本流程：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps8272.tmp.jpg) 
 
 ​	部分节点失败，但是达到了Quorums：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps8283.tmp.jpg) 
 
-​	Proposer失败：
+​	***\*Proposer失败：\****
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps8284.tmp.jpg) 
 
 ​	注：如果一个Proposer宕机，则会另起一个Proposer，Client连接到这个新的Proposer上，然后另起一个编号为2的Proposer执行任务。
 
-​	潜在问题：活锁（liveness）或dueling
+​	***\*潜在问题：活锁（liveness）或dueling\****
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps8285.tmp.jpg) 
 
 ### 描述二
 
 Paxos在原作者的《Paxos Made Simple》中的描述：
 
-决议的提出与批准
+**决议的提出与批准**
 
 通过一个决议分为两个阶段：
 
-1）prepare阶段
+***\*1）prepare阶段\****
 
-proposer选择一个提案编号n并将prepare请求发送给acceptors中的一个多数派；acceptor收到prepare消息后，如果提案的编号大于它已经回复的所有prepare消息，则acceptor将自己上次接受的提案回复给proposer，并承诺不再回复小于n的提案；
+proposer选择一个提案编号n并将prepare请求发送给acceptors中的一个多数派；***\*acceptor收到prepare消息后，如果提案的编号大于它已经回复的所有prepare消息，则acceptor将自己上次接受的提案回复给proposer，并承诺不再回复小于n的提案\****；
 
  
 
 下图是一个proposer和5个acceptor之间的交互，对2种不同的情况做了处理。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps8295.tmp.jpg) 
 
-2）批准阶段
+***\*2）批准阶段\****
 
 当一个proposer收到了多数acceptors对prepare的回复后，就进入批准阶段。它要向回复prepare请求的acceptors发送accept请求，包括编号n和value；
 
@@ -302,7 +302,7 @@ proposer选择一个提案编号n并将prepare请求发送给acceptors中的一�
 
 可以看出，Proposer与Acceptor之间的交互主要有4类消息通信，这4类消息对应于paxos算法的两个阶段4个过程。用2轮RPC来确定一个值。上面的图解都只是一个Proposer，但是实际中肯定是有其他Proposer针对同一件事情发出请求，所以在每个过程中都会有些特殊情况处理，这也是为了达成一致性所做的事情。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps8296.tmp.jpg) 
 
 如果在整个过程中没有其他Proposer来竞争，那么这个操作的结果就是确定无异议的。但是如果有其他Proposer的话，情况就不一样了。
 
@@ -314,7 +314,7 @@ proposer选择一个提案编号n并将prepare请求发送给acceptors中的一�
 
  
 
-在Google的Chubby论文中给出了这样一种方法：
+***\*在Google的Chubby论文中给出了这样一种方法：\****
 
 假设有n个proposer，每个编号为ir (0 <= ir < n)，proposol编号的任何值s都应该大于它已知的最大值，并且满足：s % n = ir => s = m * n + ir
 
@@ -322,7 +322,7 @@ proposer已知的最大值来自两部分：proposer自己对编号自增后的�
 
 我们以3个proposer P1、P2、P3为例。
 
-开始m=0，编号分别为0，1，2。P1提交的时候发现了P2已经提交，P2编号为1 > P1的0，因此P1重新计算编号：new P1 = 1 * 3 + 0 = 4。P3以编号2提交，发现小于P1的4，因此P3重新编号：new P3 = 1 * 3 + 2 = 5
+开始m=0，编号分别为0，1，2。P1提交的时候发现了P2已经提交，P2编号为1 > P1的0，因此P1重新计算编号：new P1 = 1 \* 3 + 0 = 4。P3以编号2提交，发现小于P1的4，因此P3重新编号：new P3 = 1 * 3 + 2 = 5
 
 整个paxos算法基本上就是围绕着proposal编号在进行：proposer忙于选择更大的编号提交proposal，acceptor则比较提交的proposal的编号是否已是最大，只要编号确定了，所对应的value也就确定了。所以说，在paxos算法中没有什么比proposal的编号更重要。
 
@@ -344,13 +344,13 @@ Paxos对某一个问题达成一致的一个协议。《Paxos Made Simple》花�
 
  
 
-Basic Paxos达成一次决议至少需要两次网络来回，并发情况下可能需要更多，极端情况下甚至可能形成活锁，效率低下，Multi-Paxos正是为解决此问题而提出。
+***\*Basic Paxos达成一次决议至少需要两次网络来回，并发情况下可能需要更多，极端情况下甚至可能形成活锁，效率低下\****，Multi-Paxos正是为解决此问题而提出。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps8297.tmp.jpg) 
 
 Multi-Paxos选举一个Leader，提议由Leader发起，没有竞争，解决了活锁问题。提议都由Leader发起的情况下，Prepare阶段可以跳过，将两阶段变为一阶段，提高效率。Multi-Paxos并不假设唯一Leader，它允许多Leader并发提议，不影响安全性，极端情况下退化为Basic Paxos。
 
-Multi-Paxos与Basic Paxos的区别并不在于Multi（Basic Paxos也可以Multi），只是在同一Proposer连续提议时可以优化跳过Prepare直接进入Accept阶段，仅此而已。
+***\*Multi-Paxos与Basic Paxos的区别并不在于Multi（Basic Paxos也可以Multi），只是在同一Proposer连续提议时可以优化跳过Prepare直接进入Accept阶段，仅此而已\****。
 
  
 
@@ -358,11 +358,11 @@ Multi-Paxos与Basic Paxos的区别并不在于Multi（Basic Paxos也可以Multi�
 
 ​	基本流程：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps8298.tmp.jpg) 
 
 ​	减少角色，进一步简化：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps82A9.tmp.jpg) 
 
 ## 问题
 
@@ -372,6 +372,6 @@ Multi-Paxos与Basic Paxos的区别并不在于Multi（Basic Paxos也可以Multi�
 
 由此可知，Paxos在节点宕机恢复、消息无序或丢失、网络分化的场景下能保证决议的一致性。而Paxos的描述侧重于理论，在实际项目应用中，处理了N多实际细节后，可能已经变成了另外一种算法，这时候正确性已经无法得到理论的保证。
 
-使用Paxos的开源项目包括：腾讯微信PhxPaxos。使用Raft的开源项目：etcd。
+**使用Paxos的开源项目包括：腾讯微信PhxPaxos。使用Raft的开源项目：etcd。**
 
 要证明分布式一致性算法的正确性通常比实现算法还困难。所以很多系统实际中使用的都是以Paxos理论为基础而衍生出来的变种和简化版。例如Google的Chubby、MegaStore、Spanner等系统，ZooKeeper的ZAB协议，MySQL MGR，还有更加容易理解的raft协议。大部分系统都是靠在实践中运行很长一段时间才能谨慎的表示，系统已基本运行，没有发现大的问题。

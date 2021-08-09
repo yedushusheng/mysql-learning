@@ -1,4 +1,4 @@
-# *背景*
+# 背景
 
 为了解决节点损坏的问题，业界通用的方案是采用Replication，在Master写数据的时候挂多个Slave，写完后保证将log同步到Slave，这样的流程下来才能认为写入是成功的。
 
@@ -24,17 +24,17 @@ Paxos协议中有一个基本的假设前提：可能会同时有多个Leader存
 
 2、数据广播
 
-*Paxos对于Leader的选举没有限制，用户可以自己定义*。这是因为Paxos协议设计了一个巧妙的数据广播过程，即Paxos的基本通讯协议（The Basic Protocol）。它有很强的数据一致性保障，即使在多个Leader同时出现时也能够保证广播数据的一致性。
+***\*Paxos对于Leader的选举没有限制，用户可以自己定义\****。这是因为Paxos协议设计了一个巧妙的数据广播过程，即Paxos的基本通讯协议（The Basic Protocol）。它有很强的数据一致性保障，即使在多个Leader同时出现时也能够保证广播数据的一致性。
 
-而*Raft协议走了完全相反的一个思路：保证不会同时有多个Leader存在**（**采用避免冲突的方式，Paxos则不会避免冲突，使用失败重试**）*。因此Raft协议对Leader的选举做了详细的设计，从而保证不会有多个Leader同时存在。相反，数据广播的过程则变的简单易于理解了。
+而***\*Raft协议走了完全相反的一个思路：保证不会同时有多个Leader存在\*******\*（\*******\*采用避免冲突的方式，Paxos则不会避免冲突，使用失败重试\*******\*）\****。因此Raft协议对Leader的选举做了详细的设计，从而保证不会有多个Leader同时存在。相反，数据广播的过程则变的简单易于理解了。
 
  
 
-分布式一致：
+**分布式一致：**
 
 在单节点环境中，client向node发送一个值，很容易就达成一致了
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64A8.tmp.jpg) 
 
 但当我们有多个node时，我们应该如何做，才能实现一致性呢？
 
@@ -54,13 +54,13 @@ https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md
 
  
 
-# *复制状态机*
+# 复制状态机
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64B9.tmp.jpg) 
 
 大多数的一致性算法其实都是采用了复制状态机（Replicated State Machine）的模型。对于这个模型你可以认为数据是被放在状态机上，用户操作集群时首先需要写入log，然后通过一致性算法将log复制到其他机器，一旦确定其他机器都接收到log后就会认为该log被提交了，最后其他节点会依次将log存放到状态机。
 
-## *State*
+## State
 
 Raft有着三个状态，第一个状态就是Leader，即使Raft Group存在多个节点，Leader也只会存在一个，也只有Leader能负责所有数据的读写，这样就不会出现线性一致性的问题。
 
@@ -68,7 +68,7 @@ Raft有着三个状态，第一个状态就是Leader，即使Raft Group存在多
 
  
 
-## *Term*
+## Term
 
 Raft是不依赖系统的时间，它是将时间分成一个个Term，每个Term可以是任意长度，每次Term开始的时候都是由一次新的选举产生的，然后在这个Term内选出一个Leader，该Leader会一直服务到所在Leader结束。
 
@@ -76,11 +76,11 @@ Raft是不依赖系统的时间，它是将时间分成一个个Term，每个Ter
 
  
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64BA.tmp.jpg) 
 
 每个Term都有一个唯一的数字编号。所有Term的数字编号是从小到大连续排列的。
 
-​	*作废旧Leader*
+​	***\*作废旧Leader\****
 
 Term编号在作废旧Leader的过程中至关重要，但却十分简单。过程如下：
 
@@ -92,7 +92,7 @@ Term编号在作废旧Leader的过程中至关重要，但却十分简单。过�
 
  
 
-## *Log Replication*
+## Log Replication
 
 一个新的Leader被选出来之后就会开始工作了，它会不停的去接收客户端发送过来的请求，这些请求都会通过log落地，而这些log一定要是单调递增，以保证数据的一致性。
 
@@ -100,15 +100,15 @@ Term编号在作废旧Leader的过程中至关重要，但却十分简单。过�
 
  
 
-## *Membership Change*
+## Membership Change
 
 对于分布式集群来说添加节点其实是分成困难的操作，最常见的做法是先更改配置中心，然后将新的配置同步到旧的节点。不过这样在同步配置的时候，就需要停止外部服务。而Raft采用了一种动态的成员节点变更，它会将新的节点到当作Raft log通过Leader传递给其他节点，这样其他节点就知道了这个新的节点的信息。不过这个过程中有可能会在某一阶段出现2个Leader的情况，为了避免这种情况就要每次只变更一个节点，而不进行多节点变更。
 
 Raft也提供了一种多节点变更的算法，它是一种两阶段提交，Leader在第一阶段会同时将新旧集群的配置同时当成一个Raft log发送给其他旧集群节点，当这些节点接收到数据后就会和新的集群节点进入join状态，所有的操作都要进过新旧集群的大多数节点同意才会执行，然后在新的join状态内重新提交新的配置信息，在配置被committed后新的节点会上线，旧的节点会下线。
 
-# *原理*
+# 原理
 
-## *子问题*
+## 子问题
 
 Paxos难以理解，raft应运而生，可以理解为简单的Paxos，它划分为三个子问题：
 
@@ -120,11 +120,11 @@ Paxos难以理解，raft应运而生，可以理解为简单的Paxos，它划分
 
  
 
-## *思路*
+## 思路
 
 每个node都会处于以下3个状态之一：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64BB.tmp.jpg) 
 
 （1）Follower 跟随者
 
@@ -134,7 +134,7 @@ Paxos难以理解，raft应运而生，可以理解为简单的Paxos，它划分
 
  
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64CB.tmp.jpg) 
 
 所有node开始时都是follower：
 
@@ -142,31 +142,31 @@ Paxos难以理解，raft应运而生，可以理解为简单的Paxos，它划分
 
 当candidate收到大多数node的同意后，就变为了Leader，以后对于系统的修改操作，都必须经过Leader
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64CC.tmp.jpg) 
 
 例如client要发送消息，会先发给leader，leader会把这个操作记录到自己的日志
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64CD.tmp.jpg) 
 
 注意，是记录到日志，并没有实际修改node中的值
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64DE.tmp.jpg) 
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64DF.tmp.jpg) 
 
 leader把这条操作记录发送给各个follower，follower收到后，也保存到自己的日志中
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64E0.tmp.jpg) 
 
 follower收到操作记录后，向leader发送消息，说自己安排好了
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64E1.tmp.jpg) 
 
 leader收到大多数的回馈后，就把这条记录进行提交，真正修改了node中的值
 
 leader执行提交以后，就通知各个follower，“我已经提交了，你们可以更新了”
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64F1.tmp.jpg) 
 
 现在，系统就达成了一致的状态
 
@@ -174,15 +174,15 @@ leader执行提交以后，就通知各个follower，“我已经提交了，你
 
  
 
-## *基本规则*
+## 基本规则
 
 raft的工作模式是一个Leader和多个Follower模式，即我们通常说的领导者-追随者模式。这种模式下需要解决的第一个问题就是Leader的选举问题。其次是如何把日志从Leader复制到所有Follower上去。
 
 raft中的server有三种状态，除了已经提到的Leader和Follower状态外，还有Candidate状态，即竞选者状态。下面是这三种状态的转化过程。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64F2.tmp.jpg) 
 
-### *Leader选举过程*
+### Leader选举过程
 
 raft初始状态时所有server都处于Follower状态，并且随机睡眠一段时间，这个时间在0~1000ms之间。最先醒来的server A进入Candidate状态，Candidate状态的server A有权利发起投票，向其它所有server发出requst_vote请求，请求其它server给它投票成为Leader。当其它server收到request_vote请求后，将自己仅有的一票投给server A，同时继续保持Follower状态并重置选举计时器。当server A收到大多数（超过一半以上）server的投票后，就进入Leader状态，成为系统中仅有的Leader。raft系统中只有Leader才有权利接收并处理client请求，并向其它server发出添加日志请求来提交日志。
 
@@ -200,17 +200,17 @@ Follower将其当前term加一然后转换为Candidate。它首先给自己投�
 
 3、没有服务器赢得多数的选票，Leader选举失败，等待选举时间超时后发起下一次选举。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64F3.tmp.jpg) 
 
 选举出Leader后，Leader通过定期向所有Followers发送心跳信息维持其统治。若Follower一段时间未收到Leader的心跳则认为Leader可能已经挂了，再次发起Leader选举过程。
 
  
 
-### *日志复制过程*
+### 日志复制过程
 
 Raft将用户数据称作日志（Log），存储在一个日志队列里。每个节点上都有一份。队列里的每个日志都一个序号，这个序号是连续递增的不能有缺。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps64F4.tmp.jpg) 
 
 日志队列里有一个重要的位置叫做提交日志的位置（Commit Index）。将日志队列里的日志分为了两个部分：
 
@@ -218,23 +218,23 @@ Raft将用户数据称作日志（Log），存储在一个日志队列里。每�
 
 2、未提交日志：还未复制到超过半数节点的数据。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps6505.tmp.jpg) 
 
 当Followers收到日志后，将日志按顺序存储到队列里。但这时Commit Index不会更新，因此这些日志是未提交的日志，不能发送给应用去执行。当Leader收到超过半数的Followers的应答后，会更新自己的Commit Index，并将Commit Index广播到Followers上。这时Followers更新Commit Index，未提交的日志就变成了已提交的日志，可以发送给应用程序去执行了。
 
  
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps6506.tmp.jpg) 
 
 某些Followers可能没有成功的复制日志，Leader会无限的重试 AppendEntries RPC直到所有的Followers最终存储了所有的日志条目。
 
 日志由有序编号（log index）的日志条目组成。每个日志条目包含它被创建时的任期号（term），和用于状态机执行的命令。如果一个日志条目被复制到大多数服务器上，就被认为可以提交（commit）了。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps6507.tmp.jpg) 
 
 Raft日志
 
-*Raft日志同步保证如下两点：*
+***\*Raft日志同步保证如下两点：\****
 
 1、如果不同日志中的两个条目有着相同的索引和任期号，则它们所存储的命令是相同的。
 
@@ -246,7 +246,7 @@ Raft日志
 
 一般情况下，Leader和Followers的日志保持一致，因此AppendEntries一致性检查通常不会失败。然而，Leader崩溃可能会导致日志不一致：旧的Leader可能没有完全复制完日志中的所有条目。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps6517.tmp.jpg) 
 
 Leader和Followers上日志不一致
 
@@ -268,9 +268,9 @@ Leader具有绝对的日志复制权力，其它server上存在日志不全或�
 
  
 
-### *安全性保证*
+### 安全性保证
 
-*Raft增加了如下两条限制以保证安全性：*
+***\*Raft增加了如下两条限制以保证安全性：\****
 
 1、拥有最新的已提交的log entry的Follower才有资格成为Leader。
 
@@ -280,7 +280,7 @@ Leader具有绝对的日志复制权力，其它server上存在日志不全或�
 
 之所以要这样，是因为可能会出现已提交的日志又被覆盖的情况：
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps6518.tmp.jpg) 
 
 已提交的日志被覆盖
 
@@ -298,7 +298,7 @@ S5尚未将日志推送到Followers就离线了，进而触发了一次新的选
 
  
 
-### *日志压缩*
+### 日志压缩
 
 在实际的系统中，不能让日志无限增长，否则系统重启时需要花很长的时间进行回放，从而影响可用性。Raft采用对整个系统进行snapshot来解决，snapshot之前的日志都可以丢弃。
 
@@ -318,7 +318,7 @@ Snapshot中包含以下内容：
 
  
 
-### *成员变更*
+### 成员变更
 
 成员变更是在集群运行过程中副本发生变化，如增加/减少副本数、节点替换等。
 
@@ -330,19 +330,19 @@ Snapshot中包含以下内容：
 
 成员变更不能影响服务的可用性，但是成员变更过程的某一时刻，可能出现在Cold和Cnew中同时存在两个不相交的多数派，进而可能选出两个Leader，形成不同的决议，破坏安全性。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps6519.tmp.jpg) 
 
 成员变更的某一时刻Cold和Cnew中同时存在两个不相交的多数派
 
 由于成员变更的这一特殊性，成员变更不能当成一般的一致性问题去解决。
 
-为了解决这一问题，Raft提出了两阶段的成员变更方法。集群先从旧成员配置Cold切换到一个*过渡成员配置*，称为*共同一致（joint consensus）*，共同一致是旧成员配置Cold和新成员配置Cnew的组合Cold U Cnew，*一旦共同一致Cold U Cnew被提交，系统再切换到新成员配置Cnew*。
+为了解决这一问题，Raft提出了两阶段的成员变更方法。集群先从旧成员配置Cold切换到一个***\*过渡成员配置\****，称为***\*共同一致（joint consensus）\****，共同一致是旧成员配置Cold和新成员配置Cnew的组合Cold U Cnew，***\*一旦共同一致Cold U Cnew被提交，系统再切换到新成员配置Cnew\****。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps652A.tmp.jpg) 
 
 Raft两阶段成员变更
 
-*Raft两阶段成员变更过程如下：*
+***\*Raft两阶段成员变更过程如下：\****
 
 1、Leader收到成员变更请求从Cold切成Cnew；
 
@@ -360,7 +360,7 @@ Raft两阶段成员变更
 
  
 
-*异常分析：*
+***\*异常分析：\****
 
 1、如果Leader的Cold U Cnew尚未推送到Follower，Leader就挂了，此后选出的新Leader并不包含这条日志，此时新Leader依然使用Cold作为自己的成员配置。
 
@@ -382,7 +382,7 @@ Raft两阶段成员变更
 
  
 
-*一阶段成员变更：*
+***\*一阶段成员变更：\****
 
 1、成员变更限制每次只能增加或删除一个成员（如果要变更多个成员，连续变更多次）。
 
@@ -394,45 +394,45 @@ Leader只要开始同步新成员配置，即可开始使用新的成员配置�
 
  
 
-### *QA*
+### QA
 
-*1、Leader选举过程中，如果有两个serverA和B同时醒来并发出request_vote请求怎么办？*
+***\*1、Leader选举过程中，如果有两个serverA和B同时醒来并发出request_vote请求怎么办？\****
 
 由于在一次选举过程中，一个server最多只能投一票，这就保证了serverA和B不可能同时得到大多数（一半以上）的投票。如果A或者B中其一幸运地得到了大多数投票，就能顺利地成为Leader，raft系统正常运行下去。但是A和B可能刚好都得到一半的投票，两者都成为不了Leader。这时A和B继续保持Candidate状态，并且随机睡眠一段时间，等待进入到下一个选举周期。由于所有server都是随机选择睡眠时间，所以连续出现多个server竞选的概率很低。
 
  
 
-*2、Leader挂了后，如何选举出新的Leader？*
+***\*2、Leader挂了后，如何选举出新的Leader？\****
 
 Leader正常运作时，会周期性地发出append_entries请求。这个周期性的append_entries除了可以更新其它Follower的log信息，另外一个重要功能就是起到心跳作用。Follower收到append_entries后，就知道Leader还活着。如果Follower经过一个预定的时间(一般设为2000ms左右)都没有收到Leader的心跳，就认为Leader挂了。于是转入Candidate状态，开始发起投票竞选新的Leader。每个新的Leader产生后就是一个新的任期，每个任期都对应一个唯一的任期号term。这个term是单调递增的，用来唯一标识一个Leader的任期。投票开始时，Candidate将自己的term加1，并在request_vote中带上term；Follower只会接受任期号term比自己大的request_vote请求，并为之投票。这条规则保证了只有最新的Candidate才有可能成为Leader。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps652B.tmp.jpg) 
 
  
 
-*3、Follower在收到一条append_entries添加日志请求后，是否立即保存并将其应用到状态机中去？如果不是立即应用，那么由什么来决定该条日志生效的时间？*
+***\*3、Follower在收到一条append_entries添加日志请求后，是否立即保存并将其应用到状态机中去？如果不是立即应用，那么由什么来决定该条日志生效的时间？\****
 
 Follower在收到一条append_entries后，首先会检查这条append_entries的来源信息是否与本地保存的leader信息符合，包括leaderId和任期号term。检查合法后就将日志保存到本地log中，并给Leader回复添加log成功，但是不会立即将其应用到本地状态机。Leader收到大部分Follower添加log成功的回复后，就正式将这条日志commit提交。Leader在随后发出的心跳append_entires中会带上已经提交日志索引。Follower收到Leader发出的心跳append_entries后，就可以确认刚才的log已经被commit(提交)了，这个时候Follower才会把日志应用到本地状态机。下表即是append_entries请求的内容，其中leaderCommit即是Leader已经确认提交的最大日志索引。Follower在收到Leader发出的append_entries后即可以通过leaderCommit字段决定哪些日志可以应用到状态机。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps652C.tmp.jpg) 
 
  
 
-*4、假设有一个server A宕机了很长一段时间，它的日志已经落后很多。如果A重新上线，而且此时现有Leader挂掉，server A刚好竞选成为了Leader。按照日志都是由Leader复制给其它server的原则，server A会把其它Follower已经提交的日志给抹掉，而这违反了raft状态机安全特性，raft怎么解决这种异常情况？*
+***\*4、假设有一个server A宕机了很长一段时间，它的日志已经落后很多。如果A重新上线，而且此时现有Leader挂掉，server A刚好竞选成为了Leader。按照日志都是由Leader复制给其它server的原则，server A会把其它Follower已经提交的日志给抹掉，而这违反了raft状态机安全特性，raft怎么解决这种异常情况？\****
 
 所谓的状态机安全特性即是“如果一个领导人已经在给定的索引值位置的日志条目应用到状态机中，那么其他任何的服务器在这个索引位置不会提交一个不同的日志”。如果server在竞选Leader的过程中不加任何限制的话，携带旧日志的server也有可能竞选成为Leader，就必然存在覆盖之前Leader已经提交的日志可能性，从而违反状态机安全特性。raft的解决办法很简单，就是只有具有最新日志的server的才有资格去竞选当上Leader，具体是怎么做到的呢？首先任何server都还是有资格去发起request_vote请求去拉取投票的，request_vote中会带上server的日志信息，这些信息标明了server日志的新旧程度，如下表所示。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps652D.tmp.jpg) 
 
 其它server收到request_vote后，判断如果lastLogTerm比自己的term大，那么就可以给它投票；lastLogTerm比自己的term小，就不给它投票。如果相等的话就比较lastLogIndex，lastLogIndex大的话日志就比较新，就给它投票。下图是raft日志格式，每条日志中不仅保存了日志内容，还保存了发送这条日志的Leader的任期号term。为什么要在日志里保存任期号term，由于任期号是全局单调递增且唯一的，所以根据任期号可以判断一条日志的新旧程度，为选举出具有最新日志的Leader提供依据。
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps653E.tmp.jpg) 
 
  
 
-*5、存在如下图一种异常情况，server S5在时序(d)中覆盖了server S1在时序(c)中提交的index为2的日志，方框中的数字是日志的term。这违反了状态机的安全特性--“如果一个领导人已经在给定的索引值位置的日志条目应用到状态机中，那么其他任何的服务器在这个索引位置不会提交一个不同的日志”，raft要如何解决这个问题？*
+***\*5、存在如下图一种异常情况，server S5在时序(d)中覆盖了server S1在时序(c)中提交的index为2的日志，方框中的数字是日志的term。这违反了状态机的安全特性--“如果一个领导人已经在给定的索引值位置的日志条目应用到状态机中，那么其他任何的服务器在这个索引位置不会提交一个不同的日志”，raft要如何解决这个问题？\****
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps653F.tmp.jpg) 
 
 出现这个问题的根本原因是S1在时序(c) 的任期4内提交了一个之前任期2的log，这样S1提交的日志中最大的term仅仅是2，那么一些日志比较旧的server，比如S5(它最日志的term为 3)，就有机会成为leader，并覆盖S1提交的日志。解决办法就是S1在时序(c)的任期term4提交term2的旧日志时，旧日志必须附带在当前term 4的日志下一起提交。这样就把S1日志的最大term提高到了4，让那些日志比较旧的S5没有机会竞选成为Leader，也就不会用旧的日志覆盖已经提交的日志了。
 
@@ -442,25 +442,25 @@ Follower在收到一条append_entries后，首先会检查这条append_entries�
 
  
 
-*6、向raft系统中添加新机器时，由于配置信息不可能在各个系统上同时达到同步状态，总会有某些server先得到新机器的信息，有些server后得到新机器的信息。比如下图raft系统中新增加了server4和server5这两台机器。只有server3率先感知到了这两台机器的添加。这个时候如果进行选举，就有可能出现两个Leader选举成功。因为server3认为有3台server给它投了票，它就是Leader，而server1认为只要有2台server给它投票就是Leader了。raft怎么解决这个问题呢？*
+***\*6、向raft系统中添加新机器时，由于配置信息不可能在各个系统上同时达到同步状态，总会有某些server先得到新机器的信息，有些server后得到新机器的信息。比如下图raft系统中新增加了server4和server5这两台机器。只有server3率先感知到了这两台机器的添加。这个时候如果进行选举，就有可能出现两个Leader选举成功。因为server3认为有3台server给它投了票，它就是Leader，而server1认为只要有2台server给它投票就是Leader了。raft怎么解决这个问题呢？\****
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps6540.tmp.jpg) 
 
 产生这个问题的根本原因是，raft系统中有一部分机器使用了旧的配置，如server1和server2，有一部分使用新的配置，如server3。解决这个问题的方法是添加一个中间配置(Cold, Cnew)，这个中间配置的内容是旧的配置表Cold和新的配置Cnew。还是拿上图中的例子来说明，这个时候server3收到添加机器的消息后，不是直接使用新的配置Cnew，而是使用(Cold, Cnew)来做决策。比如说server3在竞选Leader的时候，不仅需要得到Cold中的大部分投票，还要得到Cnew中的大部分投票才能成为Leader。这样就保证了server1和server2在使用Cold配置的情况下，还是只可能产生一个Leader。当所有server都获得了添加机器的消息后，再统一切换到Cnew。raft实现中，将Cold，(Cold,Cnew)以及Cnew都当成一条普通的日志。配置更改信息发送Leader后，由Leader先添加一条 (Cold, Cnew)日志，并同步给其它Follower。当这条日志(Cold, Cnew)提交后，再添加一条Cnew日志同步给其它Follower，通过Cnew日志将所有Follower的配置切换到最新。
 
 有的raft实现采用了一种更加简单粗暴的方法来解决成员变化的问题。这个办法就是每次只更新一台机器的配置变化，收到配置变化的机器立马采用新的配置。这样的做法为什么能确保安全性呢？下面举例说明。比如说系统中原来有5台机器A,B,C,D,E，现在新加了一台机器F，A,B,C三台机器没有感知到F的加入，只有D,E两台机器感知到了F的加入。现在就有了两个旧机器集合X｛A, B, C, D, E}和新机器集合Y｛F｝。假设A和D同时进入Candidate状态去竞选Leader，其中D要想竞选成功，必须得有一半以上机器投票，即6/2+1=4台机器，就算Y集合中的F机器给D投了票，还得至少在集合X中得到3票；而A要想竞选成功，也必须得到5/2+1 = 3张票，由于A只知道集合X的存在，所以也必须从集合X中获得至少3票。而A和D不可能同时从集合X同时获得3票，所以A和D不可能同时竞选成为Leader，从而保证了安全性。可以使用更加形式化的数学公式来证明一次添加一台机器配置不会导致产生两个Leader，证明过程就暂时省略了。
 
-# *Paxos VS Raft*
+# Paxos VS Raft
 
 Paxos和Raft最大的区别在于Paxos支持乱序同步，Raft只支持顺序同步。
 
 Raft相当于是Paxos协议的一种简化，好处是实现简单，容易理解，坏处是损失了日志并行同步的性能。国内和开源界流行Raft，不过对于AWS、微软、Google等大公司，关键系统还是使用Paxos的。
 
-## *相同*
+## 相同
 
-*Raft与Multi-Paxos中相似的概念：*
+***\*Raft与Multi-Paxos中相似的概念：\****
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps6550.tmp.jpg) 
 
 Raft的Leader即Multi-Paxos的Proposer。
 
@@ -474,11 +474,11 @@ Raft的Leader选举跟Multi-Paxos的Prepare阶段本质上是相同的。
 
 Raft的日志复制即Multi-Paxos的Accept阶段。
 
-## *不同*
+## 不同
 
-*Raft与Multi-Paxos的不同：*
+***\*Raft与Multi-Paxos的不同：\****
 
- 
+![img](file:///C:\Users\大力\AppData\Local\Temp\ksohtml\wps6551.tmp.jpg) 
 
 Raft假设系统在任意时刻最多只有一个Leader，提议只能由Leader发出（强Leader），否则会影响正确性；而Multi-Paxos虽然也选举Leader，但只是为了提高效率，并不限制提议只能由Leader发出（弱Leader）。
 
@@ -498,9 +498,9 @@ Raft在AppendEntries中携带Leader的commit index，一旦日志形成多数派
 
  
 
-# *优化*
+# 优化
 
-## *Pre-Vote*
+## Pre-Vote
 
 在Follow处于网络抖动无法接受到Leader的消息的时候，它就会变成Candidate并且Term加一，但是其他集群其实还是在正常工作的，这样整个集群的就混乱了。
 
@@ -508,7 +508,7 @@ Pre-Vote机制会在Follow没有接收到Leader的消息并且开始投票之前
 
  
 
-## *Pipeline*
+## Pipeline
 
 正常的Raft流程中，客户端事先给Leader写入数据，Leader处理后会追加到log中，追加成功后Replication到其他节点中，当Leader发现log被整个集群大多数节点接收后就会进行Apply。
 
@@ -516,13 +516,13 @@ Pre-Vote机制会在Follow没有接收到Leader的消息并且开始投票之前
 
  
 
-## *Batch*
+## Batch
 
 通常情况下接收到的客户端请求都是依次过来的，而当有一批请求过来的时候，就可以通过Batch将这些请求打包成一个Raft log发送出去。
 
  
 
-# *Multi-Raft*
+# Multi-Raft
 
 当目前的Raft Group无法支撑所有的数据的时候，就需要引入Multi-Raft处理数据，第一种做法是将数据切分成多个Raft Group分担到不同的机器上。
 
@@ -530,7 +530,232 @@ Pre-Vote机制会在Follow没有接收到Leader的消息并且开始投票之前
 
 # 应用
 
-## *TiKV*
+## TiKV
 
-## *SOFARaft*
+## SOFARaft
 
+# 源码
+
+## raft_new
+
+### log_new
+
+#### log_alloc
+
+##### log_clear
+
+#### raft_set_snapshot_metadata
+
+## ----
+
+## raft_recv_requestvote_response
+
+### raft_get_nvotes_for_me
+
+#### raft_node_has_vote_for_me
+
+### raft_votes_is_majority
+
+## raft_recv_requestsvote
+
+### should_grant_vote
+
+#### raft_already_voted
+
+## ----
+
+## raft_recv_entry
+
+## raft_msg_entry_response_commited
+
+## raft_get_first_entry_idx
+
+## raft_get_last_applied_entry
+
+## ----
+
+## raft_set_election_timeout
+
+## raft_set_request_timeout
+
+## raft_get_election_timeout
+
+## raft_get_request_timeout
+
+## raft_get_timeout_elapsed
+
+## ----
+
+## raft_recv_appendentries
+
+### raft_is_candidate
+
+### raft_become_follower
+
+### raft_delete_entry_from_idx
+
+#### log_delete
+
+##### raft_node_set_voting
+
+##### raft_node_set_active
+
+### raft_append_entry
+
+#### raft_entry_is_voting_cfg_change
+
+#### log_append_entry
+
+##### ensurecapacity
+
+##### raft_offer_log
+
+###### raft_add_non_voting_node
+
+raft_add_node
+
+raft_node_new
+
+## raft_recv_appendentries_response
+
+### raft_node_get_match_idx
+
+### raft_voting_change_is_progress
+
+### raft_node_is_voting_commited
+
+### raft_node_has_suffient_logs
+
+## ----
+
+## raft_begin_snapshot
+
+## raft_begin_load_snapshot
+
+### log_load_from_snapshot
+
+## raft_end_snapshot
+
+### raft_get_num_snapshottable_logs
+
+#### raft_get_log_count
+
+#### log_get_base
+
+### raft_poll_entry
+
+#### log_poll
+
+### raft_end_load_snapshot
+
+### raft_get_snapshot_last_idx
+
+### raft_get_snapshot_last_term
+
+## ----
+
+## raft_periodic
+
+### raft_get_num_voting_nodes
+
+#### raft_node_is_active
+
+#### raft_node_is_voting
+
+### raft_node_is_viting
+
+### raft_get_my_node
+
+#### raft_get_nodeid
+
+#### raft_node_get_id
+
+### raft_is_leader
+
+### raft_become_leader
+
+#### raft_set_state
+
+#### raft_node_set_next_idx
+
+#### raft_get_current_idx
+
+#### raft_node_set_match_idx
+
+#### raft_send_appendentries
+
+### raft_send_appendentries_all
+
+### raft_snapshot_is_in_progress
+
+### raft_get_num_voting_nodes
+
+### raft_get_commit_idx
+
+### raft_apply_all
+
+## ----
+
+## raft_free
+
+## raft_clear
+
+## raft_set_callbacks
+
+## ----
+
+## r**aft_get_num_nodes
+
+## raft_get_voted_for
+
+## raft_get_node_from_idx
+
+## raft_get_current_leader
+
+## raft_get_current_leader_node
+
+### log_get_at_idx
+
+## raft_set_last_applied_idx
+
+## raft_is_follower
+
+## raft_is_connected
+
+## ----
+
+## raft_node_get_udata
+
+## raft_node_set_udata
+
+## raft_node_has_vote_for_me
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
