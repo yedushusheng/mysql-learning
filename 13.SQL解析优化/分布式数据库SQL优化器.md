@@ -630,7 +630,19 @@ select1 UNION select2同时满足如下条件才可以考虑合并下发：
 
 2）没有使用union distinct
 
+#### **Hint**
+
+采用samedb、storagedb的hint信息优化下发db。
+
+Samedb表示自此SQL以后的所有SQL都是采用相同分片，不需要计算分片（适用于跑批业务），storagedb适用于业务侧已知分片信息的情况。
+
 ### SQL引擎优化
+
+#### **分包/流控**
+
+对于大结果的INSERT或者SELECT会根据具体的SQL数量分包下发，提高效率。
+
+
 
 #### 条件繁殖
 
@@ -693,6 +705,12 @@ select avg(col) from T where col>100 UR;
 select sum(col),count(col) from T where col>100;
 
  
+
+#### **JOIN优化**
+
+采用MULTI_STEP_QUERY强制使用小表驱动大表。
+
+
 
 #### 下推优化
 
