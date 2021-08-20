@@ -670,7 +670,15 @@ select T1.col, T1.col1 from T1 join T2 on T1.col=T2.col where T1.col1 in (100,20
 
 select T1.col, T1.col1 from {T1 where col1 in (100,200)} join {T2 where col1 in (100,200)} von T1.col=T2.col UR;
 
- 
+
+
+####  **OR索引失效优化**
+
+对于cond1 OR cond2这种会导致索引失效，可以采用如下的方法：
+
+cond1 UNION cond2。
+
+
 
 #### 并行执行
 
